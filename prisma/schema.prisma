@@ -1,12 +1,104 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
+}
+
+model Wallet {
+  id           String        @id @default(cuid())
+  name         String
+  type         String
+  balance      Float         @default(0)
+  color        String        @default("#7A9E7E")
+  createdAt    DateTime      @default(now())
+  transactions Transaction[] @relation("WalletTransactions")
+  transfersIn  Transaction[] @relation("TransferTarget")
+}
+
+model Transaction {
+  id             String   @id @default(cuid())
+  type           String
+  amount         Float
+  category       String
+  note           String?
+  date           DateTime @default(now())
+  walletId       String
+  wallet         Wallet   @relation("WalletTransactions", fields: [walletId], references: [id], onDelete: Cascade)
+  targetWalletId String?
+  targetWallet   Wallet?  @relation("TransferTarget", fields: [targetWalletId], references: [id])
+  createdAt      DateTime @default(now())
+}
+
+model Obligation {
+  id             String                  @id @default(cuid())
+  title          String
+  totalAmount    Float
+  reservedAmount Float                   @default(0)
+  paidAmount     Float                   @default(0)
+  dueDate        DateTime
+  category       String                  @default("OBLIGATION")
+  notes          String?
+  isPaid         Boolean                 @default(false)
+  installments   ObligationInstallment[]
+  createdAt      DateTime                @default(now())
+}
+
+model ObligationInstallment {
+  id           String     @id @default(cuid())
+  title        String
+  amount       Float
+  paidAmount   Float      @default(0)
+  dueDate      DateTime
+  isPaid       Boolean    @default(false)
+  obligationId String
+  obligation   Obligation @relation(fields: [obligationId], references: [id], onDelete: Cascade)
+}
+
+model SavingsGoal {
+  id             String               @id @default(cuid())
+  name           String
+  currentBalance Float                @default(0)
+  targetAmount   Float?
+  targetDate     DateTime?
+  notes          String?
+  transactions   SavingsTransaction[]
+  createdAt      DateTime             @default(now())
+}
+
+model SavingsTransaction {
+  id            String      @id @default(cuid())
+  type          String      // DEPOSIT, WITHDRAW, SPEND
+  amount        Float
+  note          String?
+  walletName    String?
+  date          DateTime    @default(now())
+  savingsGoalId String
+  savingsGoal   SavingsGoal @relation(fields: [savingsGoalId], references: [id], onDelete: Cascade)
+}
+
+model BillSplit {
+  id           String             @id @default(cuid())
+  title        String
+  subtotal     Float
+  vatAmount    Float              @default(0)
+  totalAmount  Float
+  splitMode    String
+  paidByMe     Boolean            @default(true)
+  date         DateTime           @default(now())
+  participants SplitParticipant[]
+}
+
+model SplitParticipant {
+  id          String    @id @default(cuid())
+  name        String
+  isMe        Boolean   @default(false)
+  itemTotal   Float
+  vatShare    Float
+  finalOwed   Float
+  isSettled   Boolean   @default(false)
+  billSplitId String
+  billSplit   BillSplit @relation(fields: [billSplitId], references: [id], onDelete: Cascade)
 }

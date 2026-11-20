@@ -1,26 +1,33 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-main: #F7F7F5;
+  --bg-card: #FFFFFF;
+  --text-primary: #363537;
+  --text-muted: #6B6A6D;
+  --border-subtle: #E5E5E2;
+
+  /* PocketQ Custom Palette */
+  --pq-inkblack: #001A23;
+  --pq-celadon: #B3EFB2;
+  --pq-aliceblue: #E8F1F2;
+  --pq-mutedteal: #7A9E7E;
+  --pq-pineteal: #31493C;
+  --pq-hotberry: #D52073;
+  --pq-bananacream: #FFEF5C;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --bg-main: #000000;
+  --bg-card: #363537;
+  --text-primary: #F7F7F5;
+  --text-muted: #B8B7BA;
+  --border-subtle: #4A484B;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
