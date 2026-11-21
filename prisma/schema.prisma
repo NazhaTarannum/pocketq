@@ -334,20 +334,43 @@ model BillSettlement {
 
 // Recurring subscription commitments and billing schedules
 model Subscription {
-  id              String   @id @default(cuid())
-  userId          String
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name            String
-  amount          Float
-  billingCycle    String   @default("MONTHLY") // MONTHLY | YEARLY | CUSTOM
-  customCycleDays Int?
-  nextRenewalDate DateTime
-  status          String   @default("ACTIVE") // ACTIVE | CANCELLED
-  category        String   @default("Subscriptions")
-  note            String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id                  String                @id @default(cuid())
+  userId              String
+  user                User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name                String
+  amount              Float
+  startDate           DateTime              @default(now())
+  billingCycle        String                @default("MONTHLY") // WEEKLY | MONTHLY | QUARTERLY | HALF_YEARLY | YEARLY | CUSTOM
+  customCycleDays     Int?
+  customIntervalValue Int?
+  customIntervalUnit  String?               // DAYS | WEEKS | MONTHS | YEARS
+  defaultWalletId     String?
+  nextRenewalDate     DateTime
+  lastPaidDate        DateTime?
+  status              String                @default("ACTIVE") // ACTIVE | CANCELLED
+  category            String                @default("Subscriptions")
+  note                String?
+  payments            SubscriptionPayment[]
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
 
+  @@index([userId])
+}
+
+model SubscriptionPayment {
+  id             String       @id @default(cuid())
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  userId         String
+  walletId       String?
+  walletName     String?
+  amount         Float
+  dueDate        DateTime
+  paidDate       DateTime     @default(now())
+  note           String?
+  createdAt      DateTime     @default(now())
+
+  @@index([subscriptionId])
   @@index([userId])
 }
 

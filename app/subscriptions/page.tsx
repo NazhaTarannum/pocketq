@@ -1,26 +1,36 @@
 'use client';
 
-/**
- * @file app/subscriptions/page.tsx
- * @description Recurring subscription management workspace tracking billing cycles, renewal reminders, and normalized monthly/annual costs.
- * - Manage recurring monthly, yearly, and custom-day subscriptions.
- * - View normalized monthly & yearly recurring burn rates.
- * - Receive 7-day renewal alerts and record payments directly into wallet expenses.
- */
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Sun,
   Moon,
   Repeat,
   Plus,
-  BellRing,
   CheckCircle2,
   XCircle,
   RefreshCw,
+  Calendar,
+  Clock,
+  AlertTriangle,
+  Lock,
+  Edit3,
+  Trash2,
+  Wallet,
+  History,
+  ChevronRight,
+  X,
 } from 'lucide-react';
 import AppSidebar from '@/components/AppSidebar';
 import { formatDateDDMMYYYY } from '@/lib/format';
+import {
+  BillingFrequency,
+  CustomIntervalUnit,
+  CycleDisplayStatus,
+  computeCycleDateFromAnchor,
+  formatFrequencyLabel,
+  generateUpcomingSchedule,
+  toISODateString,
+} from '@/lib/subscriptions';
 
 interface WalletItem {
   id: string;
@@ -28,19 +38,45 @@ interface WalletItem {
   balance: number;
 }
 
+interface PaymentHistoryItem {
+  id: string;
+  subscriptionId: string;
+  walletId: string | null;
+  walletName: string | null;
+  amount: number;
+  dueDate: string;
+  paidDate: string;
+  note: string | null;
+  subscription?: {
+    id: string;
+    name: string;
+  };
+}
+
 interface SubscriptionItem {
   id: string;
   name: string;
   amount: number;
-  billingCycle: 'MONTHLY' | 'YEARLY' | 'CUSTOM';
+  startDate: string;
+  billingCycle: BillingFrequency;
+  customIntervalValue: number | null;
+  customIntervalUnit: CustomIntervalUnit | null;
   customCycleDays: number | null;
+  defaultWalletId: string | null;
+  defaultWalletName: string | null;
   nextRenewalDate: string;
+  lastPaidDate: string | null;
   status: 'ACTIVE' | 'CANCELLED';
   note: string | null;
+  frequencyLabel: string;
+  displayStatus: CycleDisplayStatus;
+  daysUntilDue: number;
+  canSettle: boolean;
+  blockReason: string | null;
   monthlyEquivalent: number;
   yearlyEquivalent: number;
-  daysUntilRenewal: number;
-  isDueSoon: boolean;
+  upcomingDates: string[];
+  payments: PaymentHistoryItem[];
 }
 
 interface SubscriptionsPayload {
@@ -49,443 +85,969 @@ interface SubscriptionsPayload {
   };
   wallets: WalletItem[];
   subscriptions: SubscriptionItem[];
-  subscriptionSummary: {
+  paymentHistory: PaymentHistoryItem[];
+  summary: {
     activeCount: number;
     cancelledCount: number;
+    dueNowCount: number;
     totalMonthlyCost: number;
     totalYearlyCost: number;
   };
 }
 
+const FREQUENCY_OPTIONS: { value: BillingFrequency; label: string; hint: string }[] = [
+  { value: 'WEEKLY', label: 'Weekly', hint: 'Every 7 days' },
+  { value: 'MONTHLY', label: 'Monthly', hint: 'Every 1 month' },
+  { value: 'QUARTERLY', label: 'Quarterly', hint: 'Every 3 months' },
+  { value: 'HALF_YEARLY', label: 'Half-Yearly', hint: 'Every 6 months' },
+  { value: 'YEARLY', label: 'Yearly', hint: 'Every 12 months' },
+  { value: 'CUSTOM', label: 'Custom Interval', hint: 'Days, weeks, months, or years' },
+];
 
 export default function SubscriptionsPage() {
-  const [data, setData] = useState<SubscriptionsPayload | null>(null);
+  const [darkMode, setDarkMode] = useState(false);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  const [subName, setSubName] = useState('');
-  const [subAmount, setSubAmount] = useState('');
-  const [subCycle, setSubCycle] = useState<'MONTHLY' | 'YEARLY' | 'CUSTOM'>('MONTHLY');
-  const [subCustomDays, setSubCustomDays] = useState('30');
-  const [subNextDate, setSubNextDate] = useState('');
-  const [subNote, setSubNote] = useState('');
-  const [payWalletId, setPayWalletId] = useState('');
+  const [data, setData] = useState<SubscriptionsPayload>({
+    settings: { currencySymbol: '৳' },
+    wallets: [],
+    subscriptions: [],
+    paymentHistory: [],
+    summary: {
+      activeCount: 0,
+      cancelledCount: 0,
+      dueNowCount: 0,
+      totalMonthlyCost: 0,
+      totalYearlyCost: 0,
+    },
+  });
 
-  const symbol = data?.settings?.currencySymbol || '৳';
-  const formatMoney = (n: number) =>
-    `${symbol}${Math.round(n).toLocaleString('en-IN')}`;
+  // Add / Edit Subscription Form State
+  const [editingSub, setEditingSub] = useState<SubscriptionItem | null>(null);
+  const [name, setName] = useState('');
+  const [amount, setAmount] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [billingCycle, setBillingCycle] = useState<BillingFrequency>('MONTHLY');
+  const [customIntervalValue, setCustomIntervalValue] = useState('2');
+  const [customIntervalUnit, setCustomIntervalUnit] = useState<CustomIntervalUnit>('MONTHS');
+  const [defaultWalletId, setDefaultWalletId] = useState('');
+  const [note, setNote] = useState('');
 
-  const fetchData = async () => {
+  // Payment Confirmation Modal State
+  const [settleTarget, setSettleTarget] = useState<SubscriptionItem | null>(null);
+  const [settleWalletId, setSettleWalletId] = useState('');
+  const [settleAmount, setSettleAmount] = useState('');
+  const [settleNote, setSettleNote] = useState('');
+
+  // Active View Tab ('ALL' | 'DUE' | 'CANCELLED')
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'DUE' | 'CANCELLED'>('ALL');
+
+  const currency = data.settings?.currencySymbol || '৳';
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('pocketq-theme');
+    if (savedTheme === 'dark') setDarkMode(true);
+    const today = new Date().toISOString().slice(0, 10);
+    setStartDate(today);
+    fetchSubscriptions();
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', darkMode);
+    localStorage.setItem('pocketq-theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
+
+  async function fetchSubscriptions() {
     try {
-      const res = await fetch('/api/dashboard');
-      const json = await res.json();
-      if (res.ok) {
-        setData(json);
-        if (json.wallets?.length > 0) {
-          setPayWalletId((prev) => prev || json.wallets[0].id);
-        }
+      setLoading(true);
+      const res = await fetch('/api/subscriptions', { cache: 'no-store' });
+      if (res.status === 401) {
+        window.location.href = '/login';
+        return;
       }
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Failed to load subscriptions');
+      setData(json);
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : 'Unable to load subscriptions');
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    const today = new Date().toISOString().slice(0, 10);
-    setSubNextDate((prev) => prev || today);
-    fetchData();
-  }, []);
-
-  const handleCreateSubscription = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!subName.trim() || !subAmount) return;
-    setSubmitting(true);
-    try {
-      await fetch('/api/dashboard', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'CREATE_SUBSCRIPTION',
-          name: subName.trim(),
-          amount: Number(subAmount),
-          billingCycle: subCycle,
-          customCycleDays: subCycle === 'CUSTOM' ? Number(subCustomDays) || 30 : null,
-          nextRenewalDate: subNextDate,
-          note: subNote,
-        }),
-      });
-      setSubName('');
-      setSubAmount('');
-      setSubNote('');
-      await fetchData();
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handlePaySubscription = async (sub: SubscriptionItem) => {
-    setSubmitting(true);
-    try {
-      await fetch('/api/dashboard', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'PAY_SUBSCRIPTION',
-          subscriptionId: sub.id,
-          walletId: payWalletId || undefined,
-          amount: sub.amount,
-        }),
-      });
-      await fetchData();
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleToggleSubscription = async (sub: SubscriptionItem) => {
-    setSubmitting(true);
-    try {
-      await fetch('/api/dashboard', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'TOGGLE_SUBSCRIPTION_STATUS',
-          subscriptionId: sub.id,
-          status: sub.status === 'ACTIVE' ? 'CANCELLED' : 'ACTIVE',
-        }),
-      });
-      await fetchData();
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  if (loading || !data) {
-    return (
-      <div className="min-h-screen bg-[#E8F1F2] text-[#001A23] flex items-center justify-center font-semibold">
-        Loading Subscriptions...
-      </div>
-    );
   }
 
-  const upcomingRenewals = data.subscriptions.filter((s) => s.isDueSoon);
+  // Live automatic due-date & upcoming schedule preview in the setup form
+  const livePreview = useMemo(() => {
+    if (!startDate) return null;
+    try {
+      const config = {
+        startDate,
+        billingCycle,
+        customIntervalValue: billingCycle === 'CUSTOM' ? Math.max(1, Number(customIntervalValue) || 1) : null,
+        customIntervalUnit: billingCycle === 'CUSTOM' ? customIntervalUnit : null,
+      };
+      const firstDue = computeCycleDateFromAnchor(config, 1);
+      const upcoming = generateUpcomingSchedule(config, firstDue, 4);
+      return {
+        firstDueISO: toISODateString(firstDue),
+        upcoming,
+        frequencyLabel: formatFrequencyLabel(config),
+      };
+    } catch {
+      return null;
+    }
+  }, [startDate, billingCycle, customIntervalValue, customIntervalUnit]);
+
+  function resetForm() {
+    setEditingSub(null);
+    setName('');
+    setAmount('');
+    setStartDate(new Date().toISOString().slice(0, 10));
+    setBillingCycle('MONTHLY');
+    setCustomIntervalValue('2');
+    setCustomIntervalUnit('MONTHS');
+    setDefaultWalletId('');
+    setNote('');
+  }
+
+  function startEdit(sub: SubscriptionItem) {
+    setErrorMsg(null);
+    setSuccessMsg(null);
+    setEditingSub(sub);
+    setName(sub.name);
+    setAmount(String(sub.amount));
+    setStartDate(toISODateString(sub.startDate));
+    setBillingCycle(sub.billingCycle);
+    setCustomIntervalValue(String(sub.customIntervalValue || 1));
+    setCustomIntervalUnit(sub.customIntervalUnit || 'MONTHS');
+    setDefaultWalletId(sub.defaultWalletId || '');
+    setNote(sub.note || '');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function handleSaveSubscription(e: React.FormEvent) {
+    e.preventDefault();
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    if (!name.trim()) {
+      setErrorMsg('Please enter a subscription name.');
+      return;
+    }
+    const parsedAmount = Number(amount);
+    if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+      setErrorMsg('Please enter a valid subscription price greater than 0.');
+      return;
+    }
+    if (!startDate) {
+      setErrorMsg('Please select a purchase or start date.');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      const payload = {
+        name: name.trim(),
+        amount: parsedAmount,
+        startDate,
+        billingCycle,
+        customIntervalValue: billingCycle === 'CUSTOM' ? Math.max(1, Number(customIntervalValue) || 1) : null,
+        customIntervalUnit: billingCycle === 'CUSTOM' ? customIntervalUnit : null,
+        defaultWalletId: defaultWalletId || null,
+        note: note.trim() || null,
+      };
+
+      const res = editingSub
+        ? await fetch(`/api/subscriptions/${editingSub.id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'UPDATE', ...payload }),
+          })
+        : await fetch('/api/subscriptions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Failed to save subscription');
+
+      setSuccessMsg(
+        editingSub
+          ? `Updated "${name.trim()}" and recalculated billing schedule.`
+          : `Added "${name.trim()}" — next due date automatically set.`
+      );
+      resetForm();
+      await fetchSubscriptions();
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : 'Failed to save subscription');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  function openSettleModal(sub: SubscriptionItem) {
+    if (!sub.canSettle) {
+      setErrorMsg(
+        sub.blockReason ||
+          'Upcoming bills cannot be paid before their due date.'
+      );
+      return;
+    }
+    setErrorMsg(null);
+    setSuccessMsg(null);
+    setSettleTarget(sub);
+    setSettleWalletId(sub.defaultWalletId || data.wallets[0]?.id || '');
+    setSettleAmount(String(sub.amount));
+    setSettleNote(sub.note || '');
+  }
+
+  async function handleConfirmPayment(e: React.FormEvent) {
+    e.preventDefault();
+    if (!settleTarget) return;
+
+    if (!settleTarget.canSettle) {
+      setErrorMsg('Upcoming bills cannot be settled in advance.');
+      setSettleTarget(null);
+      return;
+    }
+    if (!settleWalletId) {
+      setErrorMsg('Please select a wallet to deduct the payment from.');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setErrorMsg(null);
+      const res = await fetch(`/api/subscriptions/${settleTarget.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'SETTLE_PAYMENT',
+          walletId: settleWalletId,
+          amount: Number(settleAmount) || settleTarget.amount,
+          note: settleNote.trim() || null,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Payment could not be settled');
+
+      setSuccessMsg(
+        `Payment confirmed for ${settleTarget.name}. Wallet deducted, expense logged, and next due date advanced.`
+      );
+      setSettleTarget(null);
+      await fetchSubscriptions();
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : 'Settlement failed');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function handleToggleStatus(sub: SubscriptionItem) {
+    try {
+      setSubmitting(true);
+      setErrorMsg(null);
+      const nextStatus = sub.status === 'ACTIVE' ? 'CANCELLED' : 'ACTIVE';
+      const res = await fetch(`/api/subscriptions/${sub.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'TOGGLE_STATUS', status: nextStatus }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Failed to update status');
+      setSuccessMsg(
+        nextStatus === 'CANCELLED'
+          ? `Cancelled ${sub.name}. Future payable bills paused.`
+          : `Reactivated ${sub.name}.`
+      );
+      await fetchSubscriptions();
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : 'Failed to toggle status');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function handleDeleteSubscription(sub: SubscriptionItem) {
+    if (!window.confirm(`Delete "${sub.name}" and its schedule?`)) return;
+    try {
+      setSubmitting(true);
+      const res = await fetch(`/api/subscriptions/${sub.id}`, { method: 'DELETE' });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Failed to delete');
+      if (editingSub?.id === sub.id) resetForm();
+      setSuccessMsg(`Deleted "${sub.name}".`);
+      await fetchSubscriptions();
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : 'Failed to delete subscription');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  const filteredSubscriptions = useMemo(() => {
+    if (statusFilter === 'DUE') {
+      return data.subscriptions.filter((s) => s.status === 'ACTIVE' && s.canSettle);
+    }
+    if (statusFilter === 'CANCELLED') {
+      return data.subscriptions.filter((s) => s.status === 'CANCELLED');
+    }
+    return data.subscriptions;
+  }, [data.subscriptions, statusFilter]);
+
+  function renderStatusBadge(sub: SubscriptionItem) {
+    switch (sub.displayStatus) {
+      case 'OVERDUE':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300">
+            <AlertTriangle className="w-3.5 h-3.5" />
+            Overdue ({Math.abs(sub.daysUntilDue)}d)
+          </span>
+        );
+      case 'DUE_TODAY':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-300">
+            <Clock className="w-3.5 h-3.5" />
+            Due Today
+          </span>
+        );
+      case 'PAID':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300">
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            Paid · Next in {sub.daysUntilDue}d
+          </span>
+        );
+      case 'CANCELLED':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+            <XCircle className="w-3.5 h-3.5" />
+            Cancelled
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-sky-100 text-sky-800 dark:bg-sky-950/80 dark:text-sky-300">
+            <Calendar className="w-3.5 h-3.5" />
+            Upcoming (in {sub.daysUntilDue}d)
+          </span>
+        );
+    }
+  }
 
   return (
-    <div
-      className={`min-h-screen transition-colors duration-200 ${
-        darkMode ? 'bg-black text-[#E8F1F2]' : 'bg-[#E8F1F2] text-[#001A23]'
-      }`}
-    >
-      {/* Top Sticky Header with 3-Line Sidebar Trigger */}
-      <header
-        className={`sticky top-0 z-30 border-b backdrop-blur-md ${
-          darkMode ? 'bg-black/90 border-[#31493C]' : 'bg-[#E8F1F2]/90 border-[#7A9E7E]/25'
-        }`}
-      >
-        <div className="max-w-5xl mx-auto px-4 py-3.5 flex items-center justify-between gap-3">
+    <div className="min-h-screen bg-[#F3F8F5] dark:bg-[#0B1416] text-[#001A23] dark:text-[#E8F1F2] transition-colors">
+      {/* Top Header */}
+      <header className="sticky top-0 z-30 backdrop-blur-md bg-[#F3F8F5]/90 dark:bg-[#0B1416]/90 border-b border-[#31493C]/10 dark:border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <AppSidebar darkMode={darkMode} />
-            <div>
-              <h1 className="font-bold text-base sm:text-lg leading-tight">
-                Subscriptions
-              </h1>
-              <p className="text-[11px] opacity-70">
-                Recurring service commitments, renewal reminders & forecast burn
-              </p>
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-[#31493C] text-[#B3EFB2] flex items-center justify-center shadow-xs">
+                <Repeat className="w-5 h-5" />
+              </div>
+              <div>
+                <h1 className="text-base sm:text-lg font-bold tracking-tight">
+                  Subscriptions & Recurring Schedules
+                </h1>
+                <p className="text-xs text-[#31493C]/70 dark:text-slate-400 hidden sm:block">
+                  Automatic due-date calculation, strict cycle gates & wallet expense sync
+                </p>
+              </div>
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setDarkMode(!darkMode)}
-            aria-label="Toggle theme"
-            className={`p-2 rounded-xl border transition cursor-pointer ${
-              darkMode
-                ? 'bg-[#31493C]/50 border-[#31493C] text-[#FFEF5C]'
-                : 'bg-white border-[#7A9E7E]/30 text-[#001A23]'
-            }`}
-          >
-            {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={fetchSubscriptions}
+              title="Refresh schedules"
+              className="p-2 rounded-xl border border-[#31493C]/15 dark:border-white/15 hover:bg-[#31493C]/5 dark:hover:bg-white/5 cursor-pointer"
+            >
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            </button>
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="p-2 rounded-xl border border-[#31493C]/15 dark:border-white/15 hover:bg-[#31493C]/5 dark:hover:bg-white/5 cursor-pointer"
+            >
+              {darkMode ? <Sun className="w-4 h-4 text-[#FFEF5C]" /> : <Moon className="w-4 h-4" />}
+            </button>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-6 space-y-6">
-        {/* Subscription Burn Summary Strip */}
-        <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div
-            className={`rounded-3xl p-4 border ${
-              darkMode
-                ? 'bg-[#31493C]/25 border-[#31493C]'
-                : 'bg-white border-[#7A9E7E]/25 shadow-xs'
-            }`}
-          >
-            <span className="text-[11px] font-bold uppercase tracking-wider opacity-70 block">
-              Normalized Monthly Cost
-            </span>
-            <p className="text-2xl font-extrabold text-[#D52073] mt-1">
-              {formatMoney(data.subscriptionSummary.totalMonthlyCost)}/mo
-            </p>
-            <span className="text-[11px] opacity-75">
-              Included in 30/60/90-day cash forecasts
-            </span>
-          </div>
-
-          <div
-            className={`rounded-3xl p-4 border ${
-              darkMode
-                ? 'bg-[#31493C]/25 border-[#31493C]'
-                : 'bg-white border-[#7A9E7E]/25 shadow-xs'
-            }`}
-          >
-            <span className="text-[11px] font-bold uppercase tracking-wider opacity-70 block">
-              Annualized Commitment
-            </span>
-            <p className="text-2xl font-extrabold mt-1">
-              {formatMoney(data.subscriptionSummary.totalYearlyCost)}/yr
-            </p>
-            <span className="text-[11px] opacity-75">
-              Across all active billing cycles
-            </span>
-          </div>
-
-          <div
-            className={`rounded-3xl p-4 border ${
-              darkMode
-                ? 'bg-[#31493C]/25 border-[#31493C]'
-                : 'bg-white border-[#7A9E7E]/25 shadow-xs'
-            }`}
-          >
-            <span className="text-[11px] font-bold uppercase tracking-wider opacity-70 block">
-              Subscription Status
-            </span>
-            <p className="text-2xl font-extrabold text-[#7A9E7E] mt-1">
-              {data.subscriptionSummary.activeCount} Active
-            </p>
-            <span className="text-[11px] opacity-75">
-              {data.subscriptionSummary.cancelledCount} cancelled
-            </span>
-          </div>
-        </section>
-
-        {/* Upcoming Renewal Reminders Banner */}
-        {upcomingRenewals.length > 0 && (
-          <section className="rounded-3xl p-4 bg-[#FFEF5C]/30 border border-[#FFEF5C] space-y-2.5">
-            <h2 className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-              <BellRing className="w-4 h-4 text-[#D52073]" />
-              Upcoming Renewals (Next 7 Days)
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              {upcomingRenewals.map((sub) => (
-                <div
-                  key={sub.id}
-                  className="p-3 rounded-2xl bg-white/85 dark:bg-black/60 border border-[#7A9E7E]/25 flex items-center justify-between gap-2"
-                >
-                  <div>
-                    <span className="text-xs font-bold block">{sub.name}</span>
-                    <span className="text-[11px] opacity-75">
-                      {formatMoney(sub.amount)} • Due {formatDateDDMMYYYY(sub.nextRenewalDate)} (
-                      {sub.daysUntilRenewal < 0
-                        ? `${Math.abs(sub.daysUntilRenewal)}d overdue`
-                        : sub.daysUntilRenewal === 0
-                        ? 'Today'
-                        : `in ${sub.daysUntilRenewal}d`}
-                      )
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    disabled={submitting}
-                    onClick={() => handlePaySubscription(sub)}
-                    className="px-3 py-1.5 rounded-xl text-[11px] font-bold bg-[#31493C] text-[#B3EFB2] cursor-pointer shrink-0"
-                  >
-                    Pay Now
-                  </button>
-                </div>
-              ))}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+        {/* Alerts */}
+        {errorMsg && (
+          <div className="rounded-2xl p-4 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-sm flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <span>{errorMsg}</span>
             </div>
-          </section>
+            <button onClick={() => setErrorMsg(null)} className="p-1 cursor-pointer">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
         )}
 
-        {/* Subscription Manager Card */}
-        <section
-          className={`rounded-3xl p-6 border space-y-5 ${
-            darkMode
-              ? 'bg-[#31493C]/20 border-[#31493C]'
-              : 'bg-white border-[#7A9E7E]/25 shadow-sm'
-          }`}
-        >
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="font-bold text-base flex items-center gap-2">
-              <Repeat className="w-4 h-4 text-[#D52073]" />
-              Manage Subscriptions
-            </h2>
-            <div className="flex items-center gap-2 text-xs">
-              <span className="opacity-70">Default Payment Wallet:</span>
-              <select
-                value={payWalletId}
-                onChange={(e) => setPayWalletId(e.target.value)}
-                className="rounded-xl px-2.5 py-1.5 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
-              >
-                {data.wallets.map((w) => (
-                  <option key={w.id} value={w.id}>
-                    {w.name} ({formatMoney(w.balance)})
-                  </option>
-                ))}
-              </select>
+        {successMsg && (
+          <div className="rounded-2xl p-4 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-sm flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 shrink-0" />
+              <span>{successMsg}</span>
             </div>
+            <button onClick={() => setSuccessMsg(null)} className="p-1 cursor-pointer">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        {/* Summary KPI Strip */}
+        <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="rounded-3xl p-5 bg-white dark:bg-[#121E21] border border-[#31493C]/10 dark:border-white/10">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#31493C]/70 dark:text-slate-400">
+              Active Subscriptions
+            </p>
+            <p className="text-2xl font-extrabold mt-1">{data.summary.activeCount}</p>
+            <p className="text-xs text-slate-500 mt-1">
+              {data.summary.cancelledCount} cancelled
+            </p>
           </div>
 
-          {/* Add Subscription Form */}
-          <form
-            onSubmit={handleCreateSubscription}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2.5 p-3.5 rounded-2xl bg-[#7A9E7E]/10 border border-[#7A9E7E]/20"
-          >
-            <input
-              type="text"
-              required
-              placeholder="Service name (e.g., Spotify, iCloud)"
-              value={subName}
-              onChange={(e) => setSubName(e.target.value)}
-              className="lg:col-span-2 rounded-xl px-3 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
-            />
-            <input
-              type="number"
-              min="1"
-              step="any"
-              required
-              placeholder={`Cost (${symbol})`}
-              value={subAmount}
-              onChange={(e) => setSubAmount(e.target.value)}
-              className="rounded-xl px-3 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
-            />
-            <select
-              value={subCycle}
-              onChange={(e) => setSubCycle(e.target.value as 'MONTHLY' | 'YEARLY' | 'CUSTOM')}
-              className="rounded-xl px-3 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
-            >
-              <option value="MONTHLY">Monthly</option>
-              <option value="YEARLY">Yearly</option>
-              <option value="CUSTOM">Custom Days</option>
-            </select>
-            {subCycle === 'CUSTOM' ? (
-              <input
-                type="number"
-                min="1"
-                required
-                placeholder="Every N days"
-                value={subCustomDays}
-                onChange={(e) => setSubCustomDays(e.target.value)}
-                className="rounded-xl px-3 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
-              />
-            ) : (
-              <input
-                type="date"
-                required
-                value={subNextDate}
-                onChange={(e) => setSubNextDate(e.target.value)}
-                className="rounded-xl px-3 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
-              />
-            )}
-            <button
-              type="submit"
-              disabled={submitting}
-              className="px-4 py-2 rounded-xl text-xs font-bold bg-[#B3EFB2] text-[#001A23] hover:brightness-95 cursor-pointer flex items-center justify-center gap-1"
-            >
-              <Plus className="w-3.5 h-3.5" /> Add
-            </button>
-            {subCycle === 'CUSTOM' && (
-              <div className="sm:col-span-2 lg:col-span-3 flex items-center gap-2">
-                <span className="text-[11px] opacity-70">Next Renewal Date:</span>
+          <div className="rounded-3xl p-5 bg-white dark:bg-[#121E21] border border-[#31493C]/10 dark:border-white/10">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#31493C]/70 dark:text-slate-400">
+              Payable Today / Overdue
+            </p>
+            <p className="text-2xl font-extrabold mt-1 text-amber-600 dark:text-[#FFEF5C]">
+              {data.summary.dueNowCount}
+            </p>
+            <p className="text-xs text-slate-500 mt-1">
+              Future cycles stay locked until due
+            </p>
+          </div>
+
+          <div className="rounded-3xl p-5 bg-white dark:bg-[#121E21] border border-[#31493C]/10 dark:border-white/10">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#31493C]/70 dark:text-slate-400">
+              Monthly Run-Rate
+            </p>
+            <p className="text-2xl font-extrabold mt-1">
+              {currency}
+              {data.summary.totalMonthlyCost.toLocaleString()}
+            </p>
+            <p className="text-xs text-slate-500 mt-1">Normalized across cycles</p>
+          </div>
+
+          <div className="rounded-3xl p-5 bg-[#31493C] text-white">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#B3EFB2]">
+              Annualized Commitment
+            </p>
+            <p className="text-2xl font-extrabold mt-1">
+              {currency}
+              {data.summary.totalYearlyCost.toLocaleString()}
+            </p>
+            <p className="text-xs text-white/75 mt-1">12-month projected spend</p>
+          </div>
+        </section>
+
+        {/* Main 2-Column Layout: Setup Form + Schedule Workspace */}
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* LEFT: Add / Edit Subscription Setup Card */}
+          <div className="lg:col-span-5 rounded-3xl p-6 bg-white dark:bg-[#121E21] border border-[#31493C]/10 dark:border-white/10 shadow-xs">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-base font-bold">
+                  {editingSub ? `Edit "${editingSub.name}"` : 'Add a Subscription'}
+                </h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Enter start date & frequency — PocketQ calculates all future due dates automatically.
+                </p>
+              </div>
+              {editingSub && (
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-white/10 cursor-pointer"
+                >
+                  Cancel Edit
+                </button>
+              )}
+            </div>
+
+            <form onSubmit={handleSaveSubscription} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold mb-1">Subscription Name *</label>
                 <input
-                  type="date"
+                  type="text"
                   required
-                  value={subNextDate}
-                  onChange={(e) => setSubNextDate(e.target.value)}
-                  className="rounded-xl px-3 py-1.5 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
+                  placeholder="e.g. Netflix, Spotify, Google One"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#F3F8F5] dark:bg-[#0B1416] border border-[#31493C]/15 dark:border-white/15 focus:outline-none focus:ring-2 focus:ring-[#31493C]"
                 />
               </div>
-            )}
-          </form>
 
-          {/* Subscriptions List */}
-          {data.subscriptions.length === 0 ? (
-            <p className="text-xs opacity-65 text-center py-6">
-              No subscriptions tracked yet. Add your first recurring subscription above.
-            </p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {data.subscriptions.map((sub) => (
-                <div
-                  key={sub.id}
-                  className={`p-4 rounded-2xl border flex flex-col justify-between gap-3 ${
-                    sub.status === 'CANCELLED'
-                      ? 'opacity-65 border-[#7A9E7E]/20'
-                      : darkMode
-                      ? 'bg-black/50 border-[#31493C]'
-                      : 'bg-[#E8F1F2]/60 border-[#7A9E7E]/25'
-                  }`}
-                >
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm">{sub.name}</span>
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          sub.status === 'ACTIVE'
-                            ? 'bg-[#B3EFB2] text-[#001A23]'
-                            : 'bg-gray-300 text-gray-800'
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold mb-1">
+                    Price ({currency}) *
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    required
+                    placeholder="0.00"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#F3F8F5] dark:bg-[#0B1416] border border-[#31493C]/15 dark:border-white/15 focus:outline-none focus:ring-2 focus:ring-[#31493C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold mb-1">
+                    Purchase / Start Date *
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#F3F8F5] dark:bg-[#0B1416] border border-[#31493C]/15 dark:border-white/15 focus:outline-none focus:ring-2 focus:ring-[#31493C]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold mb-1.5">Billing Frequency *</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {FREQUENCY_OPTIONS.map((opt) => {
+                    const active = billingCycle === opt.value;
+                    return (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => setBillingCycle(opt.value)}
+                        className={`text-left px-3 py-2 rounded-xl border text-xs transition cursor-pointer ${
+                          active
+                            ? 'bg-[#31493C] text-white border-[#31493C] font-semibold'
+                            : 'bg-[#F3F8F5] dark:bg-[#0B1416] border-[#31493C]/15 dark:border-white/15 hover:border-[#31493C]/40'
                         }`}
                       >
-                        {sub.status}
-                      </span>
-                    </div>
-                    <p className="text-xs opacity-75 mt-1">
-                      {formatMoney(sub.amount)} •{' '}
-                      {sub.billingCycle === 'CUSTOM'
-                        ? `Every ${sub.customCycleDays} days`
-                        : sub.billingCycle}{' '}
-                      ({formatMoney(sub.monthlyEquivalent)}/mo • {formatMoney(sub.yearlyEquivalent)}/yr)
-                    </p>
-                    <p className="text-[11px] opacity-70 mt-0.5">
-                      Next renewal: <strong>{formatDateDDMMYYYY(sub.nextRenewalDate)}</strong>
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-2 pt-2 border-t border-[#7A9E7E]/15">
-                    {sub.status === 'ACTIVE' && (
-                      <button
-                        type="button"
-                        disabled={submitting}
-                        onClick={() => handlePaySubscription(sub)}
-                        className="flex-1 py-1.5 px-3 rounded-xl text-xs font-bold bg-[#31493C] text-[#B3EFB2] hover:opacity-90 cursor-pointer flex items-center justify-center gap-1"
-                      >
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Record Payment
+                        <div>{opt.label}</div>
+                        <div
+                          className={`text-[11px] ${
+                            active ? 'text-[#B3EFB2]' : 'text-slate-500 dark:text-slate-400'
+                          }`}
+                        >
+                          {opt.hint}
+                        </div>
                       </button>
-                    )}
-                    <button
-                      type="button"
-                      disabled={submitting}
-                      onClick={() => handleToggleSubscription(sub)}
-                      className="py-1.5 px-3 rounded-xl text-xs font-bold border border-[#7A9E7E]/40 hover:bg-[#7A9E7E]/15 cursor-pointer flex items-center gap-1"
+                    );
+                  })}
+                </div>
+              </div>
+
+              {billingCycle === 'CUSTOM' && (
+                <div className="p-3.5 rounded-2xl bg-[#F3F8F5] dark:bg-[#0B1416] border border-[#31493C]/15 dark:border-white/15 space-y-2">
+                  <label className="block text-xs font-semibold">Custom Billing Interval</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="number"
+                      min="1"
+                      max="3650"
+                      value={customIntervalValue}
+                      onChange={(e) => setCustomIntervalValue(e.target.value)}
+                      className="px-3 py-2 rounded-xl text-sm bg-white dark:bg-[#121E21] border border-[#31493C]/15 dark:border-white/15"
+                    />
+                    <select
+                      value={customIntervalUnit}
+                      onChange={(e) => setCustomIntervalUnit(e.target.value as CustomIntervalUnit)}
+                      className="px-3 py-2 rounded-xl text-sm bg-white dark:bg-[#121E21] border border-[#31493C]/15 dark:border-white/15"
                     >
-                      {sub.status === 'ACTIVE' ? (
-                        <>
-                          <XCircle className="w-3.5 h-3.5 text-[#D52073]" /> Cancel
-                        </>
-                      ) : (
-                        <>
-                          <RefreshCw className="w-3.5 h-3.5 text-[#7A9E7E]" /> Reactivate
-                        </>
-                      )}
-                    </button>
+                      <option value="DAYS">Days</option>
+                      <option value="WEEKS">Weeks</option>
+                      <option value="MONTHS">Months</option>
+                      <option value="YEARS">Years</option>
+                    </select>
                   </div>
                 </div>
-              ))}
+              )}
+
+              <div>
+                <label className="block text-xs font-semibold mb-1">
+                  Default Payment Wallet (Optional)
+                </label>
+                <select
+                  value={defaultWalletId}
+                  onChange={(e) => setDefaultWalletId(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#F3F8F5] dark:bg-[#0B1416] border border-[#31493C]/15 dark:border-white/15"
+                >
+                  <option value="">Select wallet at payment time</option>
+                  {data.wallets.map((w) => (
+                    <option key={w.id} value={w.id}>
+                      {w.name} ({currency}
+                      {w.balance.toLocaleString()})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold mb-1">Optional Notes</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Family plan, auto-debit card"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#F3F8F5] dark:bg-[#0B1416] border border-[#31493C]/15 dark:border-white/15"
+                />
+              </div>
+
+              {/* Automatic Due Date Preview Box */}
+              {livePreview && (
+                <div className="p-3.5 rounded-2xl bg-[#31493C]/8 dark:bg-[#B3EFB2]/10 border border-[#31493C]/20 dark:border-[#B3EFB2]/20 space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-[#31493C] dark:text-[#B3EFB2]">
+                      Automatic Next Due Date
+                    </span>
+                    <span className="font-bold">
+                      {formatDateDDMMYYYY(livePreview.firstDueISO)}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-slate-600 dark:text-slate-300">
+                    Schedule ({livePreview.frequencyLabel}):{' '}
+                    {livePreview.upcoming.map((d) => formatDateDDMMYYYY(d)).join(' → ')}
+                  </div>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full py-3 rounded-xl text-sm font-bold bg-[#FFEF5C] text-[#001A23] hover:brightness-95 transition flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
+              >
+                <Plus className="w-4 h-4" />
+                <span>
+                  {submitting
+                    ? 'Saving...'
+                    : editingSub
+                      ? 'Save Subscription Changes'
+                      : 'Create Subscription Schedule'}
+                </span>
+              </button>
+            </form>
+          </div>
+
+          {/* RIGHT: Recurring Schedules & Payment History */}
+          <div className="lg:col-span-7 space-y-6">
+            {/* Filter Pills */}
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                {(['ALL', 'DUE', 'CANCELLED'] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setStatusFilter(tab)}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                      statusFilter === tab
+                        ? 'bg-[#31493C] text-white'
+                        : 'bg-white dark:bg-[#121E21] border border-[#31493C]/15 dark:border-white/15'
+                    }`}
+                  >
+                    {tab === 'ALL'
+                      ? `All (${data.subscriptions.length})`
+                      : tab === 'DUE'
+                        ? `Payable Now (${data.summary.dueNowCount})`
+                        : `Cancelled (${data.summary.cancelledCount})`}
+                  </button>
+                ))}
+              </div>
+              <span className="text-xs text-slate-500">
+                Settlement unlocks automatically on each due date
+              </span>
             </div>
-          )}
+
+            {/* Subscription Cards */}
+            {filteredSubscriptions.length === 0 ? (
+              <div className="rounded-3xl p-10 bg-white dark:bg-[#121E21] border border-[#31493C]/10 dark:border-white/10 text-center space-y-2">
+                <Repeat className="w-8 h-8 mx-auto text-[#31493C]/50 dark:text-slate-500" />
+                <p className="font-bold text-sm">No subscriptions in this view</p>
+                <p className="text-xs text-slate-500">
+                  Add a subscription on the left to automatically generate its recurring due dates.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {filteredSubscriptions.map((sub) => (
+                  <div
+                    key={sub.id}
+                    className={`rounded-3xl p-5 bg-white dark:bg-[#121E21] border transition ${
+                      sub.canSettle
+                        ? 'border-amber-400/70 dark:border-amber-500/40 shadow-sm'
+                        : 'border-[#31493C]/10 dark:border-white/10'
+                    }`}
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="space-y-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="text-base font-bold">{sub.name}</h3>
+                          {renderStatusBadge(sub)}
+                        </div>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                          {sub.frequencyLabel} · Started {formatDateDDMMYYYY(sub.startDate)}
+                          {sub.defaultWalletName ? ` · Wallet: ${sub.defaultWalletName}` : ''}
+                        </p>
+                        {sub.note && (
+                          <p className="text-xs text-slate-600 dark:text-slate-300 italic">
+                            “{sub.note}”
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="text-right">
+                        <div className="text-lg font-extrabold">
+                          {currency}
+                          {sub.amount.toLocaleString()}
+                        </div>
+                        <div className="text-[11px] text-slate-500">
+                          Next due: <span className="font-semibold">{formatDateDDMMYYYY(sub.nextRenewalDate)}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Automatic Upcoming Billing Schedule */}
+                    {sub.status === 'ACTIVE' && sub.upcomingDates.length > 0 && (
+                      <div className="mt-4 pt-3 border-t border-[#31493C]/10 dark:border-white/10">
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">
+                          Upcoming Automatic Schedule
+                        </p>
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          {sub.upcomingDates.map((isoDate, idx) => (
+                            <span
+                              key={isoDate}
+                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs ${
+                                idx === 0
+                                  ? sub.canSettle
+                                    ? 'bg-amber-100 text-amber-900 dark:bg-amber-950/70 dark:text-amber-300 font-bold'
+                                    : 'bg-[#31493C]/10 text-[#31493C] dark:bg-[#B3EFB2]/15 dark:text-[#B3EFB2] font-semibold'
+                                  : 'bg-[#F3F8F5] dark:bg-[#0B1416] text-slate-600 dark:text-slate-400'
+                              }`}
+                            >
+                              {formatDateDDMMYYYY(isoDate)}
+                              {idx === 0 && (sub.canSettle ? ' (Payable)' : ' (Locked)')}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Action Bar with Strict Settlement Gate */}
+                    <div className="mt-4 pt-3 border-t border-[#31493C]/10 dark:border-white/10 flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => openSettleModal(sub)}
+                          disabled={!sub.canSettle}
+                          title={
+                            sub.canSettle
+                              ? 'Confirm payment for this billing cycle'
+                              : sub.blockReason || 'Upcoming bill cannot be paid before its due date'
+                          }
+                          className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition ${
+                            sub.canSettle
+                              ? 'bg-[#31493C] text-[#B3EFB2] hover:opacity-95 cursor-pointer shadow-xs'
+                              : 'bg-slate-200/80 dark:bg-white/5 text-slate-400 dark:text-slate-500 cursor-not-allowed'
+                          }`}
+                        >
+                          {sub.canSettle ? (
+                            <>
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              <span>Confirm Payment</span>
+                            </>
+                          ) : (
+                            <>
+                              <Lock className="w-3.5 h-3.5" />
+                              <span>
+                                {sub.status === 'CANCELLED'
+                                  ? 'Cancelled'
+                                  : `Settle Unlocks ${formatDateDDMMYYYY(sub.nextRenewalDate)}`}
+                              </span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => startEdit(sub)}
+                          title="Edit subscription"
+                          className="p-2 rounded-xl text-xs hover:bg-[#F3F8F5] dark:hover:bg-white/10 text-slate-600 dark:text-slate-300 cursor-pointer"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleToggleStatus(sub)}
+                          className="px-2.5 py-1.5 rounded-xl text-xs font-semibold hover:bg-[#F3F8F5] dark:hover:bg-white/10 text-slate-600 dark:text-slate-300 cursor-pointer"
+                        >
+                          {sub.status === 'ACTIVE' ? 'Cancel' : 'Reactivate'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteSubscription(sub)}
+                          title="Delete subscription"
+                          className="p-2 rounded-xl text-xs hover:bg-rose-50 dark:hover:bg-rose-950/50 text-rose-600 cursor-pointer"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Payment History Ledger */}
+            <div className="rounded-3xl p-5 bg-white dark:bg-[#121E21] border border-[#31493C]/10 dark:border-white/10">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <History className="w-4 h-4 text-[#31493C] dark:text-[#B3EFB2]" />
+                  <h3 className="text-sm font-bold">Confirmed Payment History</h3>
+                </div>
+                <span className="text-xs text-slate-500">
+                  {data.paymentHistory.length} settled cycle(s)
+                </span>
+              </div>
+
+              {data.paymentHistory.length === 0 ? (
+                <p className="text-xs text-slate-500 py-4 text-center">
+                  No subscription payments confirmed yet. When a bill reaches its due date and you confirm payment, it appears here.
+                </p>
+              ) : (
+                <div className="divide-y divide-[#31493C]/10 dark:divide-white/10">
+                  {data.paymentHistory.map((item) => (
+                    <div key={item.id} className="py-3 flex items-center justify-between gap-3 text-xs">
+                      <div>
+                        <p className="font-bold">
+                          {item.subscription?.name || 'Subscription Payment'}
+                        </p>
+                        <p className="text-slate-500">
+                          Cycle Due: {formatDateDDMMYYYY(item.dueDate)} · Paid:{' '}
+                          {formatDateDDMMYYYY(item.paidDate)}
+                          {item.walletName ? ` · via ${item.walletName}` : ''}
+                        </p>
+                      </div>
+                      <div className="font-extrabold text-rose-600 dark:text-rose-400">
+                        -{currency}
+                        {item.amount.toLocaleString()}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </section>
       </main>
+
+      {/* Payment Confirmation Modal (Only reachable for Due Today / Overdue bills) */}
+      {settleTarget && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="w-full max-w-md rounded-3xl p-6 bg-white dark:bg-[#121E21] border border-[#31493C]/15 dark:border-white/15 shadow-xl space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-bold">Confirm Subscription Payment</h3>
+                <p className="text-xs text-slate-500">
+                  {settleTarget.name} · Cycle due {formatDateDDMMYYYY(settleTarget.nextRenewalDate)}
+                </p>
+              </div>
+              <button
+                onClick={() => setSettleTarget(null)}
+                className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleConfirmPayment} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold mb-1">
+                  Select Payment Wallet *
+                </label>
+                <div className="relative">
+                  <select
+                    required
+                    value={settleWalletId}
+                    onChange={(e) => setSettleWalletId(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#F3F8F5] dark:bg-[#0B1416] border border-[#31493C]/15 dark:border-white/15"
+                  >
+                    <option value="">Choose wallet...</option>
+                    {data.wallets.map((w) => (
+                      <option key={w.id} value={w.id}>
+                        {w.name} — Balance: {currency}
+                        {w.balance.toLocaleString()}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold mb-1">
+                  Amount Due ({currency})
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  required
+                  value={settleAmount}
+                  onChange={(e) => setSettleAmount(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm font-bold bg-[#F3F8F5] dark:bg-[#0B1416] border border-[#31493C]/15 dark:border-white/15"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold mb-1">Payment Note (Optional)</label>
+                <input
+                  type="text"
+                  value={settleNote}
+                  onChange={(e) => setSettleNote(e.target.value)}
+                  placeholder="Optional receipt or card note"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#F3F8F5] dark:bg-[#0B1416] border border-[#31493C]/15 dark:border-white/15"
+                />
+              </div>
+
+              <div className="p-3 rounded-2xl bg-[#F3F8F5] dark:bg-[#0B1416] text-xs text-slate-600 dark:text-slate-300 flex items-center gap-2">
+                <Wallet className="w-4 h-4 shrink-0 text-[#31493C] dark:text-[#B3EFB2]" />
+                <span>
+                  Deducts from selected wallet, logs an Expense transaction, and advances the next due date automatically.
+                </span>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setSettleTarget(null)}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold border border-[#31493C]/15 dark:border-white/15 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#FFEF5C] text-[#001A23] hover:brightness-95 flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                >
+                  <span>{submitting ? 'Confirming...' : 'Confirm & Deduct Wallet'}</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
