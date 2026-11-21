@@ -272,20 +272,21 @@ export default function PlanningWorkspacePage() {
           darkMode ? 'bg-black/90 border-[#31493C]' : 'bg-[#E8F1F2]/90 border-[#7A9E7E]/30'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
             <AppSidebar darkMode={darkMode} />
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#31493C] text-[#B3EFB2] hover:opacity-90"
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-[#31493C] text-[#B3EFB2] hover:opacity-90 shrink-0"
             >
-              <ArrowLeft className="w-3.5 h-3.5" /> Dashboard
+              <ArrowLeft className="w-3.5 h-3.5 shrink-0" />
+              <span>Dashboard</span>
             </Link>
-            <div>
-              <h1 className="font-bold text-base sm:text-lg leading-tight">
-                Flexible Budgets, Expected Income & Loans
+            <div className="min-w-0">
+              <h1 className="font-bold text-sm sm:text-lg leading-tight truncate">
+                Flexible Budgets, Expected Income &amp; Loans
               </h1>
-              <p className="text-[11px] opacity-70">
+              <p className="text-[11px] opacity-70 hidden sm:block">
                 Keep expected income separate from received cash, adapt spending limits, and track borrowed/lent money
               </p>
             </div>
@@ -305,7 +306,10 @@ export default function PlanningWorkspacePage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+      <main className="max-w-7xl mx-auto px-4 py-4 sm:py-6 space-y-5 sm:space-y-6">
+        <p className="text-xs opacity-75 sm:hidden -mt-1">
+          Keep expected income separate from received cash, adapt spending limits, and track borrowed/lent money
+        </p>
         {/* Top Metrics */}
         <section className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="rounded-2xl p-4 bg-[#31493C] text-[#E8F1F2]">

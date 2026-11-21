@@ -13,7 +13,7 @@ import {
   Menu,
   X,
   LayoutDashboard,
-  PiggyBank,
+  PieChart,
   CalendarRange,
   Repeat,
   TrendingUp,
@@ -38,7 +38,7 @@ const NAV_ITEMS = [
     href: '/planning',
     label: 'Budgets & Loans',
     subtitle: 'Spending limits, loans & goals',
-    icon: PiggyBank,
+    icon: PieChart,
   },
   {
     href: '/insights',
