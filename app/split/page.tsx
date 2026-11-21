@@ -522,28 +522,28 @@ export default function BillSplittingPage() {
   }, [savedBills]);
 
   const cardClass = darkMode
-    ? 'bg-[#07262E] border-[#31493C] text-[#E8F1F2]'
-    : 'bg-white border-[#7A9E7E]/25 text-[#001A23]';
+    ? 'bg-[#31493C]/20 border-[#31493C] text-[#E8F1F2]'
+    : 'bg-white border-[#7A9E7E]/25 text-[#001A23] shadow-sm';
 
   const inputClass = darkMode
-    ? 'bg-[#001A23] border-[#31493C] text-[#E8F1F2] focus:border-[#B3EFB2]'
+    ? 'bg-black/60 border-[#31493C] text-[#E8F1F2] focus:border-[#B3EFB2]'
     : 'bg-[#F7FAFA] border-[#7A9E7E]/30 text-[#001A23] focus:border-[#31493C]';
 
   return (
     <div
-      className={`min-h-screen transition-colors ${
-        darkMode ? 'bg-[#001A23] text-[#E8F1F2]' : 'bg-[#E8F1F2]/60 text-[#001A23]'
+      className={`min-h-screen transition-colors duration-200 ${
+        darkMode ? 'bg-black text-[#E8F1F2]' : 'bg-[#E8F1F2] text-[#001A23]'
       }`}
     >
       {/* Top Header */}
       <header
         className={`sticky top-0 z-30 border-b backdrop-blur-md ${
           darkMode
-            ? 'bg-[#001A23]/90 border-[#31493C]'
-            : 'bg-white/90 border-[#7A9E7E]/25'
+            ? 'bg-black/90 border-[#31493C]'
+            : 'bg-[#E8F1F2]/90 border-[#7A9E7E]/30'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <AppSidebar darkMode={darkMode} />
             <div>

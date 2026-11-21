@@ -440,10 +440,10 @@ export default function SubscriptionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F3F8F5] dark:bg-[#0B1416] text-[#001A23] dark:text-[#E8F1F2] transition-colors">
+    <div className="min-h-screen bg-[#E8F1F2] dark:bg-black text-[#001A23] dark:text-[#E8F1F2] transition-colors duration-200">
       {/* Top Header */}
-      <header className="sticky top-0 z-30 backdrop-blur-md bg-[#F3F8F5]/90 dark:bg-[#0B1416]/90 border-b border-[#31493C]/10 dark:border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <header className="sticky top-0 z-30 backdrop-blur-md bg-[#E8F1F2]/90 dark:bg-black/90 border-b border-[#7A9E7E]/30 dark:border-[#31493C]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <AppSidebar darkMode={darkMode} />
             <div className="flex items-center gap-2.5">
@@ -507,7 +507,7 @@ export default function SubscriptionsPage() {
 
         {/* Summary KPI Strip */}
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="rounded-3xl p-5 bg-white dark:bg-[#121E21] border border-[#31493C]/10 dark:border-white/10">
+          <div className="rounded-3xl p-5 bg-white dark:bg-[#31493C]/20 border border-[#7A9E7E]/25 dark:border-[#31493C]">
             <p className="text-xs font-semibold uppercase tracking-wider text-[#31493C]/70 dark:text-slate-400">
               Active Subscriptions
             </p>
@@ -517,7 +517,7 @@ export default function SubscriptionsPage() {
             </p>
           </div>
 
-          <div className="rounded-3xl p-5 bg-white dark:bg-[#121E21] border border-[#31493C]/10 dark:border-white/10">
+          <div className="rounded-3xl p-5 bg-white dark:bg-[#31493C]/20 border border-[#7A9E7E]/25 dark:border-[#31493C]">
             <p className="text-xs font-semibold uppercase tracking-wider text-[#31493C]/70 dark:text-slate-400">
               Payable Today / Overdue
             </p>
@@ -529,7 +529,7 @@ export default function SubscriptionsPage() {
             </p>
           </div>
 
-          <div className="rounded-3xl p-5 bg-white dark:bg-[#121E21] border border-[#31493C]/10 dark:border-white/10">
+          <div className="rounded-3xl p-5 bg-white dark:bg-[#31493C]/20 border border-[#7A9E7E]/25 dark:border-[#31493C]">
             <p className="text-xs font-semibold uppercase tracking-wider text-[#31493C]/70 dark:text-slate-400">
               Monthly Run-Rate
             </p>
@@ -555,7 +555,7 @@ export default function SubscriptionsPage() {
         {/* Main 2-Column Layout: Setup Form + Schedule Workspace */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* LEFT: Add / Edit Subscription Setup Card */}
-          <div className="lg:col-span-5 rounded-3xl p-6 bg-white dark:bg-[#121E21] border border-[#31493C]/10 dark:border-white/10 shadow-xs">
+          <div className="lg:col-span-5 rounded-3xl p-6 bg-white dark:bg-[#31493C]/20 border border-[#7A9E7E]/25 dark:border-[#31493C] shadow-xs">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-base font-bold">
@@ -585,7 +585,7 @@ export default function SubscriptionsPage() {
                   placeholder="e.g. Netflix, Spotify, Google One"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#F3F8F5] dark:bg-[#0B1416] border border-[#31493C]/15 dark:border-white/15 focus:outline-none focus:ring-2 focus:ring-[#31493C]"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#E8F1F2] dark:bg-black border border-[#31493C]/15 dark:border-white/15 focus:outline-none focus:ring-2 focus:ring-[#31493C]"
                 />
               </div>
 
@@ -602,7 +602,7 @@ export default function SubscriptionsPage() {
                     placeholder="0.00"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#F3F8F5] dark:bg-[#0B1416] border border-[#31493C]/15 dark:border-white/15 focus:outline-none focus:ring-2 focus:ring-[#31493C]"
+                    className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#E8F1F2] dark:bg-black border border-[#31493C]/15 dark:border-white/15 focus:outline-none focus:ring-2 focus:ring-[#31493C]"
                   />
                 </div>
 
@@ -615,7 +615,7 @@ export default function SubscriptionsPage() {
                     required
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#F3F8F5] dark:bg-[#0B1416] border border-[#31493C]/15 dark:border-white/15 focus:outline-none focus:ring-2 focus:ring-[#31493C]"
+                    className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#E8F1F2] dark:bg-black border border-[#31493C]/15 dark:border-white/15 focus:outline-none focus:ring-2 focus:ring-[#31493C]"
                   />
                 </div>
               </div>
@@ -633,7 +633,7 @@ export default function SubscriptionsPage() {
                         className={`text-left px-3 py-2 rounded-xl border text-xs transition cursor-pointer ${
                           active
                             ? 'bg-[#31493C] text-white border-[#31493C] font-semibold'
-                            : 'bg-[#F3F8F5] dark:bg-[#0B1416] border-[#31493C]/15 dark:border-white/15 hover:border-[#31493C]/40'
+                            : 'bg-[#E8F1F2] dark:bg-black border-[#31493C]/15 dark:border-white/15 hover:border-[#31493C]/40'
                         }`}
                       >
                         <div>{opt.label}</div>
@@ -651,7 +651,7 @@ export default function SubscriptionsPage() {
               </div>
 
               {billingCycle === 'CUSTOM' && (
-                <div className="p-3.5 rounded-2xl bg-[#F3F8F5] dark:bg-[#0B1416] border border-[#31493C]/15 dark:border-white/15 space-y-2">
+                <div className="p-3.5 rounded-2xl bg-[#E8F1F2] dark:bg-black border border-[#31493C]/15 dark:border-white/15 space-y-2">
                   <label className="block text-xs font-semibold">Custom Billing Interval</label>
                   <div className="grid grid-cols-2 gap-2">
                     <input
@@ -660,12 +660,12 @@ export default function SubscriptionsPage() {
                       max="3650"
                       value={customIntervalValue}
                       onChange={(e) => setCustomIntervalValue(e.target.value)}
-                      className="px-3 py-2 rounded-xl text-sm bg-white dark:bg-[#121E21] border border-[#31493C]/15 dark:border-white/15"
+                      className="px-3 py-2 rounded-xl text-sm bg-white dark:bg-[#31493C]/20 border border-[#31493C]/15 dark:border-white/15"
                     />
                     <select
                       value={customIntervalUnit}
                       onChange={(e) => setCustomIntervalUnit(e.target.value as CustomIntervalUnit)}
-                      className="px-3 py-2 rounded-xl text-sm bg-white dark:bg-[#121E21] border border-[#31493C]/15 dark:border-white/15"
+                      className="px-3 py-2 rounded-xl text-sm bg-white dark:bg-[#31493C]/20 border border-[#31493C]/15 dark:border-white/15"
                     >
                       <option value="DAYS">Days</option>
                       <option value="WEEKS">Weeks</option>
@@ -683,7 +683,7 @@ export default function SubscriptionsPage() {
                 <select
                   value={defaultWalletId}
                   onChange={(e) => setDefaultWalletId(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#F3F8F5] dark:bg-[#0B1416] border border-[#31493C]/15 dark:border-white/15"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#E8F1F2] dark:bg-black border border-[#31493C]/15 dark:border-white/15"
                 >
                   <option value="">Select wallet at payment time</option>
                   {data.wallets.map((w) => (
@@ -702,7 +702,7 @@ export default function SubscriptionsPage() {
                   placeholder="e.g. Family plan, auto-debit card"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#F3F8F5] dark:bg-[#0B1416] border border-[#31493C]/15 dark:border-white/15"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#E8F1F2] dark:bg-black border border-[#31493C]/15 dark:border-white/15"
                 />
               </div>
 
@@ -753,7 +753,7 @@ export default function SubscriptionsPage() {
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
                       statusFilter === tab
                         ? 'bg-[#31493C] text-white'
-                        : 'bg-white dark:bg-[#121E21] border border-[#31493C]/15 dark:border-white/15'
+                        : 'bg-white dark:bg-[#31493C]/20 border border-[#31493C]/15 dark:border-white/15'
                     }`}
                   >
                     {tab === 'ALL'
@@ -771,7 +771,7 @@ export default function SubscriptionsPage() {
 
             {/* Subscription Cards */}
             {filteredSubscriptions.length === 0 ? (
-              <div className="rounded-3xl p-10 bg-white dark:bg-[#121E21] border border-[#31493C]/10 dark:border-white/10 text-center space-y-2">
+              <div className="rounded-3xl p-10 bg-white dark:bg-[#31493C]/20 border border-[#7A9E7E]/25 dark:border-[#31493C] text-center space-y-2">
                 <Repeat className="w-8 h-8 mx-auto text-[#31493C]/50 dark:text-slate-500" />
                 <p className="font-bold text-sm">No subscriptions in this view</p>
                 <p className="text-xs text-slate-500">
@@ -783,10 +783,10 @@ export default function SubscriptionsPage() {
                 {filteredSubscriptions.map((sub) => (
                   <div
                     key={sub.id}
-                    className={`rounded-3xl p-5 bg-white dark:bg-[#121E21] border transition ${
+                    className={`rounded-3xl p-5 bg-white dark:bg-[#31493C]/20 border transition ${
                       sub.canSettle
                         ? 'border-amber-400/70 dark:border-amber-500/40 shadow-sm'
-                        : 'border-[#31493C]/10 dark:border-white/10'
+                        : 'border-[#7A9E7E]/25 dark:border-[#31493C]'
                     }`}
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
@@ -819,7 +819,7 @@ export default function SubscriptionsPage() {
 
                     {/* Automatic Upcoming Billing Schedule */}
                     {sub.status === 'ACTIVE' && sub.upcomingDates.length > 0 && (
-                      <div className="mt-4 pt-3 border-t border-[#31493C]/10 dark:border-white/10">
+                      <div className="mt-4 pt-3 border-t border-[#7A9E7E]/25 dark:border-[#31493C]">
                         <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">
                           Upcoming Automatic Schedule
                         </p>
@@ -832,7 +832,7 @@ export default function SubscriptionsPage() {
                                   ? sub.canSettle
                                     ? 'bg-amber-100 text-amber-900 dark:bg-amber-950/70 dark:text-amber-300 font-bold'
                                     : 'bg-[#31493C]/10 text-[#31493C] dark:bg-[#B3EFB2]/15 dark:text-[#B3EFB2] font-semibold'
-                                  : 'bg-[#F3F8F5] dark:bg-[#0B1416] text-slate-600 dark:text-slate-400'
+                                  : 'bg-[#E8F1F2] dark:bg-black text-slate-600 dark:text-slate-400'
                               }`}
                             >
                               {formatDateDDMMYYYY(isoDate)}
@@ -844,7 +844,7 @@ export default function SubscriptionsPage() {
                     )}
 
                     {/* Action Bar with Strict Settlement Gate */}
-                    <div className="mt-4 pt-3 border-t border-[#31493C]/10 dark:border-white/10 flex flex-wrap items-center justify-between gap-2">
+                    <div className="mt-4 pt-3 border-t border-[#7A9E7E]/25 dark:border-[#31493C] flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
@@ -884,14 +884,14 @@ export default function SubscriptionsPage() {
                           type="button"
                           onClick={() => startEdit(sub)}
                           title="Edit subscription"
-                          className="p-2 rounded-xl text-xs hover:bg-[#F3F8F5] dark:hover:bg-white/10 text-slate-600 dark:text-slate-300 cursor-pointer"
+                          className="p-2 rounded-xl text-xs hover:bg-[#E8F1F2] dark:hover:bg-white/10 text-slate-600 dark:text-slate-300 cursor-pointer"
                         >
                           <Edit3 className="w-4 h-4" />
                         </button>
                         <button
                           type="button"
                           onClick={() => handleToggleStatus(sub)}
-                          className="px-2.5 py-1.5 rounded-xl text-xs font-semibold hover:bg-[#F3F8F5] dark:hover:bg-white/10 text-slate-600 dark:text-slate-300 cursor-pointer"
+                          className="px-2.5 py-1.5 rounded-xl text-xs font-semibold hover:bg-[#E8F1F2] dark:hover:bg-white/10 text-slate-600 dark:text-slate-300 cursor-pointer"
                         >
                           {sub.status === 'ACTIVE' ? 'Cancel' : 'Reactivate'}
                         </button>
@@ -911,7 +911,7 @@ export default function SubscriptionsPage() {
             )}
 
             {/* Payment History Ledger */}
-            <div className="rounded-3xl p-5 bg-white dark:bg-[#121E21] border border-[#31493C]/10 dark:border-white/10">
+            <div className="rounded-3xl p-5 bg-white dark:bg-[#31493C]/20 border border-[#7A9E7E]/25 dark:border-[#31493C]">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <History className="w-4 h-4 text-[#31493C] dark:text-[#B3EFB2]" />
@@ -956,7 +956,7 @@ export default function SubscriptionsPage() {
       {/* Payment Confirmation Modal (Only reachable for Due Today / Overdue bills) */}
       {settleTarget && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="w-full max-w-md rounded-3xl p-6 bg-white dark:bg-[#121E21] border border-[#31493C]/15 dark:border-white/15 shadow-xl space-y-4">
+          <div className="w-full max-w-md rounded-3xl p-6 bg-white dark:bg-[#31493C]/20 border border-[#31493C]/15 dark:border-white/15 shadow-xl space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-base font-bold">Confirm Subscription Payment</h3>
@@ -982,7 +982,7 @@ export default function SubscriptionsPage() {
                     required
                     value={settleWalletId}
                     onChange={(e) => setSettleWalletId(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#F3F8F5] dark:bg-[#0B1416] border border-[#31493C]/15 dark:border-white/15"
+                    className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#E8F1F2] dark:bg-black border border-[#31493C]/15 dark:border-white/15"
                   >
                     <option value="">Choose wallet...</option>
                     {data.wallets.map((w) => (
@@ -1006,7 +1006,7 @@ export default function SubscriptionsPage() {
                   required
                   value={settleAmount}
                   onChange={(e) => setSettleAmount(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm font-bold bg-[#F3F8F5] dark:bg-[#0B1416] border border-[#31493C]/15 dark:border-white/15"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm font-bold bg-[#E8F1F2] dark:bg-black border border-[#31493C]/15 dark:border-white/15"
                 />
               </div>
 
@@ -1017,11 +1017,11 @@ export default function SubscriptionsPage() {
                   value={settleNote}
                   onChange={(e) => setSettleNote(e.target.value)}
                   placeholder="Optional receipt or card note"
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#F3F8F5] dark:bg-[#0B1416] border border-[#31493C]/15 dark:border-white/15"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#E8F1F2] dark:bg-black border border-[#31493C]/15 dark:border-white/15"
                 />
               </div>
 
-              <div className="p-3 rounded-2xl bg-[#F3F8F5] dark:bg-[#0B1416] text-xs text-slate-600 dark:text-slate-300 flex items-center gap-2">
+              <div className="p-3 rounded-2xl bg-[#E8F1F2] dark:bg-black text-xs text-slate-600 dark:text-slate-300 flex items-center gap-2">
                 <Wallet className="w-4 h-4 shrink-0 text-[#31493C] dark:text-[#B3EFB2]" />
                 <span>
                   Deducts from selected wallet, logs an Expense transaction, and advances the next due date automatically.

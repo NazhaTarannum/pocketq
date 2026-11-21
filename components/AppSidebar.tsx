@@ -132,8 +132,8 @@ export default function AppSidebar({ darkMode = false }: AppSidebarProps) {
             <aside
               className={`relative z-10 w-76 max-w-[84vw] h-dvh flex flex-col justify-between p-5 border-r shadow-2xl overflow-y-auto ${
                 darkMode
-                  ? 'bg-[#001A23] text-[#E8F1F2] border-[#31493C]'
-                  : 'bg-white text-[#001A23] border-[#7A9E7E]/25'
+                  ? 'bg-black text-[#E8F1F2] border-[#31493C]'
+                  : 'bg-[#E8F1F2] text-[#001A23] border-[#7A9E7E]/30'
               }`}
             >
               <div className="space-y-6">
@@ -171,7 +171,7 @@ export default function AppSidebar({ darkMode = false }: AppSidebarProps) {
                             ? 'bg-[#31493C] text-[#B3EFB2] shadow-xs'
                             : darkMode
                             ? 'hover:bg-[#31493C]/40'
-                            : 'hover:bg-[#E8F1F2]'
+                            : 'hover:bg-white/80'
                         }`}
                       >
                         <Icon className="w-4 h-4 mt-0.5 shrink-0" />

@@ -269,10 +269,10 @@ export default function PlanningWorkspacePage() {
     >
       <header
         className={`sticky top-0 z-30 border-b backdrop-blur-md ${
-          darkMode ? 'bg-black/90 border-[#31493C]' : 'bg-[#E8F1F2]/90 border-[#7A9E7E]/25'
+          darkMode ? 'bg-black/90 border-[#31493C]' : 'bg-[#E8F1F2]/90 border-[#7A9E7E]/30'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 py-3.5 flex items-center justify-between gap-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <AppSidebar darkMode={darkMode} />
             <Link

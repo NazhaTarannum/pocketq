@@ -669,14 +669,17 @@ export default function PocketQApp() {
             : 'bg-[#E8F1F2]/90 border-[#7A9E7E]/30'
         }`}
       >
-        <div className="max-w-5xl mx-auto px-4 py-3.5 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#31493C] flex items-center justify-center text-[#B3EFB2] font-bold text-lg shadow-sm">
-              Q
-            </div>
-            <div>
-              <h1 className="font-bold text-lg tracking-tight leading-none">PocketQ</h1>
-              <p className="text-xs opacity-70 mt-0.5">Smart Financial Companion</p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <AppSidebar darkMode={darkMode} />
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-[#31493C] flex items-center justify-center text-[#B3EFB2] font-bold text-lg shadow-sm">
+                Q
+              </div>
+              <div>
+                <h1 className="font-bold text-lg tracking-tight leading-none">PocketQ</h1>
+                <p className="text-xs opacity-70 mt-0.5">Smart Financial Companion</p>
+              </div>
             </div>
           </div>
 
@@ -697,8 +700,6 @@ export default function PocketQApp() {
               <span>Add Entry</span>
             </button>
 
-            {/* 3-line sidebar drawer for Budgets & Loans, Calendar & Reports, Subscriptions, and Wealth */}
-            <AppSidebar darkMode={darkMode} />
             <Link
               href="/settings"
               aria-label="Settings & Personalization"
