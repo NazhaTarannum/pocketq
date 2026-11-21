@@ -876,12 +876,14 @@ export default function PocketQApp() {
           {/* CENTER COLUMN on Desktop (6 cols), 1st & 2nd on Mobile: Safe Available-to-Spend + Can I Afford It? */}
           <div className="order-1 lg:order-2 lg:col-span-6 flex flex-col gap-4">
           <div className="rounded-3xl p-5 bg-[#31493C] text-[#E8F1F2] shadow-md relative overflow-hidden">
-            <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-[#B3EFB2]/20 text-[#B3EFB2]">
-                <ShieldCheck className="w-4 h-4" />
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="inline-flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs font-semibold uppercase tracking-wider px-2.5 sm:px-3 py-1 rounded-full bg-[#B3EFB2]/20 text-[#B3EFB2] shrink-0">
+                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                 Safe Available-to-Spend
               </span>
-              <span className="text-xs opacity-75">After upcoming obligations</span>
+              <span className="text-[11px] sm:text-xs opacity-75 ml-auto text-right">
+                After upcoming obligations
+              </span>
             </div>
 
             <div className="mt-4">
