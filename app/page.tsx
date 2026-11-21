@@ -145,8 +145,32 @@ interface DashboardData {
 }
 
 
+const EMPTY_DASHBOARD_DATA: DashboardData = {
+  summary: {
+    totalBalance: 0,
+    totalReserved: 0,
+    totalReservedObligations: 0,
+    totalReservedSavings: 0,
+    availableToSpend: 0,
+    owedByFriends: 0,
+  },
+  wallets: [],
+  transactions: [],
+  obligations: [],
+  savingsGoals: [],
+  billSplits: [],
+};
+
 export default function PocketQApp() {
-  const [data, setData] = useState<DashboardData | null>(null);
+  const [data, setData] = useState<DashboardData>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const cached = sessionStorage.getItem('pocketq_dashboard_cache');
+        if (cached) return JSON.parse(cached);
+      } catch {}
+    }
+    return EMPTY_DASHBOARD_DATA;
+  });
   const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useThemePreference();
   const [simAmount, setSimAmount] = useState<number>(0);
@@ -602,17 +626,6 @@ export default function PocketQApp() {
     const yyyy = d.getFullYear();
     return `${dd}/${mm}/${yyyy}`;
   };
-
-  if (loading || !data) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#E8F1F2] text-[#001A23]">
-        <div className="flex items-center gap-3 text-lg font-semibold">
-          <Sparkles className="w-6 h-6 text-[#31493C] animate-pulse" />
-          <span>Loading PocketQ...</span>
-        </div>
-      </div>
-    );
-  }
 
   const preview = computeSplitPreview();
 

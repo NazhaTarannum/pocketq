@@ -71,8 +71,33 @@ interface WealthPayload {
 }
 
 
+const EMPTY_WEALTH_DATA: WealthPayload = {
+  settings: { currencySymbol: '৳' },
+  summary: { availableToSpend: 0 },
+  wallets: [],
+  investments: [],
+  investmentSummary: {
+    totalInvested: 0,
+    currentValue: 0,
+    gainLoss: 0,
+    returnPercent: 0,
+    netWorthIncludingInvestments: 0,
+  },
+};
+
 export default function WealthPage() {
-  const [data, setData] = useState<WealthPayload | null>(null);
+  const [data, setData] = useState<WealthPayload>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const cached = sessionStorage.getItem('pocketq_dashboard_cache');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed && parsed.investmentSummary) return parsed;
+        }
+      } catch {}
+    }
+    return EMPTY_WEALTH_DATA;
+  });
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [darkMode, setDarkMode] = useThemePreference();
@@ -103,6 +128,7 @@ export default function WealthPage() {
       const json = await res.json();
       if (res.ok) {
         setData(json);
+        try { sessionStorage.setItem('pocketq_dashboard_cache', JSON.stringify(json)); } catch {}
         if (json.wallets?.length > 0) {
           setInvActionWalletId((prev) => prev || json.wallets[0].id);
         }
@@ -175,14 +201,6 @@ export default function WealthPage() {
       setSubmitting(false);
     }
   };
-
-  if (loading || !data) {
-    return (
-      <div className="min-h-screen bg-[#E8F1F2] text-[#001A23] flex items-center justify-center font-semibold">
-        Loading Wealth & Investments...
-      </div>
-    );
-  }
 
   return (
     <div

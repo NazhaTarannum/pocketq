@@ -114,8 +114,32 @@ interface DashboardData {
 }
 
 
+const EMPTY_RESERVED_DATA: DashboardData = {
+  summary: {
+    totalBalance: 0,
+    totalReserved: 0,
+    totalReservedObligations: 0,
+    totalReservedSavings: 0,
+    availableToSpend: 0,
+  },
+  wallets: [],
+  obligations: [],
+  savingsGoals: [],
+};
+
 export default function ReservedManagementPage() {
-  const [data, setData] = useState<DashboardData | null>(null);
+  const [data, setData] = useState<DashboardData>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const cached = sessionStorage.getItem('pocketq_dashboard_cache');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed && Array.isArray(parsed.obligations)) return parsed;
+        }
+      } catch {}
+    }
+    return EMPTY_RESERVED_DATA;
+  });
   const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useThemePreference();
   const [submitting, setSubmitting] = useState(false);
@@ -186,6 +210,7 @@ export default function ReservedManagementPage() {
       const json = await res.json();
       if (res.ok && json && Array.isArray(json.obligations)) {
         setData(json);
+        try { sessionStorage.setItem('pocketq_dashboard_cache', JSON.stringify(json)); } catch {}
       }
     } finally {
       setLoading(false);
@@ -376,14 +401,6 @@ export default function ReservedManagementPage() {
     });
     fetchData();
   };
-
-  if (loading || !data) {
-    return (
-      <div className="min-h-screen bg-[#E8F1F2] text-[#001A23] flex items-center justify-center font-semibold">
-        Loading Reserved Funds & Savings...
-      </div>
-    );
-  }
 
   const totalReq = data.obligations.reduce((s, o) => s + o.totalAmount, 0);
   const totalResOb = data.obligations.reduce((s, o) => s + (o.isPaid ? 0 : o.reservedAmount), 0);

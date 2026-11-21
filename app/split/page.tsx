@@ -1778,11 +1778,7 @@ export default function BillSplittingPage() {
         ) : (
           /* STEP 7: Saved Bills & Settlement Management */
           <section className="space-y-4">
-            {loading ? (
-              <div className={`p-8 rounded-2xl border text-center text-xs ${cardClass}`}>
-                Loading bill splits...
-              </div>
-            ) : savedBills.length === 0 ? (
+            {savedBills.length === 0 ? (
               <div className={`p-8 rounded-2xl border text-center space-y-3 ${cardClass}`}>
                 <p className="text-sm font-bold">No split bills recorded yet</p>
                 <p className="text-xs opacity-70">

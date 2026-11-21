@@ -61,8 +61,37 @@ interface InsightsData {
   }>;
 }
 
+const EMPTY_INSIGHTS_DATA: InsightsData = {
+  plannerContext: {
+    scenarios: {
+      OPTIMISTIC: [],
+      EXPECTED: [],
+      CONSERVATIVE: [],
+    },
+  },
+  reports: {
+    monthlySeries: [],
+    yearlyIncome: 0,
+    yearlyExpenses: 0,
+    yearlyNet: 0,
+  },
+  calendarEvents: [],
+  notifications: [],
+};
+
 export default function InsightsAndCalendarPage() {
-  const [data, setData] = useState<InsightsData | null>(null);
+  const [data, setData] = useState<InsightsData>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const cached = sessionStorage.getItem('pocketq_dashboard_cache');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed && parsed.reports) return parsed;
+        }
+      } catch {}
+    }
+    return EMPTY_INSIGHTS_DATA;
+  });
   const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useThemePreference();
   const [scenario, setScenario] = useState<'OPTIMISTIC' | 'EXPECTED' | 'CONSERVATIVE'>('EXPECTED');
@@ -81,18 +110,10 @@ export default function InsightsAndCalendarPage() {
     fetch('/api/dashboard')
       .then((res) => res.json())
       .then((json) => {
-        if (json && json.reports) setData(json);
+        if (json && json.reports) { setData(json); try { sessionStorage.setItem('pocketq_dashboard_cache', JSON.stringify(json)); } catch {} }
       })
       .finally(() => setLoading(false));
   }, []);
-
-  if (loading || !data) {
-    return (
-      <div className="min-h-screen bg-[#E8F1F2] text-[#001A23] flex items-center justify-center font-semibold">
-        Loading Calendar, Reports & Smart Alerts...
-      </div>
-    );
-  }
 
   const activeForecast = data.plannerContext.scenarios[scenario] || [];
   const maxBar = Math.max(

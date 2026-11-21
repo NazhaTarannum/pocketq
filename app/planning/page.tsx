@@ -93,8 +93,29 @@ interface PlanningData {
 }
 
 
+const EMPTY_PLANNING_DATA: PlanningData = {
+  wallets: [],
+  expectedIncomes: [],
+  budgets: [],
+  loans: [],
+  summary: {
+    availableToSpend: 0,
+    pendingExpectedIncome30: 0,
+    totalLoanRemaining: 0,
+    totalLentRemaining: 0,
+  },
+};
+
 export default function PlanningWorkspacePage() {
-  const [data, setData] = useState<PlanningData | null>(null);
+  const [data, setData] = useState<PlanningData>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const cached = sessionStorage.getItem('pocketq_dashboard_cache');
+        if (cached) return JSON.parse(cached);
+      } catch {}
+    }
+    return EMPTY_PLANNING_DATA;
+  });
   const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useThemePreference();
   const [submitting, setSubmitting] = useState(false);
@@ -137,6 +158,7 @@ export default function PlanningWorkspacePage() {
       const json = await res.json();
       if (res.ok && json) {
         setData(json);
+        try { sessionStorage.setItem('pocketq_dashboard_cache', JSON.stringify(json)); } catch {}
         if (json.wallets?.length > 0 && !eiWalletId) {
           setEiWalletId(json.wallets[0].id);
         }
@@ -252,14 +274,6 @@ export default function PlanningWorkspacePage() {
     setSubmitting(false);
     fetchData();
   };
-
-  if (loading || !data) {
-    return (
-      <div className="min-h-screen bg-[#E8F1F2] text-[#001A23] flex items-center justify-center font-semibold">
-        Loading Budgets, Expected Income & Loans...
-      </div>
-    );
-  }
 
   return (
     <div

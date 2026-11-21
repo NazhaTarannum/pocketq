@@ -262,14 +262,6 @@ export default function SettingsPage() {
     URL.revokeObjectURL(url);
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#E8F1F2] text-[#001A23] flex items-center justify-center font-semibold">
-        Loading Settings & Personalization...
-      </div>
-    );
-  }
-
   return (
     <div
       className={`min-h-screen transition-colors duration-200 ${
