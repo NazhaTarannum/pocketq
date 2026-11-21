@@ -150,6 +150,12 @@ export default function PocketQApp() {
   const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useThemePreference();
   const [simAmount, setSimAmount] = useState<number>(850);
+  const [dailySafeThreshold, setDailySafeThreshold] = useState<number>(200);
+  const [dailyCrazyThreshold, setDailyCrazyThreshold] = useState<number>(50);
+  const [editingSimLimits, setEditingSimLimits] = useState<boolean>(false);
+  const [draftSafeLimit, setDraftSafeLimit] = useState<string>('200');
+  const [draftCrazyLimit, setDraftCrazyLimit] = useState<string>('50');
+  const [savingSimLimits, setSavingSimLimits] = useState<boolean>(false);
   const [runwayDays, setRunwayDays] = useState<number>(15);
   const [walletModalOpen, setWalletModalOpen] = useState(false);
   const [editingWallet, setEditingWallet] = useState<WalletItem | null>(null);
@@ -237,6 +243,14 @@ export default function PocketQApp() {
         return;
       }
       setData(json);
+        if (json?.settings) {
+          const sSafe = typeof json.settings.dailySafeThreshold === 'number' ? json.settings.dailySafeThreshold : 200;
+          const sCrazy = typeof json.settings.dailyCrazyThreshold === 'number' ? json.settings.dailyCrazyThreshold : 50;
+          setDailySafeThreshold(sSafe);
+          setDailyCrazyThreshold(sCrazy);
+          setDraftSafeLimit(String(sSafe));
+          setDraftCrazyLimit(String(sCrazy));
+        }
       if (json.wallets?.length > 0) {
         setTxWalletId((prev) => prev || json.wallets[0].id);
         setSplitWalletId((prev) => prev || json.wallets[0].id);
@@ -919,33 +933,127 @@ export default function PocketQApp() {
                   Can I Afford It?
                 </span>
                 <p className="text-xs opacity-75">
-                  Test an impulse spend before touching your real wallet
+                  Safe &ge; {formatBDT(dailySafeThreshold)}/day &middot; Crazy &le; {formatBDT(dailyCrazyThreshold)}/day
                 </p>
               </div>
-              <div className="flex items-center gap-1 p-1 rounded-full bg-[#7A9E7E]/15 text-xs font-semibold">
-                {[7, 15, 30].map((d) => (
-                  <button
-                    key={d}
-                    type="button"
-                    onClick={() => setRunwayDays(d)}
-                    className={`px-2.5 py-1 rounded-full transition cursor-pointer ${
-                      runwayDays === d
-                        ? "bg-[#31493C] text-[#B3EFB2] shadow-xs"
-                        : "opacity-70 hover:opacity-100"
-                    }`}
-                  >
-                    {d}d
-                  </button>
-                ))}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDraftSafeLimit(String(dailySafeThreshold));
+                    setDraftCrazyLimit(String(dailyCrazyThreshold));
+                    setEditingSimLimits((v) => !v);
+                  }}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-bold border transition cursor-pointer ${
+                    editingSimLimits
+                      ? "bg-[#31493C] text-[#B3EFB2] border-[#31493C]"
+                      : "border-[#7A9E7E]/35 hover:bg-[#7A9E7E]/15"
+                  }`}
+                >
+                  {editingSimLimits ? "Close Limits" : "Set Limits"}
+                </button>
+                <div className="flex items-center gap-1 p-1 rounded-full bg-[#7A9E7E]/15 text-xs font-semibold">
+                  {[7, 15, 30].map((d) => (
+                    <button
+                      key={d}
+                      type="button"
+                      onClick={() => setRunwayDays(d)}
+                      className={`px-2.5 py-1 rounded-full transition cursor-pointer ${
+                        runwayDays === d
+                          ? "bg-[#31493C] text-[#B3EFB2] shadow-xs"
+                          : "opacity-70 hover:opacity-100"
+                      }`}
+                    >
+                      {d}d
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
+
+            {editingSimLimits && (
+              <div
+                className={`mb-3 p-3 rounded-2xl border text-xs space-y-2.5 ${
+                  darkMode
+                    ? "bg-black/40 border-[#31493C]"
+                    : "bg-[#E8F1F2]/70 border-[#7A9E7E]/25"
+                }`}
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div>
+                    <label className="font-semibold block mb-1">
+                      &ldquo;You Can&rdquo; Daily Limit (&ge;/day)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="10"
+                      value={draftSafeLimit}
+                      onChange={(e) => setDraftSafeLimit(e.target.value)}
+                      className="w-full rounded-xl px-3 py-1.5 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-semibold block mb-1">
+                      &ldquo;This Is Crazy&rdquo; Daily Limit (&le;/day)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="10"
+                      value={draftCrazyLimit}
+                      onChange={(e) => setDraftCrazyLimit(e.target.value)}
+                      className="w-full rounded-xl px-3 py-1.5 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[11px] opacity-70">
+                    Between {formatBDT(Number(draftCrazyLimit) || 0)} and {formatBDT(Number(draftSafeLimit) || 0)}/day shows &ldquo;You Shouldn&apos;t&rdquo;.
+                  </span>
+                  <button
+                    type="button"
+                    disabled={savingSimLimits}
+                    onClick={async () => {
+                      const nextSafe = Math.max(0, Number(draftSafeLimit) || 0);
+                      const nextCrazy = Math.max(0, Math.min(nextSafe, Number(draftCrazyLimit) || 0));
+                      setSavingSimLimits(true);
+                      try {
+                        const res = await fetch('/api/dashboard', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            action: 'UPDATE_SIMULATOR_LIMITS',
+                            dailySafeThreshold: nextSafe,
+                            dailyCrazyThreshold: nextCrazy,
+                          }),
+                        });
+                        if (res.ok) {
+                          setDailySafeThreshold(nextSafe);
+                          setDailyCrazyThreshold(nextCrazy);
+                          setDraftSafeLimit(String(nextSafe));
+                          setDraftCrazyLimit(String(nextCrazy));
+                          setEditingSimLimits(false);
+                        }
+                      } finally {
+                        setSavingSimLimits(false);
+                      }
+                    }}
+                    className="px-3 py-1.5 rounded-xl bg-[#31493C] text-[#B3EFB2] font-bold hover:brightness-110 transition cursor-pointer shrink-0"
+                  >
+                    {savingSimLimits ? "Saving..." : "Save Limits"}
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="flex items-center gap-3 mb-3">
               <input
                 type="range"
                 min={0}
                 max={Math.max(15000, Math.round(data.summary.availableToSpend))}
                 step={50}
-                value={simAmount}
+                value={Math.min(simAmount, Math.max(15000, Math.round(data.summary.availableToSpend)))}
                 onChange={(e) => setSimAmount(Number(e.target.value))}
                 className="w-full accent-[#D52073] cursor-pointer"
               />
@@ -956,9 +1064,10 @@ export default function PocketQApp() {
 
             {(() => {
               const postSpend = data.summary.availableToSpend - simAmount;
-              const dailySafe = Math.max(0, Math.round(postSpend / runwayDays));
-              const isDanger = postSpend < 0;
-              const isTight = !isDanger && postSpend < data.summary.availableToSpend * 0.4;
+              const rawDaily = postSpend / runwayDays;
+              const dailySafe = Math.max(0, Math.round(rawDaily));
+              const isDanger = postSpend < 0 || rawDaily <= dailyCrazyThreshold;
+              const isTight = !isDanger && rawDaily < dailySafeThreshold;
 
               return (
                 <div className="pt-3 border-t border-[#7A9E7E]/20 flex flex-wrap items-center justify-between gap-2 text-xs">

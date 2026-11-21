@@ -1314,6 +1314,34 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, category: cat });
     }
 
+    if (action === 'UPDATE_SIMULATOR_LIMITS') {
+      const safeLimit = Math.max(0, Number(body.dailySafeThreshold) || 200);
+      const crazyLimit = Math.max(0, Math.min(safeLimit, Number(body.dailyCrazyThreshold) ?? 50));
+      await prisma.userSettings.upsert({
+        where: { userId },
+        update: {
+          dailySafeThreshold: safeLimit,
+          dailyCrazyThreshold: crazyLimit,
+        },
+        create: {
+          userId,
+          currencySymbol: '৳',
+          currencyCode: 'BDT',
+          lowBalanceThreshold: 2000,
+          enableReminders: true,
+          enableBudgetAlerts: true,
+          theme: 'LIGHT',
+          dailySafeThreshold: safeLimit,
+          dailyCrazyThreshold: crazyLimit,
+        },
+      });
+      return NextResponse.json({
+        success: true,
+        dailySafeThreshold: safeLimit,
+        dailyCrazyThreshold: crazyLimit,
+      });
+    }
+
     if (action === 'UPDATE_THEME') {
       const normalizedTheme = body.theme === 'DARK' ? 'DARK' : 'LIGHT';
       await prisma.userSettings.upsert({
@@ -1340,6 +1368,8 @@ export async function POST(request: Request) {
         enableReminders,
         enableBudgetAlerts,
         theme,
+        dailySafeThreshold,
+        dailyCrazyThreshold,
       } = body;
       const normalizedTheme = theme === 'DARK' ? 'DARK' : theme === 'LIGHT' ? 'LIGHT' : undefined;
       await prisma.userSettings.upsert({
@@ -1351,6 +1381,12 @@ export async function POST(request: Request) {
           enableReminders: Boolean(enableReminders),
           enableBudgetAlerts: Boolean(enableBudgetAlerts),
           ...(normalizedTheme ? { theme: normalizedTheme } : {}),
+          ...(dailySafeThreshold !== undefined
+            ? { dailySafeThreshold: Math.max(0, Number(dailySafeThreshold) || 200) }
+            : {}),
+          ...(dailyCrazyThreshold !== undefined
+            ? { dailyCrazyThreshold: Math.max(0, Number(dailyCrazyThreshold) ?? 50) }
+            : {}),
         },
         create: {
           userId,

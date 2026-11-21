@@ -42,6 +42,8 @@ interface UserSettingsData {
   lowBalanceThreshold: number;
   enableReminders: boolean;
   enableBudgetAlerts: boolean;
+  dailySafeThreshold?: number;
+  dailyCrazyThreshold?: number;
 }
 
 /**
@@ -138,6 +140,8 @@ export default function SettingsPage() {
   const [lowBalanceThreshold, setLowBalanceThreshold] = useState('2000');
   const [enableReminders, setEnableReminders] = useState(true);
   const [enableBudgetAlerts, setEnableBudgetAlerts] = useState(true);
+  const [dailySafeThreshold, setDailySafeThreshold] = useState('200');
+  const [dailyCrazyThreshold, setDailyCrazyThreshold] = useState('50');
 
   // Controlled form state for CustomCategory creation
   const [customCategories, setCustomCategories] = useState<CustomCategoryItem[]>([]);
@@ -169,6 +173,8 @@ export default function SettingsPage() {
           setLowBalanceThreshold(String(s.lowBalanceThreshold ?? 2000));
           setEnableReminders(Boolean(s.enableReminders));
           setEnableBudgetAlerts(Boolean(s.enableBudgetAlerts));
+          setDailySafeThreshold(String(s.dailySafeThreshold ?? 200));
+          setDailyCrazyThreshold(String(s.dailyCrazyThreshold ?? 50));
         }
         if (Array.isArray(json.customCategories)) {
           setCustomCategories(json.customCategories);
@@ -202,6 +208,8 @@ export default function SettingsPage() {
           enableReminders,
           enableBudgetAlerts,
           theme: darkMode ? 'DARK' : 'LIGHT',
+          dailySafeThreshold: Number(dailySafeThreshold) || 200,
+          dailyCrazyThreshold: Number(dailyCrazyThreshold) ?? 50,
         }),
       });
       if (res.ok) {
@@ -445,6 +453,41 @@ export default function SettingsPage() {
                 required
                 value={lowBalanceThreshold}
                 onChange={(e) => setLowBalanceThreshold(e.target.value)}
+                className="w-full rounded-xl px-3.5 py-2.5 text-sm border border-[#7A9E7E]/30 bg-transparent outline-none"
+              />
+            </div>
+
+            {/* Daily Spend Simulator Limits */}
+            <div className="space-y-2">
+              <label className="text-xs font-semibold block">
+                Spend Simulator: &ldquo;You Can&rdquo; Safe Daily Limit ({currencySymbol}/day)
+              </label>
+              <p className="text-[11px] opacity-70">
+                Post-spend daily allowance &ge; this amount shows &ldquo;You Can&rdquo; (default 200).
+              </p>
+              <input
+                type="number"
+                min="0"
+                step="10"
+                value={dailySafeThreshold}
+                onChange={(e) => setDailySafeThreshold(e.target.value)}
+                className="w-full rounded-xl px-3.5 py-2.5 text-sm border border-[#7A9E7E]/30 bg-transparent outline-none"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-semibold block">
+                Spend Simulator: &ldquo;This Is Crazy&rdquo; Daily Limit ({currencySymbol}/day)
+              </label>
+              <p className="text-[11px] opacity-70">
+                Post-spend daily allowance &le; this amount shows &ldquo;This Is Crazy&rdquo; (default 50).
+              </p>
+              <input
+                type="number"
+                min="0"
+                step="10"
+                value={dailyCrazyThreshold}
+                onChange={(e) => setDailyCrazyThreshold(e.target.value)}
                 className="w-full rounded-xl px-3.5 py-2.5 text-sm border border-[#7A9E7E]/30 bg-transparent outline-none"
               />
             </div>

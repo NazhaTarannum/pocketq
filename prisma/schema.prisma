@@ -222,6 +222,8 @@ model UserSettings {
   enableReminders     Boolean @default(true)
   enableBudgetAlerts  Boolean @default(true)
   theme               String  @default("LIGHT") // LIGHT | DARK
+  dailySafeThreshold  Float   @default(200)
+  dailyCrazyThreshold Float   @default(50)
 }
 
 model BillSplit {
