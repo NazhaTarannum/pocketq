@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 
 /**
  * @file app/split/page.tsx
@@ -10,6 +11,7 @@ import {
   Sun,
   Moon,
   Receipt,
+  ArrowLeft,
   Users,
   Plus,
   Trash2,
@@ -543,62 +545,34 @@ export default function BillSplittingPage() {
             : 'bg-[#E8F1F2]/90 border-[#7A9E7E]/30'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
             <AppSidebar darkMode={darkMode} />
-            <div>
-              <div className="flex items-center gap-2">
-                <Receipt className="w-5 h-5 text-[#31493C] dark:text-[#B3EFB2]" />
-                <h1 className="text-lg sm:text-xl font-extrabold tracking-tight">
-                  Bill Splitting &amp; Settlements
-                </h1>
-              </div>
-              <p className="text-xs opacity-70">
-                Itemized &amp; equal splitting with proportional VAT, shared dishes &amp; wallet sync
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <div className="inline-flex rounded-xl p-1 border border-[#7A9E7E]/30 bg-[#7A9E7E]/10">
-              <button
-                type="button"
-                onClick={() => setActiveTab('NEW')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-                  activeTab === 'NEW'
-                    ? 'bg-[#31493C] text-[#B3EFB2] shadow-xs'
-                    : 'opacity-75 hover:opacity-100'
-                }`}
-              >
-                + Split New Bill
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('HISTORY')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
-                  activeTab === 'HISTORY'
-                    ? 'bg-[#31493C] text-[#B3EFB2] shadow-xs'
-                    : 'opacity-75 hover:opacity-100'
-                }`}
-              >
-                <History className="w-3.5 h-3.5" />
-                Bills &amp; Settlements ({savedBills.length})
-              </button>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setDarkMode((d) => !d)}
-              aria-label="Toggle theme"
-              className={`p-2 rounded-xl border transition cursor-pointer ${
-                darkMode
-                  ? 'bg-[#31493C]/50 border-[#31493C] text-[#B3EFB2]'
-                  : 'bg-white border-[#7A9E7E]/30 text-[#001A23]'
-              }`}
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-[#31493C] text-[#B3EFB2] hover:opacity-90 shrink-0"
             >
-              {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </button>
+              <ArrowLeft className="w-3.5 h-3.5 shrink-0" />
+              <span>Dashboard</span>
+            </Link>
+            <h1 className="text-sm sm:text-lg font-extrabold tracking-tight flex items-center gap-1.5 min-w-0">
+              <Receipt className="w-4 h-4 sm:w-5 sm:h-5 text-[#31493C] dark:text-[#B3EFB2] shrink-0" />
+              <span className="truncate">Bill Splitting</span>
+            </h1>
           </div>
+
+          <button
+            type="button"
+            onClick={() => setDarkMode((d) => !d)}
+            aria-label="Toggle theme"
+            className={`p-1.5 sm:p-2 rounded-xl border transition cursor-pointer shrink-0 ${
+              darkMode
+                ? 'bg-[#31493C]/50 border-[#31493C] text-[#B3EFB2]'
+                : 'bg-white border-[#7A9E7E]/30 text-[#001A23]'
+            }`}
+          >
+            {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
         </div>
       </header>
 
@@ -628,40 +602,32 @@ export default function BillSplittingPage() {
           </div>
         )}
 
-        {/* Top KPI Strip */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className={`p-4 rounded-2xl border ${cardClass}`}>
-            <span className="text-[11px] font-bold uppercase tracking-wider opacity-65">
-              Owed To You (Pending)
-            </span>
-            <p className="text-xl font-extrabold mt-1 text-[#31493C] dark:text-[#B3EFB2]">
-              {currency}
-              {pendingReceivables.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-            </p>
-            <span className="text-[11px] opacity-65">
-              Excluded from income until settled into wallet
-            </span>
-          </div>
-          <div className={`p-4 rounded-2xl border ${cardClass}`}>
-            <span className="text-[11px] font-bold uppercase tracking-wider opacity-65">
-              You Owe Others (Pending)
-            </span>
-            <p className="text-xl font-extrabold mt-1 text-[#D52073]">
-              {currency}
-              {pendingPayables.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-            </p>
-            <span className="text-[11px] opacity-65">
-              Unsettled shares from group bills paid by friends
-            </span>
-          </div>
-          <div className={`p-4 rounded-2xl border ${cardClass}`}>
-            <span className="text-[11px] font-bold uppercase tracking-wider opacity-65">
-              Total Split Bills Tracked
-            </span>
-            <p className="text-xl font-extrabold mt-1">{savedBills.length}</p>
-            <span className="text-[11px] opacity-65">
-              {savedBills.filter((b) => b.status === 'SETTLED').length} fully settled
-            </span>
+        {/* Workspace View Switcher */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="inline-flex rounded-xl p-1 border border-[#7A9E7E]/30 bg-[#7A9E7E]/10 w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={() => setActiveTab('NEW')}
+              className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                activeTab === 'NEW'
+                  ? 'bg-[#31493C] text-[#B3EFB2] shadow-xs'
+                  : 'opacity-75 hover:opacity-100'
+              }`}
+            >
+              + Split New Bill
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('HISTORY')}
+              className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer flex items-center justify-center gap-1.5 ${
+                activeTab === 'HISTORY'
+                  ? 'bg-[#31493C] text-[#B3EFB2] shadow-xs'
+                  : 'opacity-75 hover:opacity-100'
+              }`}
+            >
+              <History className="w-3.5 h-3.5" />
+              Bills &amp; Settlements
+            </button>
           </div>
         </div>
 
@@ -1962,6 +1928,44 @@ export default function BillSplittingPage() {
             )}
           </section>
         )}
+
+        {/* Summary KPI Strip (Below Splitting Workspace) */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className={`p-4 rounded-2xl border ${cardClass}`}>
+            <span className="text-[11px] font-bold uppercase tracking-wider opacity-65">
+              Owed To You (Pending)
+            </span>
+            <p className="text-xl font-extrabold mt-1 text-[#31493C] dark:text-[#B3EFB2]">
+              {currency}
+              {pendingReceivables.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            </p>
+            <span className="text-[11px] opacity-65">
+              Excluded from income until settled into wallet
+            </span>
+          </div>
+          <div className={`p-4 rounded-2xl border ${cardClass}`}>
+            <span className="text-[11px] font-bold uppercase tracking-wider opacity-65">
+              You Owe Others (Pending)
+            </span>
+            <p className="text-xl font-extrabold mt-1 text-[#D52073]">
+              {currency}
+              {pendingPayables.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            </p>
+            <span className="text-[11px] opacity-65">
+              Unsettled shares from group bills paid by friends
+            </span>
+          </div>
+          <div className={`p-4 rounded-2xl border ${cardClass}`}>
+            <span className="text-[11px] font-bold uppercase tracking-wider opacity-65">
+              Total Split Bills Tracked
+            </span>
+            <p className="text-xl font-extrabold mt-1">{savedBills.length}</p>
+            <span className="text-[11px] opacity-65">
+              {savedBills.filter((b) => b.status === 'SETTLED').length} fully settled
+            </span>
+          </div>
+        </div>
+
       </main>
 
       {/* Partial / Full Settlement Modal */}
