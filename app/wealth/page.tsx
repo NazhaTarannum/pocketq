@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 
 /**
  * @file app/wealth/page.tsx
@@ -11,6 +12,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   Sun,
+  ArrowLeft,
   Moon,
   TrendingUp,
   Plus,
@@ -194,17 +196,19 @@ export default function WealthPage() {
           darkMode ? 'bg-black/90 border-[#31493C]' : 'bg-[#E8F1F2]/90 border-[#7A9E7E]/30'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
             <AppSidebar darkMode={darkMode} />
-            <div>
-              <h1 className="font-bold text-base sm:text-lg leading-tight">
-                Wealth & Investments
-              </h1>
-              <p className="text-[11px] opacity-70">
-                Long-term assets, portfolio valuation & historical performance
-              </p>
-            </div>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-[#31493C] text-[#B3EFB2] hover:opacity-90 shrink-0"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 shrink-0" />
+              <span>Dashboard</span>
+            </Link>
+            <h1 className="font-bold text-sm sm:text-lg leading-tight truncate">
+              Wealth &amp; Investments
+            </h1>
           </div>
 
           <button

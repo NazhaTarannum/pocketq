@@ -1,10 +1,12 @@
 'use client';
+import Link from 'next/link';
 
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   Sun,
   Moon,
   Repeat,
+  ArrowLeft,
   Plus,
   CheckCircle2,
   XCircle,
@@ -443,21 +445,23 @@ export default function SubscriptionsPage() {
     <div className="min-h-screen bg-[#E8F1F2] dark:bg-black text-[#001A23] dark:text-[#E8F1F2] transition-colors duration-200">
       {/* Top Header */}
       <header className="sticky top-0 z-30 backdrop-blur-md bg-[#E8F1F2]/90 dark:bg-black/90 border-b border-[#7A9E7E]/30 dark:border-[#31493C]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
             <AppSidebar darkMode={darkMode} />
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-[#31493C] text-[#B3EFB2] flex items-center justify-center shadow-xs">
-                <Repeat className="w-5 h-5" />
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-[#31493C] text-[#B3EFB2] hover:opacity-90 shrink-0"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 shrink-0" />
+              <span>Dashboard</span>
+            </Link>
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#31493C] text-[#B3EFB2] flex items-center justify-center shadow-xs shrink-0">
+                <Repeat className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
-              <div>
-                <h1 className="text-base sm:text-lg font-bold tracking-tight">
-                  Subscriptions & Recurring Schedules
-                </h1>
-                <p className="text-xs text-[#31493C]/70 dark:text-slate-400 hidden sm:block">
-                  Automatic due-date calculation, strict cycle gates & wallet expense sync
-                </p>
-              </div>
+              <h1 className="text-sm sm:text-lg font-bold tracking-tight truncate">
+                Subscriptions &amp; Recurring Schedules
+              </h1>
             </div>
           </div>
 

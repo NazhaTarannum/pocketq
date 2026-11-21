@@ -286,9 +286,6 @@ export default function PlanningWorkspacePage() {
               <h1 className="font-bold text-sm sm:text-lg leading-tight truncate">
                 Flexible Budgets, Expected Income &amp; Loans
               </h1>
-              <p className="text-[11px] opacity-70 hidden sm:block">
-                Keep expected income separate from received cash, adapt spending limits, and track borrowed/lent money
-              </p>
             </div>
           </div>
 
@@ -307,9 +304,6 @@ export default function PlanningWorkspacePage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-4 sm:py-6 space-y-5 sm:space-y-6">
-        <p className="text-xs opacity-75 sm:hidden -mt-1">
-          Keep expected income separate from received cash, adapt spending limits, and track borrowed/lent money
-        </p>
         {/* Top Metrics */}
         <section className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="rounded-2xl p-4 bg-[#31493C] text-[#E8F1F2]">

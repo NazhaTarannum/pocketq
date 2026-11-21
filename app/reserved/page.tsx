@@ -419,9 +419,6 @@ export default function ReservedManagementPage() {
               <h1 className="font-bold text-sm sm:text-lg leading-tight truncate">
                 Reserved Funds: Obligations vs. Savings
               </h1>
-              <p className="text-[11px] opacity-70 hidden sm:block">
-                Deadline-based funding planner for mandatory bills + user-controlled savings vaults
-              </p>
             </div>
           </div>
 
@@ -441,9 +438,6 @@ export default function ReservedManagementPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-4 sm:py-6 space-y-5 sm:space-y-6">
-        <p className="text-xs opacity-75 sm:hidden -mt-1">
-          Deadline-based funding planner for mandatory bills + user-controlled savings vaults
-        </p>
         {/* Top Summary Strip */}
         <section className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="rounded-2xl p-4 bg-[#31493C] text-[#E8F1F2]">

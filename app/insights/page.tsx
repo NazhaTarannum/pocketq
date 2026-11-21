@@ -125,9 +125,6 @@ export default function InsightsAndCalendarPage() {
               <h1 className="font-bold text-sm sm:text-lg leading-tight truncate">
                 Calendar, Reports &amp; Smart Notifications
               </h1>
-              <p className="text-[11px] opacity-70 hidden sm:block">
-                3-scenario cash-flow forecasting, upcoming deadlines calendar, and yearly financial reports
-              </p>
             </div>
           </div>
 
@@ -146,9 +143,6 @@ export default function InsightsAndCalendarPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-4 sm:py-6 space-y-5 sm:space-y-6">
-        <p className="text-xs opacity-75 sm:hidden -mt-1">
-          3-scenario cash-flow forecasting, upcoming deadlines calendar, and yearly financial reports
-        </p>
         {/* Smart Notifications Feed */}
         <section
           className={`rounded-3xl p-5 border ${
