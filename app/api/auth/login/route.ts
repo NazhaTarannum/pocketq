@@ -6,7 +6,7 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
-import { SESSION_COOKIE_NAME, signSessionToken } from '@/lib/auth';
+import { SESSION_COOKIE_NAME, signSessionToken, isAdminEmail } from '@/lib/auth';
 
 export async function POST(req: Request) {
   try {
@@ -31,14 +31,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid email or password.' }, { status: 401 });
     }
 
+    const adminFlag = Boolean(user.isAdmin || isAdminEmail(user.email));
+    if (adminFlag && !user.isAdmin) {
+      await prisma.user.update({ where: { id: user.id }, data: { isAdmin: true } }).catch(() => {});
+    }
+
     const token = await signSessionToken({
       userId: user.id,
       email: user.email,
       name: user.name,
+      isAdmin: adminFlag,
     });
 
     const res = NextResponse.json({
-      user: { id: user.id, name: user.name, email: user.email },
+      user: { id: user.id, name: user.name, email: user.email, isAdmin: adminFlag },
     });
 
     res.cookies.set(SESSION_COOKIE_NAME, token, {

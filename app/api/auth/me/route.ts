@@ -4,12 +4,29 @@
  */
 
 import { NextResponse } from 'next/server';
-import { getCurrentSession } from '@/lib/auth';
+import { getCurrentSession, isAdminEmail } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   const session = await getCurrentSession();
   if (!session) {
     return NextResponse.json({ user: null }, { status: 401 });
   }
-  return NextResponse.json({ user: session });
+  const dbUser = await prisma.user.findUnique({
+    where: { id: session.userId },
+    select: { id: true, name: true, email: true, isAdmin: true },
+  });
+  if (!dbUser) {
+    return NextResponse.json({ user: null }, { status: 401 });
+  }
+  const adminFlag = Boolean(dbUser.isAdmin || isAdminEmail(dbUser.email));
+  return NextResponse.json({
+    user: {
+      userId: dbUser.id,
+      id: dbUser.id,
+      name: dbUser.name,
+      email: dbUser.email,
+      isAdmin: adminFlag,
+    },
+  });
 }

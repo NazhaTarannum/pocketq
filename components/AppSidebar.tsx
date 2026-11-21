@@ -19,6 +19,7 @@ import {
   TrendingUp,
   Receipt,
   ShieldCheck,
+  ShieldAlert,
   Settings,
   LogOut,
 } from 'lucide-react';
@@ -81,7 +82,7 @@ const NAV_ITEMS = [
 export default function AppSidebar({ darkMode = false }: AppSidebarProps) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  const [user, setUser] = useState<{ name: string; email: string; isAdmin?: boolean } | null>(null);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -96,6 +97,10 @@ export default function AppSidebar({ darkMode = false }: AppSidebarProps) {
   }, []);
 
   const handleLogout = async () => {
+    try {
+      sessionStorage.removeItem('pocketq_dashboard_cache');
+      sessionStorage.removeItem('pocketq_splits_cache');
+    } catch {}
     await fetch('/api/auth/logout', { method: 'POST' });
     setOpen(false);
     router.push('/login');
@@ -190,6 +195,31 @@ export default function AppSidebar({ darkMode = false }: AppSidebarProps) {
                       </Link>
                     );
                   })}
+                  {user?.isAdmin && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setOpen(false)}
+                      className={`flex items-start gap-3 p-3 rounded-2xl transition border ${
+                        pathname === '/admin'
+                          ? 'bg-[#D52073] text-white border-[#D52073] shadow-xs'
+                          : 'border-[#D52073]/30 text-[#D52073] hover:bg-[#D52073]/10'
+                      }`}
+                    >
+                      <ShieldAlert className="w-4 h-4 mt-0.5 shrink-0" />
+                      <div>
+                        <span className="text-xs font-bold block leading-snug">
+                          Admin Portal
+                        </span>
+                        <span
+                          className={`text-[11px] block leading-tight mt-0.5 ${
+                            pathname === '/admin' ? 'text-white/85' : 'opacity-75'
+                          }`}
+                        >
+                          Manage users & delete profiles
+                        </span>
+                      </div>
+                    </Link>
+                  )}
                 </nav>
               </div>
 

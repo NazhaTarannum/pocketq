@@ -1,6 +1,6 @@
 /**
  * @file lib/auth.ts
- * @description Stateless JWT session signing, verification, and HTTP-only cookie management for multi-user authentication.
+ * @description Stateless JWT session signing, verification, admin role checks, and HTTP-only cookie management.
  */
 
 import { SignJWT, jwtVerify } from 'jose';
@@ -12,14 +12,31 @@ export interface SessionPayload {
   userId: string;
   email: string;
   name: string;
+  isAdmin?: boolean;
 }
 
 function getSecretKey(): Uint8Array {
-  const secret =
-    process.env.AUTH_SECRET ||
-    process.env.NEXTAUTH_SECRET ||
-    'pocketq-local-development-secret-key-change-in-production';
+  const secret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('AUTH_SECRET environment variable is required in production.');
+    }
+    return new TextEncoder().encode('pocketq-local-development-secret-key-change-in-production');
+  }
   return new TextEncoder().encode(secret);
+}
+
+/**
+ * Checks whether an email matches the configured ADMIN_EMAIL(s) environment variable.
+ */
+export function isAdminEmail(email: string): boolean {
+  const raw = process.env.ADMIN_EMAIL || process.env.ADMIN_EMAILS || '';
+  if (!raw.trim()) return false;
+  const allowed = raw
+    .split(',')
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  return allowed.includes(email.trim().toLowerCase());
 }
 
 /**
@@ -30,6 +47,7 @@ export async function signSessionToken(payload: SessionPayload): Promise<string>
     userId: payload.userId,
     email: payload.email,
     name: payload.name,
+    isAdmin: Boolean(payload.isAdmin || isAdminEmail(payload.email)),
   })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
@@ -52,6 +70,7 @@ export async function verifySessionToken(token: string): Promise<SessionPayload 
         userId: payload.userId,
         email: payload.email,
         name: payload.name,
+        isAdmin: Boolean(payload.isAdmin || isAdminEmail(payload.email)),
       };
     }
     return null;

@@ -32,6 +32,7 @@ export default function LoginPage() {
         setError(data.error || 'Unable to sign in');
         return;
       }
+      try { sessionStorage.removeItem('pocketq_dashboard_cache'); sessionStorage.removeItem('pocketq_splits_cache'); } catch {}
       router.push('/');
       router.refresh();
     } catch {
