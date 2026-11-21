@@ -1,14 +1,40 @@
+// Prisma database schema defining multi-user PocketQ persistence models for PostgreSQL.
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// Registered application user account owning isolated financial records
+model User {
+  id             String           @id @default(cuid())
+  name           String
+  email          String           @unique
+  passwordHash   String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  wallets        Wallet[]
+  incomes        ExpectedIncome[]
+  budgets        Budget[]
+  obligations    Obligation[]
+  savingsGoals   SavingsGoal[]
+  loans          Loan[]
+  purchasePlans  PurchasePlan[]
+  categories     CustomCategory[]
+  settings       UserSettings?
+  billSplits     BillSplit[]
+  subscriptions  Subscription[]
+  investments    Investment[]
 }
 
 model Wallet {
   id           String        @id @default(cuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   name         String
   type         String
   balance      Float         @default(0)
@@ -16,6 +42,9 @@ model Wallet {
   createdAt    DateTime      @default(now())
   transactions Transaction[] @relation("WalletTransactions")
   transfersIn  Transaction[] @relation("TransferTarget")
+  obligations  Obligation[]  @relation("ObligationTargetWallet")
+
+  @@index([userId])
 }
 
 model Transaction {
@@ -24,16 +53,54 @@ model Transaction {
   amount         Float
   category       String
   note           String?
+  isRecurring    Boolean  @default(false)
+  expectedAmount Float?
   date           DateTime @default(now())
   walletId       String
   wallet         Wallet   @relation("WalletTransactions", fields: [walletId], references: [id], onDelete: Cascade)
   targetWalletId String?
   targetWallet   Wallet?  @relation("TransferTarget", fields: [targetWalletId], references: [id])
   createdAt      DateTime @default(now())
+
+  @@index([walletId])
+}
+
+model ExpectedIncome {
+  id             String    @id @default(cuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title          String
+  sourceType     String    @default("FIXED") // FIXED, IRREGULAR, FREELANCE, SALARY, BUSINESS
+  amount         Float
+  expectedDate   DateTime
+  isRecurring    Boolean   @default(false)
+  isReceived     Boolean   @default(false)
+  receivedAmount Float     @default(0)
+  receivedDate   DateTime?
+  targetWalletId String?
+  notes          String?
+  createdAt      DateTime  @default(now())
+
+  @@index([userId])
+}
+
+model Budget {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category     String
+  monthlyLimit Float
+  isFlexible   Boolean  @default(true)
+  notes        String?
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
 }
 
 model Obligation {
   id             String                  @id @default(cuid())
+  userId         String
+  user           User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
   title          String
   totalAmount    Float
   reservedAmount Float                   @default(0)
@@ -41,9 +108,14 @@ model Obligation {
   dueDate        DateTime
   category       String                  @default("OBLIGATION")
   notes          String?
+  targetWalletId String?
+  targetWallet   Wallet?                 @relation("ObligationTargetWallet", fields: [targetWalletId], references: [id], onDelete: SetNull)
+  customPlanJson String?
   isPaid         Boolean                 @default(false)
   installments   ObligationInstallment[]
   createdAt      DateTime                @default(now())
+
+  @@index([userId])
 }
 
 model ObligationInstallment {
@@ -59,6 +131,8 @@ model ObligationInstallment {
 
 model SavingsGoal {
   id             String               @id @default(cuid())
+  userId         String
+  user           User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   name           String
   currentBalance Float                @default(0)
   targetAmount   Float?
@@ -66,11 +140,13 @@ model SavingsGoal {
   notes          String?
   transactions   SavingsTransaction[]
   createdAt      DateTime             @default(now())
+
+  @@index([userId])
 }
 
 model SavingsTransaction {
   id            String      @id @default(cuid())
-  type          String      // DEPOSIT, WITHDRAW, SPEND
+  type          String
   amount        Float
   note          String?
   walletName    String?
@@ -79,8 +155,78 @@ model SavingsTransaction {
   savingsGoal   SavingsGoal @relation(fields: [savingsGoalId], references: [id], onDelete: Cascade)
 }
 
+model Loan {
+  id             String        @id @default(cuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  direction      String        @default("BORROWED") // BORROWED (I owe) | LENT (Owed to me)
+  title          String
+  lender         String?
+  principal      Float
+  remaining      Float
+  monthlyEmi     Float
+  reservedAmount Float         @default(0)
+  nextDueDate    DateTime
+  notes          String?
+  isClosed       Boolean       @default(false)
+  payments       LoanPayment[]
+  createdAt      DateTime      @default(now())
+
+  @@index([userId])
+}
+
+model LoanPayment {
+  id         String   @id @default(cuid())
+  amount     Float
+  date       DateTime @default(now())
+  walletName String?
+  note       String?
+  loanId     String
+  loan       Loan     @relation(fields: [loanId], references: [id], onDelete: Cascade)
+}
+
+model PurchasePlan {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String
+  estimatedCost Float
+  savedSoFar    Float     @default(0)
+  priority      String    @default("MEDIUM")
+  targetDate    DateTime?
+  notes         String?
+  isPurchased   Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+
+  @@index([userId])
+}
+
+model CustomCategory {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  type      String   @default("EXPENSE") // EXPENSE | INCOME
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model UserSettings {
+  id                  String  @id @default(cuid())
+  userId              String  @unique
+  user                User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currencySymbol      String  @default("৳")
+  currencyCode        String  @default("BDT")
+  lowBalanceThreshold Float   @default(2000)
+  enableReminders     Boolean @default(true)
+  enableBudgetAlerts  Boolean @default(true)
+}
+
 model BillSplit {
   id           String             @id @default(cuid())
+  userId       String
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   title        String
   subtotal     Float
   vatAmount    Float              @default(0)
@@ -89,6 +235,8 @@ model BillSplit {
   paidByMe     Boolean            @default(true)
   date         DateTime           @default(now())
   participants SplitParticipant[]
+
+  @@index([userId])
 }
 
 model SplitParticipant {
@@ -101,4 +249,53 @@ model SplitParticipant {
   isSettled   Boolean   @default(false)
   billSplitId String
   billSplit   BillSplit @relation(fields: [billSplitId], references: [id], onDelete: Cascade)
+}
+
+// Recurring subscription commitments and billing schedules
+model Subscription {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name            String
+  amount          Float
+  billingCycle    String   @default("MONTHLY") // MONTHLY | YEARLY | CUSTOM
+  customCycleDays Int?
+  nextRenewalDate DateTime
+  status          String   @default("ACTIVE") // ACTIVE | CANCELLED
+  category        String   @default("Subscriptions")
+  note            String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// Long-term non-liquid investment assets and historical valuation events
+model Investment {
+  id             String            @id @default(cuid())
+  userId         String
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name           String
+  assetType      String            @default("DPS") // DPS | FDR | STOCKS | GOLD | CRYPTO | OTHER
+  investedAmount Float
+  currentValue   Float
+  startDate      DateTime          @default(now())
+  note           String?
+  events         InvestmentEvent[]
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@index([userId])
+}
+
+// Chronological audit trail of initial deposits, contributions, withdrawals, and value updates
+model InvestmentEvent {
+  id           String     @id @default(cuid())
+  investmentId String
+  investment   Investment @relation(fields: [investmentId], references: [id], onDelete: Cascade)
+  eventType    String     // INITIAL | CONTRIBUTION | WITHDRAWAL | VALUATION_UPDATE
+  amount       Float
+  valueAfter   Float
+  note         String?
+  eventDate    DateTime   @default(now())
 }

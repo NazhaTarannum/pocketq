@@ -1,3 +1,8 @@
+/**
+ * @file app/layout.tsx
+ * @description Root Next.js layout configuring global typography (Aeonik Pro, Inter, Geist, Geist Mono) and metadata.
+ */
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";

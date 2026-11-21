@@ -1,7 +1,14 @@
 'use client';
 
+/**
+ * @file app/page.tsx
+ * @description Primary financial command dashboard displaying Safe Available-to-Spend, wallets, obligations, savings, impulse simulator, and daily ledger activity.
+ */
+
+import DDMMYYYYInput from '@/components/DDMMYYYYInput';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import AppSidebar from '@/components/AppSidebar';
 import {
   Wallet,
   ArrowUpRight,
@@ -13,6 +20,7 @@ import {
   ShieldCheck,
   Sun,
   Moon,
+  Settings,
   CheckCircle2,
   Receipt,
   Sparkles,
@@ -61,8 +69,21 @@ interface ObligationItem {
   dueDate: string;
   category: string;
   notes?: string | null;
+  targetWalletId?: string | null;
   isPaid: boolean;
   installments: ObligationInstallmentItem[];
+  outstandingTotal?: number;
+  remainingToReserve?: number;
+  daysRemaining?: number;
+  monthsRemaining?: number;
+  fundingPlan?: {
+    schedule: Array<{ monthIndex: number; label: string; amount: number }>;
+    totalPlanned: number;
+    projectedShortfall: number;
+    isShortfall: boolean;
+    shortfallMessage: string | null;
+    isCustomPlan: boolean;
+  };
 }
 
 interface SavingsTransactionItem {
@@ -122,67 +143,6 @@ interface DashboardData {
   billSplits: BillSplitItem[];
 }
 
-function DDMMYYYYInput({
-  value,
-  onChange,
-  required = false,
-  className = "",
-  placeholder = "dd/mm/yyyy",
-}: {
-  value: string; // ISO yyyy-mm-dd or empty
-  onChange: (isoDate: string) => void;
-  required?: boolean;
-  className?: string;
-  placeholder?: string;
-}) {
-  const isoToDisplay = (iso: string) => {
-    if (!iso) return "";
-    const parts = iso.split("T")[0].split("-");
-    if (parts.length !== 3) return iso;
-    return `${parts[2]}/${parts[1]}/${parts[0]}`;
-  };
-
-  const [text, setText] = useState(() => isoToDisplay(value));
-
-  useEffect(() => {
-    setText(isoToDisplay(value));
-  }, [value]);
-
-  const handleChange = (raw: string) => {
-    const digits = raw.replace(/\D/g, "").slice(0, 8);
-    let formatted = digits;
-    if (digits.length > 4) {
-      formatted = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
-    } else if (digits.length > 2) {
-      formatted = `${digits.slice(0, 2)}/${digits.slice(2)}`;
-    }
-    setText(formatted);
-
-    if (digits.length === 8) {
-      const dd = digits.slice(0, 2);
-      const mm = digits.slice(2, 4);
-      const yyyy = digits.slice(4, 8);
-      onChange(`${yyyy}-${mm}-${dd}`);
-    } else if (digits.length === 0) {
-      onChange("");
-    }
-  };
-
-  return (
-    <input
-      type="text"
-      inputMode="numeric"
-      maxLength={10}
-      required={required}
-      value={text}
-      onChange={(e) => handleChange(e.target.value)}
-      placeholder={placeholder}
-      pattern="\\d{2}/\\d{2}/\\d{4}"
-      title="Enter date as dd/mm/yyyy"
-      className={className}
-    />
-  );
-}
 
 export default function PocketQApp() {
   const [data, setData] = useState<DashboardData | null>(null);
@@ -349,6 +309,7 @@ export default function PocketQApp() {
             itemTotal: itemCost,
             vatShare,
             finalOwed: itemCost + vatShare,
+            cashGiven: Number(p.cashGiven) || 0,
           };
         }),
       };
@@ -721,6 +682,22 @@ export default function PocketQApp() {
               <span>Add Entry</span>
             </button>
 
+            {/* 3-line sidebar drawer for Budgets & Loans, Calendar & Reports, Subscriptions, and Wealth */}
+            <AppSidebar darkMode={darkMode} />
+            <Link
+              href="/settings"
+              aria-label="Settings & Personalization"
+              title="Settings & Personalization"
+              className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-bold transition ${
+                darkMode
+                  ? 'bg-[#31493C]/50 border-[#31493C] text-[#E8F1F2] hover:bg-[#31493C]'
+                  : 'bg-white border-[#7A9E7E]/30 text-[#001A23] hover:bg-[#7A9E7E]/10'
+              }`}
+            >
+              <Settings className="w-4 h-4 text-[#7A9E7E]" />
+              <span className="hidden md:inline">Settings</span>
+            </Link>
+
             <button
               onClick={() => setDarkMode(!darkMode)}
               aria-label="Toggle theme"
@@ -741,7 +718,7 @@ export default function PocketQApp() {
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
           {/* LEFT COLUMN (3 cols): Reserved Obligations */}
           <div
-            className={`lg:col-span-3 rounded-3xl p-4 border flex flex-col justify-between lg:max-h-[430px] ${
+            className={`lg:col-span-3 rounded-3xl p-4 border flex flex-col justify-between ${
               darkMode
                 ? 'bg-[#31493C]/30 border-[#31493C]'
                 : 'bg-white border-[#7A9E7E]/25 shadow-sm'
@@ -775,11 +752,13 @@ export default function PocketQApp() {
                 );
               })()}
 
-              <div className="space-y-2.5 overflow-hidden">
+              {/* Shows up to 2 upcoming obligations completely before the See More + link */}
+              <div className="space-y-2.5">
                 {data.obligations.length === 0 ? (
                   <p className="text-xs opacity-60 py-6 text-center">No obligations added yet.</p>
                 ) : (
-                  data.obligations.slice(0, 2).map((ob) => {
+                  /* Render up to 3 upcoming obligations to naturally fill the hero column height */
+                  data.obligations.slice(0, 3).map((ob) => {
                     const remainingToPay = Math.max(0, ob.totalAmount - ob.paidAmount);
                     const isOverdue = !ob.isPaid && nowMs > 0 && new Date(ob.dueDate).getTime() < nowMs;
                     const statusLabel = ob.isPaid
@@ -869,11 +848,12 @@ export default function PocketQApp() {
               </div>
             </div>
 
+            {/* Footer link to full Reserved Funds & Deadline Funding Planner */}
             <Link
               href="/reserved"
               className="mt-3 pt-2.5 border-t border-[#7A9E7E]/20 flex items-center justify-center gap-1 text-xs font-bold text-[#7A9E7E] hover:underline"
             >
-              See More + {data.obligations.length > 2 ? `(${data.obligations.length} total)` : ""}
+              See More + {data.obligations.length > 3 ? `(${data.obligations.length} total)` : ""}
             </Link>
           </div>
 
@@ -1026,7 +1006,7 @@ export default function PocketQApp() {
 
           {/* RIGHT COLUMN (3 cols): Savings & Emergency Funds */}
           <div
-            className={`lg:col-span-3 rounded-3xl p-4 border flex flex-col justify-between lg:max-h-[430px] ${
+            className={`lg:col-span-3 rounded-3xl p-4 border flex flex-col justify-between ${
               darkMode
                 ? 'bg-[#31493C]/30 border-[#31493C]'
                 : 'bg-white border-[#7A9E7E]/25 shadow-sm'
@@ -1054,11 +1034,12 @@ export default function PocketQApp() {
                 </strong>
               </div>
 
-              <div className="space-y-2.5 overflow-hidden">
+              {/* Render up to 4 savings goals so the right card matches the center stack height cleanly */}
+              <div className="space-y-2.5">
                 {!data.savingsGoals || data.savingsGoals.length === 0 ? (
                   <p className="text-xs opacity-60 py-6 text-center">No savings entries yet.</p>
                 ) : (
-                  data.savingsGoals.slice(0, 2).map((goal) => (
+                  data.savingsGoals.slice(0, 4).map((goal) => (
                     <div
                       key={goal.id}
                       className={`p-2.5 rounded-2xl border space-y-1.5 ${
@@ -1121,7 +1102,7 @@ export default function PocketQApp() {
               href="/reserved"
               className="mt-3 pt-2.5 border-t border-[#7A9E7E]/20 flex items-center justify-center gap-1 text-xs font-bold text-[#7A9E7E] hover:underline"
             >
-              See More + {data.savingsGoals && data.savingsGoals.length > 2 ? `(${data.savingsGoals.length} total)` : ""}
+              See More + {data.savingsGoals && data.savingsGoals.length > 4 ? `(${data.savingsGoals.length} total)` : ""}
             </Link>
           </div>
         </section>

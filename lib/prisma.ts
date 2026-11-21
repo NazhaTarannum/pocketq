@@ -1,3 +1,8 @@
+/**
+ * @file lib/prisma.ts
+ * @description Singleton Prisma Client instance preventing connection exhaustion during development reloads.
+ */
+
 import { PrismaClient } from '@prisma/client';
 
 const globalForPrisma = globalThis as unknown as {
