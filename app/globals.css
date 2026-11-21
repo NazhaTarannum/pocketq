@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* Optional self-hosted Aeonik Pro (place .woff2 files in public/fonts/ to activate) */
 @font-face {

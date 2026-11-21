@@ -21,6 +21,7 @@ import {
   Pencil,
   Plus,
 } from 'lucide-react';
+import AppSidebar from '@/components/AppSidebar';
 
 interface WalletItem {
   id: string;
@@ -405,6 +406,7 @@ export default function ReservedManagementPage() {
       >
         <div className="max-w-7xl mx-auto px-4 py-3.5 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
+            <AppSidebar darkMode={darkMode} />
             <Link
               href="/"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#31493C] text-[#B3EFB2] hover:opacity-90"

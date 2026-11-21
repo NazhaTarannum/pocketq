@@ -18,6 +18,8 @@ import {
   Repeat,
   TrendingUp,
   Receipt,
+  ShieldCheck,
+  Settings,
   LogOut,
 } from 'lucide-react';
 
@@ -57,10 +59,22 @@ const NAV_ITEMS = [
     icon: Receipt,
   },
   {
+    href: '/reserved',
+    label: 'Reserved & Goals',
+    subtitle: 'Protected funds & savings vaults',
+    icon: ShieldCheck,
+  },
+  {
     href: '/wealth',
     label: 'Wealth',
     subtitle: 'Investments & non-liquid net worth',
     icon: TrendingUp,
+  },
+  {
+    href: '/settings',
+    label: 'Settings',
+    subtitle: 'Currency, profile & workspace preferences',
+    icon: Settings,
   },
 ];
 
