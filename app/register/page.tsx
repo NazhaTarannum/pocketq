@@ -2,25 +2,40 @@
 
 /**
  * @file app/register/page.tsx
- * @description Registration page allowing new users to create an isolated PocketQ financial account.
+ * @description Registration page with password confirmation, show/hide password toggles, and instant dashboard handoff.
  */
 
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ShieldCheck, ArrowRight } from 'lucide-react';
+import { ShieldCheck, ArrowRight, Eye, EyeOff } from 'lucide-react';
 
 export default function RegisterPage() {
   const router = useRouter();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const passwordsMismatch = confirmPassword.length > 0 && password !== confirmPassword;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters.');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError('Passwords do not match. Please re-enter carefully.');
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch('/api/auth/register', {
@@ -33,8 +48,17 @@ export default function RegisterPage() {
         setError(data.error || 'Unable to create account');
         return;
       }
+
+      try {
+        sessionStorage.removeItem('pocketq_splits_cache');
+        if (data.initialDashboard) {
+          sessionStorage.setItem('pocketq_dashboard_cache', JSON.stringify(data.initialDashboard));
+        } else {
+          sessionStorage.removeItem('pocketq_dashboard_cache');
+        }
+      } catch {}
+
       router.push('/');
-      router.refresh();
     } catch {
       setError('Network error while creating account');
     } finally {
@@ -91,22 +115,65 @@ export default function RegisterPage() {
 
           <div className="space-y-1">
             <label className="text-xs font-bold block">Password (min 6 characters)</label>
-            <input
-              type="password"
-              required
-              minLength={6}
-              autoComplete="new-password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-xl px-3.5 py-2.5 text-sm border border-[#7A9E7E]/30 outline-none focus:border-[#31493C]"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                required
+                minLength={6}
+                autoComplete="new-password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-xl pl-3.5 pr-10 py-2.5 text-sm border border-[#7A9E7E]/30 outline-none focus:border-[#31493C]"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#001A23]/55 hover:text-[#001A23] transition cursor-pointer"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-xs font-bold block">Confirm Password</label>
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? 'text' : 'password'}
+                required
+                minLength={6}
+                autoComplete="new-password"
+                placeholder="••••••••"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className={`w-full rounded-xl pl-3.5 pr-10 py-2.5 text-sm border outline-none transition ${
+                  passwordsMismatch
+                    ? 'border-[#D52073] focus:border-[#D52073]'
+                    : 'border-[#7A9E7E]/30 focus:border-[#31493C]'
+                }`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+                aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#001A23]/55 hover:text-[#001A23] transition cursor-pointer"
+              >
+                {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+            {passwordsMismatch && (
+              <p className="text-[11px] font-semibold text-[#D52073]">
+                Passwords do not match
+              </p>
+            )}
           </div>
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full py-2.5 px-4 rounded-xl text-sm font-bold bg-[#31493C] text-[#B3EFB2] hover:opacity-95 transition cursor-pointer flex items-center justify-center gap-1.5"
+            disabled={loading || passwordsMismatch}
+            className="w-full py-2.5 px-4 rounded-xl text-sm font-bold bg-[#31493C] text-[#B3EFB2] hover:opacity-95 transition cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50"
           >
             {loading ? 'Creating account...' : 'Create Account'}
             <ArrowRight className="w-4 h-4" />

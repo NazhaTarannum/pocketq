@@ -1,12 +1,12 @@
 /**
  * @file app/api/auth/register/route.ts
- * @description Creates a new user account, initializes default settings and starter wallets, and sets an authenticated session cookie.
+ * @description Fast single-roundtrip user registration with starter wallets, settings, and pre-warmed dashboard state.
  */
 
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
-import { SESSION_COOKIE_NAME, signSessionToken } from '@/lib/auth';
+import { SESSION_COOKIE_NAME, signSessionToken, isAdminEmail } from '@/lib/auth';
 
 export async function POST(req: Request) {
   try {
@@ -22,21 +22,15 @@ export async function POST(req: Request) {
       );
     }
 
-    const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) {
-      return NextResponse.json(
-        { error: 'An account with this email already exists.' },
-        { status: 409 }
-      );
-    }
-
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, 8);
+    const adminFlag = isAdminEmail(email);
 
     const user = await prisma.user.create({
       data: {
         name,
         email,
         passwordHash,
+        isAdmin: adminFlag,
         settings: {
           create: {
             currencySymbol: '৳',
@@ -54,16 +48,41 @@ export async function POST(req: Request) {
           ],
         },
       },
+      include: {
+        wallets: true,
+        settings: true,
+      },
     });
 
     const token = await signSessionToken({
       userId: user.id,
       email: user.email,
       name: user.name,
+      isAdmin: adminFlag,
     });
 
+    const initialDashboard = {
+      summary: {
+        totalBalance: 0,
+        totalReserved: 0,
+        totalReservedObligations: 0,
+        totalReservedSavings: 0,
+        availableToSpend: 0,
+        owedByFriends: 0,
+      },
+      wallets: user.wallets,
+      transactions: [],
+      obligations: [],
+      savingsGoals: [],
+      billSplits: [],
+      settings: user.settings,
+    };
+
     const res = NextResponse.json(
-      { user: { id: user.id, name: user.name, email: user.email } },
+      {
+        user: { id: user.id, name: user.name, email: user.email, isAdmin: adminFlag },
+        initialDashboard,
+      },
       { status: 201 }
     );
 
@@ -77,6 +96,17 @@ export async function POST(req: Request) {
 
     return res;
   } catch (error: unknown) {
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      (error as { code?: string }).code === 'P2002'
+    ) {
+      return NextResponse.json(
+        { error: 'An account with this email already exists.' },
+        { status: 409 }
+      );
+    }
     const message = error instanceof Error ? error.message : 'Registration failed';
     return NextResponse.json({ error: message }, { status: 500 });
   }

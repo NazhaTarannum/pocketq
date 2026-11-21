@@ -8,12 +8,13 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ShieldCheck, ArrowRight } from 'lucide-react';
+import { ShieldCheck, ArrowRight, Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -32,9 +33,11 @@ export default function LoginPage() {
         setError(data.error || 'Unable to sign in');
         return;
       }
-      try { sessionStorage.removeItem('pocketq_dashboard_cache'); sessionStorage.removeItem('pocketq_splits_cache'); } catch {}
+      try {
+        sessionStorage.removeItem('pocketq_dashboard_cache');
+        sessionStorage.removeItem('pocketq_splits_cache');
+      } catch {}
       router.push('/');
-      router.refresh();
     } catch {
       setError('Network error while signing in');
     } finally {
@@ -79,15 +82,25 @@ export default function LoginPage() {
 
           <div className="space-y-1">
             <label className="text-xs font-bold block">Password</label>
-            <input
-              type="password"
-              required
-              autoComplete="current-password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-xl px-3.5 py-2.5 text-sm border border-[#7A9E7E]/30 outline-none focus:border-[#31493C]"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                required
+                autoComplete="current-password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-xl pl-3.5 pr-10 py-2.5 text-sm border border-[#7A9E7E]/30 outline-none focus:border-[#31493C]"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#001A23]/55 hover:text-[#001A23] transition cursor-pointer"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
 
           <button
