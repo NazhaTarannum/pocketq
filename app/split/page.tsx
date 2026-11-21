@@ -1929,8 +1929,9 @@ export default function BillSplittingPage() {
           </section>
         )}
 
-        {/* Summary KPI Strip (Below Splitting Workspace) */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* Summary KPI Strip (Below Splitting Workspace - HISTORY tab only) */}
+        {activeTab === 'HISTORY' && (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className={`p-4 rounded-2xl border ${cardClass}`}>
             <span className="text-[11px] font-bold uppercase tracking-wider opacity-65">
               Owed To You (Pending)
@@ -1965,7 +1966,7 @@ export default function BillSplittingPage() {
             </span>
           </div>
         </div>
-
+        )}
       </main>
 
       {/* Partial / Full Settlement Modal */}
