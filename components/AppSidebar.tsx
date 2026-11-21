@@ -17,6 +17,7 @@ import {
   CalendarRange,
   Repeat,
   TrendingUp,
+  Receipt,
   LogOut,
 } from 'lucide-react';
 
@@ -48,6 +49,12 @@ const NAV_ITEMS = [
     label: 'Subscriptions',
     subtitle: 'Recurring bills & renewal reminders',
     icon: Repeat,
+  },
+  {
+    href: '/split',
+    label: 'Bill Splitting',
+    subtitle: 'Shared bills, itemized splits & settlements',
+    icon: Receipt,
   },
   {
     href: '/wealth',

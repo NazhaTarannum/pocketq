@@ -224,31 +224,112 @@ model UserSettings {
 }
 
 model BillSplit {
-  id           String             @id @default(cuid())
-  userId       String
-  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title        String
-  subtotal     Float
-  vatAmount    Float              @default(0)
-  totalAmount  Float
-  splitMode    String
-  paidByMe     Boolean            @default(true)
-  date         DateTime           @default(now())
-  participants SplitParticipant[]
+  id                 String             @id @default(cuid())
+  userId             String
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title              String
+  notes              String?
+  subtotal           Float
+  vatMode            String             @default("EXCLUSIVE") // EXCLUSIVE | INCLUSIVE | NONE
+  vatType            String             @default("PERCENT")   // PERCENT | FIXED
+  vatValue           Float              @default(0)
+  vatAmount          Float              @default(0)
+  discountTiming     String             @default("BEFORE_VAT") // BEFORE_VAT | AFTER_VAT
+  discountType       String             @default("FIXED")      // PERCENT | FIXED
+  discountValue      Float              @default(0)
+  discountAmount     Float              @default(0)
+  serviceChargeType  String             @default("PERCENT")    // PERCENT | FIXED
+  serviceChargeValue Float              @default(0)
+  serviceChargeAmt   Float              @default(0)
+  deliveryCharge     Float              @default(0)
+  otherChargesTotal  Float              @default(0)
+  totalAmount        Float
+  splitMode          String             @default("ITEMIZED")   // ITEMIZED | EQUAL
+  status             String             @default("CONFIRMED")  // CONFIRMED | SETTLED
+  paidByMe           Boolean            @default(true)
+  payerWalletId      String?
+  date               DateTime           @default(now())
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  participants       SplitParticipant[]
+  items              BillItem[]
+  extraCharges       BillExtraCharge[]
+  settlements        BillSettlement[]
 
   @@index([userId])
 }
 
 model SplitParticipant {
-  id          String    @id @default(cuid())
+  id              String               @id @default(cuid())
+  name            String
+  isMe            Boolean              @default(false)
+  paidAmount      Float                @default(0)
+  walletId        String?
+  individualTotal Float                @default(0)
+  sharedTotal     Float                @default(0)
+  itemTotal       Float
+  vatShare        Float
+  chargesShare    Float                @default(0)
+  discountShare   Float                @default(0)
+  finalOwed       Float
+  isSettled       Boolean              @default(false)
+  billSplitId     String
+  billSplit       BillSplit            @relation(fields: [billSplitId], references: [id], onDelete: Cascade)
+  assignments     BillItemAssignment[]
+  settlementsFrom BillSettlement[]     @relation("SettlementFrom")
+  settlementsTo   BillSettlement[]     @relation("SettlementTo")
+}
+
+model BillItem {
+  id          String               @id @default(cuid())
   name        String
-  isMe        Boolean   @default(false)
-  itemTotal   Float
-  vatShare    Float
-  finalOwed   Float
-  isSettled   Boolean   @default(false)
+  quantity    Float                @default(1)
+  unitPrice   Float
+  subtotal    Float
+  billSplitId String
+  billSplit   BillSplit            @relation(fields: [billSplitId], references: [id], onDelete: Cascade)
+  assignments BillItemAssignment[]
+}
+
+model BillItemAssignment {
+  id              String           @id @default(cuid())
+  billItemId      String
+  billItem        BillItem         @relation(fields: [billItemId], references: [id], onDelete: Cascade)
+  participantId   String
+  participant     SplitParticipant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  assignmentGroup String           @default("SINGLE") // Shared group ID when multiple people share the same portion
+  splitType       String           @default("EQUAL")  // EQUAL | PERCENTAGE | CUSTOM_AMOUNT
+  quantity        Float            @default(1)
+  percentage      Float?
+  allocatedAmount Float
+}
+
+model BillExtraCharge {
+  id          String    @id @default(cuid())
+  label       String
+  type        String    @default("FIXED") // PERCENT | FIXED
+  value       Float
+  amount      Float
   billSplitId String
   billSplit   BillSplit @relation(fields: [billSplitId], references: [id], onDelete: Cascade)
+}
+
+model BillSettlement {
+  id                String           @id @default(cuid())
+  billSplitId       String
+  billSplit         BillSplit        @relation(fields: [billSplitId], references: [id], onDelete: Cascade)
+  fromParticipantId String
+  fromParticipant   SplitParticipant @relation("SettlementFrom", fields: [fromParticipantId], references: [id], onDelete: Cascade)
+  toParticipantId   String
+  toParticipant     SplitParticipant @relation("SettlementTo", fields: [toParticipantId], references: [id], onDelete: Cascade)
+  amount            Float
+  paidAmount        Float            @default(0)
+  status            String           @default("PENDING") // PENDING | PARTIAL | PAID
+  paidDate          DateTime?
+  walletId          String?
+  note              String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
 }
 
 // Recurring subscription commitments and billing schedules
