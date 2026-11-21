@@ -221,6 +221,7 @@ model UserSettings {
   lowBalanceThreshold Float   @default(2000)
   enableReminders     Boolean @default(true)
   enableBudgetAlerts  Boolean @default(true)
+  theme               String  @default("LIGHT") // LIGHT | DARK
 }
 
 model BillSplit {

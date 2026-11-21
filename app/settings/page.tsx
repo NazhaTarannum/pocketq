@@ -30,6 +30,7 @@ import {
   Plus,
 } from 'lucide-react';
 import AppSidebar from '@/components/AppSidebar';
+import { useThemePreference } from '@/lib/useThemePreference';
 
 /**
  * Represents the persisted user preferences row (`UserSettings` id = "default").
@@ -125,7 +126,7 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savedBanner, setSavedBanner] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useThemePreference();
 
   // Full dashboard snapshot held in state for one-click JSON backup export
   const [rawSnapshot, setRawSnapshot] = useState<unknown>(null);
@@ -200,6 +201,7 @@ export default function SettingsPage() {
           lowBalanceThreshold: Number(lowBalanceThreshold) || 0,
           enableReminders,
           enableBudgetAlerts,
+          theme: darkMode ? 'DARK' : 'LIGHT',
         }),
       });
       if (res.ok) {
@@ -316,6 +318,70 @@ export default function SettingsPage() {
             Preferences saved! Active currency: {currencyCode} ({currencySymbol}).
           </div>
         )}
+
+        {/* Appearance (Persistent Light / Dark Theme) */}
+        <section
+          className={`rounded-3xl p-6 border space-y-4 ${
+            darkMode
+              ? 'bg-[#31493C]/20 border-[#31493C]'
+              : 'bg-white border-[#7A9E7E]/25 shadow-sm'
+          }`}
+        >
+          <div>
+            <h2 className="font-bold text-base mb-1">Appearance & Theme</h2>
+            <p className="text-xs opacity-75">
+              Choose your default visual theme across all PocketQ workspaces. Your selection is saved to your account.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => setDarkMode(false)}
+              className={`flex items-center justify-between p-4 rounded-2xl border text-left transition cursor-pointer ${
+                !darkMode
+                  ? 'bg-[#31493C] text-white border-[#31493C] shadow-xs'
+                  : 'bg-transparent border-[#7A9E7E]/30 hover:border-[#7A9E7E]'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${!darkMode ? 'bg-[#FFEF5C] text-[#001A23]' : 'bg-[#7A9E7E]/15'}`}>
+                  <Sun className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-sm font-bold block">Light Mode</span>
+                  <span className={`text-xs ${!darkMode ? 'text-[#B3EFB2]' : 'opacity-70'}`}>
+                    Clean daytime workspace
+                  </span>
+                </div>
+              </div>
+              {!darkMode && <CheckCircle2 className="w-4 h-4 text-[#B3EFB2]" />}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setDarkMode(true)}
+              className={`flex items-center justify-between p-4 rounded-2xl border text-left transition cursor-pointer ${
+                darkMode
+                  ? 'bg-[#31493C] text-white border-[#B3EFB2]/50 shadow-xs'
+                  : 'bg-transparent border-[#7A9E7E]/30 hover:border-[#7A9E7E]'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${darkMode ? 'bg-[#FFEF5C] text-[#001A23]' : 'bg-[#7A9E7E]/15'}`}>
+                  <Moon className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-sm font-bold block">Dark Mode</span>
+                  <span className={`text-xs ${darkMode ? 'text-[#B3EFB2]' : 'opacity-70'}`}>
+                    Low-glare night workspace
+                  </span>
+                </div>
+              </div>
+              {darkMode && <CheckCircle2 className="w-4 h-4 text-[#B3EFB2]" />}
+            </button>
+          </div>
+        </section>
 
         {/* Section 1: Global Currency & Notification Preferences Form */}
         <form

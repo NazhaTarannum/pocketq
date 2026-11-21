@@ -21,6 +21,7 @@ import {
   X,
 } from 'lucide-react';
 import AppSidebar from '@/components/AppSidebar';
+import { useThemePreference } from '@/lib/useThemePreference';
 import { formatDateDDMMYYYY } from '@/lib/format';
 import {
   BillingFrequency,
@@ -105,7 +106,7 @@ const FREQUENCY_OPTIONS: { value: BillingFrequency; label: string; hint: string 
 ];
 
 export default function SubscriptionsPage() {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useThemePreference();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);

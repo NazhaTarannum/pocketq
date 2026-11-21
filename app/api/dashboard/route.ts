@@ -1314,9 +1314,34 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, category: cat });
     }
 
+    if (action === 'UPDATE_THEME') {
+      const normalizedTheme = body.theme === 'DARK' ? 'DARK' : 'LIGHT';
+      await prisma.userSettings.upsert({
+        where: { userId },
+        update: { theme: normalizedTheme },
+        create: {
+          userId,
+          currencySymbol: '৳',
+          currencyCode: 'BDT',
+          lowBalanceThreshold: 2000,
+          enableReminders: true,
+          enableBudgetAlerts: true,
+          theme: normalizedTheme,
+        },
+      });
+      return NextResponse.json({ success: true, theme: normalizedTheme });
+    }
+
     if (action === 'UPDATE_SETTINGS') {
-      const { currencySymbol, currencyCode, lowBalanceThreshold, enableReminders, enableBudgetAlerts } =
-        body;
+      const {
+        currencySymbol,
+        currencyCode,
+        lowBalanceThreshold,
+        enableReminders,
+        enableBudgetAlerts,
+        theme,
+      } = body;
+      const normalizedTheme = theme === 'DARK' ? 'DARK' : theme === 'LIGHT' ? 'LIGHT' : undefined;
       await prisma.userSettings.upsert({
         where: { userId },
         update: {
@@ -1325,6 +1350,7 @@ export async function POST(request: Request) {
           lowBalanceThreshold: Number(lowBalanceThreshold) || 2000,
           enableReminders: Boolean(enableReminders),
           enableBudgetAlerts: Boolean(enableBudgetAlerts),
+          ...(normalizedTheme ? { theme: normalizedTheme } : {}),
         },
         create: {
           userId,
@@ -1333,6 +1359,7 @@ export async function POST(request: Request) {
           lowBalanceThreshold: Number(lowBalanceThreshold) || 2000,
           enableReminders: Boolean(enableReminders),
           enableBudgetAlerts: Boolean(enableBudgetAlerts),
+          theme: normalizedTheme || 'LIGHT',
         },
       });
       return NextResponse.json({ success: true });

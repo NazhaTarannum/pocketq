@@ -22,6 +22,7 @@ import {
   Plus,
 } from 'lucide-react';
 import AppSidebar from '@/components/AppSidebar';
+import { useThemePreference } from '@/lib/useThemePreference';
 
 interface WalletItem {
   id: string;
@@ -116,7 +117,7 @@ interface DashboardData {
 export default function ReservedManagementPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useThemePreference();
   const [submitting, setSubmitting] = useState(false);
 
   const [activeModal, setActiveModal] = useState<

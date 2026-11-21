@@ -24,6 +24,7 @@ import {
   Check,
 } from 'lucide-react';
 import AppSidebar from '@/components/AppSidebar';
+import { useThemePreference } from '@/lib/useThemePreference';
 import { formatDateDDMMYYYY } from '@/lib/format';
 import {
   calculateBillSplit,
@@ -91,7 +92,7 @@ interface SavedBillSplit {
 const uid = () => Math.random().toString(36).slice(2, 10);
 
 export default function BillSplittingPage() {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useThemePreference();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);

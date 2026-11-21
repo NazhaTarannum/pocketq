@@ -19,6 +19,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import AppSidebar from '@/components/AppSidebar';
+import { useThemePreference } from '@/lib/useThemePreference';
 import { formatDateDDMMYYYY } from '@/lib/format';
 
 interface WalletItem {
@@ -72,7 +73,7 @@ export default function WealthPage() {
   const [data, setData] = useState<WealthPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useThemePreference();
 
   const [invName, setInvName] = useState('');
   const [invType, setInvType] = useState('DPS');

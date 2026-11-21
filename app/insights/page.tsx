@@ -20,6 +20,7 @@ import {
   Info,
 } from 'lucide-react';
 import AppSidebar from '@/components/AppSidebar';
+import { useThemePreference } from '@/lib/useThemePreference';
 
 interface ForecastPoint {
   days: number;
@@ -63,7 +64,7 @@ interface InsightsData {
 export default function InsightsAndCalendarPage() {
   const [data, setData] = useState<InsightsData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useThemePreference();
   const [scenario, setScenario] = useState<'OPTIMISTIC' | 'EXPECTED' | 'CONSERVATIVE'>('EXPECTED');
 
   const formatBDT = (num: number) => `৳${Math.round(num).toLocaleString('en-IN')}`;

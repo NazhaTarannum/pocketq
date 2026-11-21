@@ -22,6 +22,7 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import AppSidebar from '@/components/AppSidebar';
+import { useThemePreference } from '@/lib/useThemePreference';
 
 interface WalletItem {
   id: string;
@@ -95,7 +96,7 @@ interface PlanningData {
 export default function PlanningWorkspacePage() {
   const [data, setData] = useState<PlanningData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useThemePreference();
   const [submitting, setSubmitting] = useState(false);
 
   // Expected Income Form

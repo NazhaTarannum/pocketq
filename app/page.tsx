@@ -9,6 +9,7 @@ import DDMMYYYYInput from '@/components/DDMMYYYYInput';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import AppSidebar from '@/components/AppSidebar';
+import { useThemePreference } from '@/lib/useThemePreference';
 import {
   Wallet,
   ArrowUpRight,
@@ -147,7 +148,7 @@ interface DashboardData {
 export default function PocketQApp() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useThemePreference();
   const [simAmount, setSimAmount] = useState<number>(850);
   const [runwayDays, setRunwayDays] = useState<number>(15);
   const [walletModalOpen, setWalletModalOpen] = useState(false);
