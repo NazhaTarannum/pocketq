@@ -667,7 +667,7 @@ export default function PocketQApp() {
 
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setActiveModal('SPLIT')}
+              onClick={() => { window.location.href = '/split'; }}
               className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-[#FFEF5C] text-[#001A23] hover:brightness-95 transition shadow-sm cursor-pointer"
             >
               <Users className="w-4 h-4" />
