@@ -657,7 +657,7 @@ export default function PocketQApp() {
 
   return (
     <div
-      className={`min-h-screen transition-colors duration-200 ${
+      className={`min-h-screen overflow-x-hidden transition-colors duration-200 ${
         darkMode ? 'bg-black text-[#E8F1F2]' : 'bg-[#E8F1F2] text-[#001A23]'
       }`}
     >
@@ -678,7 +678,7 @@ export default function PocketQApp() {
               </div>
               <div>
                 <h1 className="font-bold text-lg tracking-tight leading-none">PocketQ</h1>
-                <p className="text-xs opacity-70 mt-0.5">Smart Financial Companion</p>
+                <p className="text-xs opacity-70 mt-0.5 hidden sm:block">Smart Financial Companion</p>
               </div>
             </div>
           </div>
@@ -686,7 +686,7 @@ export default function PocketQApp() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => { window.location.href = '/split'; }}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-[#FFEF5C] text-[#001A23] hover:brightness-95 transition shadow-sm cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl text-xs font-semibold bg-[#FFEF5C] text-[#001A23] hover:brightness-95 transition shadow-sm cursor-pointer shrink-0"
             >
               <Users className="w-4 h-4" />
               <span>Split Bill</span>
@@ -694,7 +694,7 @@ export default function PocketQApp() {
 
             <button
               onClick={() => setActiveModal('TRANSACTION')}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#31493C] text-[#B3EFB2] hover:opacity-95 transition shadow-sm cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#31493C] text-[#B3EFB2] hover:opacity-95 transition shadow-sm cursor-pointer shrink-0"
             >
               <Plus className="w-4 h-4" />
               <span>Add Entry</span>
@@ -730,11 +730,11 @@ export default function PocketQApp() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
-        {/* Hero Section: 3-Column Symmetrical Layout (Obligations | Available-to-Spend | Savings) */}
+        {/* Hero + Wallets Responsive Section (Mobile: Safe Spend -> Slider -> Wallets -> Obligations -> Savings | Desktop: 3-Col Hero + Wallets Row) */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
-          {/* LEFT COLUMN (3 cols): Reserved Obligations */}
+          {/* LEFT COLUMN on Desktop (3 cols), 4th on Mobile: Reserved Obligations */}
           <div
-            className={`lg:col-span-3 rounded-3xl p-4 border flex flex-col justify-between ${
+            className={`order-3 lg:order-1 lg:col-span-3 rounded-3xl p-4 border flex flex-col justify-between ${
               darkMode
                 ? 'bg-[#31493C]/30 border-[#31493C]'
                 : 'bg-white border-[#7A9E7E]/25 shadow-sm'
@@ -873,8 +873,8 @@ export default function PocketQApp() {
             </Link>
           </div>
 
-          {/* CENTER COLUMN (6 cols): Safe Available-to-Spend + Can I Afford It? */}
-          <div className="lg:col-span-6 flex flex-col gap-4">
+          {/* CENTER COLUMN on Desktop (6 cols), 1st & 2nd on Mobile: Safe Available-to-Spend + Can I Afford It? */}
+          <div className="order-1 lg:order-2 lg:col-span-6 flex flex-col gap-4">
           <div className="rounded-3xl p-5 bg-[#31493C] text-[#E8F1F2] shadow-md relative overflow-hidden">
             <div className="flex items-center justify-between">
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-[#B3EFB2]/20 text-[#B3EFB2]">
@@ -894,7 +894,7 @@ export default function PocketQApp() {
               </p>
             </div>
 
-            <div className="mt-4 pt-3.5 border-t border-[#7A9E7E]/30 grid grid-cols-3 gap-3 text-xs">
+            <div className="mt-4 pt-3.5 border-t border-[#7A9E7E]/30 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
               <div>
                 <span className="opacity-70 block">Total Owned</span>
                 <span className="font-bold text-base">{formatBDT(data.summary.totalBalance)}</span>
@@ -1115,9 +1115,9 @@ export default function PocketQApp() {
           </div>
         </div>
 
-          {/* RIGHT COLUMN (3 cols): Savings & Emergency Funds */}
+          {/* RIGHT COLUMN on Desktop (3 cols), 5th on Mobile: Savings & Emergency Funds */}
           <div
-            className={`lg:col-span-3 rounded-3xl p-4 border flex flex-col justify-between ${
+            className={`order-4 lg:order-3 lg:col-span-3 rounded-3xl p-4 border flex flex-col justify-between ${
               darkMode
                 ? 'bg-[#31493C]/30 border-[#31493C]'
                 : 'bg-white border-[#7A9E7E]/25 shadow-sm'
@@ -1216,10 +1216,9 @@ export default function PocketQApp() {
               See More + {data.savingsGoals && data.savingsGoals.length > 4 ? `(${data.savingsGoals.length} total)` : ""}
             </Link>
           </div>
-        </section>
 
-        {/* Wallets Row */}
-        <section>
+          {/* Wallets Row: 3rd on Mobile (right after Slider), Full-Width Row below Hero on Desktop */}
+          <div className="order-2 lg:order-4 lg:col-span-12 pt-2">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-bold text-base flex items-center gap-2">
               <Wallet className="w-4 h-4 text-[#7A9E7E]" />
@@ -1292,6 +1291,7 @@ export default function PocketQApp() {
               </div>
             ))}
           </div>
+                  </div>
         </section>
 
         {/* Spending Analytics & Cashflow Section */}
