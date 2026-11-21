@@ -114,6 +114,7 @@ export interface BillCalculationResult {
   finalTotal: number;
   totalPaidByParticipants: number;
   unallocatedPaymentDiff: number;
+  overpaidPoolAmount: number;
   participantBreakdowns: ParticipantBreakdown[];
   itemStatuses: ItemValidationStatus[];
   nettedTransfers: NettedTransfer[];
@@ -472,17 +473,20 @@ export function calculateBillSplit(input: BillCalculationInput): BillCalculation
   }
 
   // 5. Payer validation & Minimum-Transfer Settlement Netting
+  // Allows total paid to exceed the final bill (overcollection/change returned to overpayers),
+  // while flagging only if total collected is less than the bill total.
   const totalPaidMinor = participants.reduce(
     (acc, p) => acc + toMinor(Math.max(0, Number(p.paidAmount) || 0)),
     0
   );
   const paymentDiffMinor = finalTotalMinor - totalPaidMinor;
+  const overpaidPoolMinor = Math.max(0, totalPaidMinor - finalTotalMinor);
 
-  if (finalTotalMinor > 0 && Math.abs(paymentDiffMinor) > 1) {
+  if (finalTotalMinor > 0 && paymentDiffMinor > 1) {
     validationErrors.push(
-      `Total paid (${fromMinor(totalPaidMinor).toFixed(2)}) must equal final bill total (${fromMinor(
+      `Total paid (${fromMinor(totalPaidMinor).toFixed(2)}) is short of the bill total (${fromMinor(
         finalTotalMinor
-      ).toFixed(2)}).`
+      ).toFixed(2)}) by ${fromMinor(paymentDiffMinor).toFixed(2)}.`
     );
   }
 
@@ -542,6 +546,7 @@ export function calculateBillSplit(input: BillCalculationInput): BillCalculation
     finalTotal: fromMinor(finalTotalMinor),
     totalPaidByParticipants: fromMinor(totalPaidMinor),
     unallocatedPaymentDiff: fromMinor(paymentDiffMinor),
+    overpaidPoolAmount: fromMinor(overpaidPoolMinor),
     participantBreakdowns,
     itemStatuses,
     nettedTransfers,

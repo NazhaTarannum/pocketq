@@ -1488,57 +1488,108 @@ export default function BillSplittingPage() {
                   </div>
                 ) : (
                   <div className="space-y-2.5">
-                    {participants.map((p) => (
-                      <div
-                        key={p.id}
-                        className="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center p-2.5 rounded-xl border border-[#7A9E7E]/25"
-                      >
-                        <span className="sm:col-span-4 text-xs font-bold">{p.name}</span>
-                        <div className="sm:col-span-4">
-                          <input
-                            type="number"
-                            min="0"
-                            step="any"
-                            value={p.paidAmount || ''}
-                            onChange={(e) => {
-                              const amt = parseFloat(e.target.value) || 0;
-                              setParticipants((prev) =>
-                                prev.map((item) =>
-                                  item.id === p.id ? { ...item, paidAmount: amt } : item
-                                )
-                              );
-                            }}
-                            placeholder={`Amount paid (${currency})`}
-                            className={`w-full px-2.5 py-1.5 rounded-lg border text-xs ${inputClass}`}
-                          />
-                        </div>
-                        <div className="sm:col-span-4">
-                          {p.isMe && p.paidAmount > 0 && (
-                            <select
-                              value={p.walletId || ''}
-                              onChange={(e) =>
+                    {participants.map((p) => {
+                      const bd = liveCalc.participantBreakdowns.find(
+                        (b) => b.participantId === p.id
+                      );
+                      const net = bd ? bd.netBalance : 0;
+                      const share = bd ? bd.finalOwed : 0;
+                      return (
+                        <div
+                          key={p.id}
+                          className="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center p-2.5 rounded-xl border border-[#7A9E7E]/25"
+                        >
+                          <div className="sm:col-span-4">
+                            <span className="text-xs font-bold block">{p.name}</span>
+                            <span className="text-[11px] opacity-70">
+                              Share: {currency}{share.toFixed(2)}
+                            </span>
+                          </div>
+                          <div className="sm:col-span-4">
+                            <input
+                              type="number"
+                              min="0"
+                              step="any"
+                              value={p.paidAmount || ''}
+                              onChange={(e) => {
+                                const amt = parseFloat(e.target.value) || 0;
                                 setParticipants((prev) =>
                                   prev.map((item) =>
-                                    item.id === p.id
-                                      ? { ...item, walletId: e.target.value || null }
-                                      : item
+                                    item.id === p.id ? { ...item, paidAmount: amt } : item
                                   )
-                                )
-                              }
+                                );
+                              }}
+                              placeholder={`Amount paid (${currency})`}
                               className={`w-full px-2.5 py-1.5 rounded-lg border text-xs ${inputClass}`}
-                            >
-                              <option value="">No wallet deduction</option>
-                              {wallets.map((w) => (
-                                <option key={w.id} value={w.id}>
-                                  {w.name} ({currency}
-                                  {w.balance.toLocaleString()})
-                                </option>
-                              ))}
-                            </select>
-                          )}
+                            />
+                          </div>
+                          <div className="sm:col-span-4 flex flex-col items-start sm:items-end gap-1">
+                            {net > 0.005 ? (
+                              <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#B3EFB2] text-[#001A23]">
+                                Gets back +{currency}{net.toFixed(2)}
+                              </span>
+                            ) : net < -0.005 ? (
+                              <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#D52073]/15 text-[#D52073]">
+                                Has to pay more {currency}{Math.abs(net).toFixed(2)}
+                              </span>
+                            ) : (
+                              <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold opacity-70">
+                                Settled ({currency}0.00)
+                              </span>
+                            )}
+                            {p.isMe && p.paidAmount > 0 && (
+                              <select
+                                value={p.walletId || ''}
+                                onChange={(e) =>
+                                  setParticipants((prev) =>
+                                    prev.map((item) =>
+                                      item.id === p.id
+                                        ? { ...item, walletId: e.target.value || null }
+                                        : item
+                                    )
+                                  )
+                                }
+                                className={`w-full px-2 py-1 rounded-lg border text-[11px] ${inputClass}`}
+                              >
+                                <option value="">No wallet deduction</option>
+                                {wallets.map((w) => (
+                                  <option key={w.id} value={w.id}>
+                                    {w.name} ({currency}
+                                    {w.balance.toLocaleString()})
+                                  </option>
+                                ))}
+                              </select>
+                            )}
+                          </div>
                         </div>
+                      );
+                    })}
+
+                    {/* Group Contribution Pool Summary */}
+                    <div className="p-3 rounded-xl bg-[#7A9E7E]/10 border border-[#7A9E7E]/25 flex flex-wrap items-center justify-between gap-2 text-xs">
+                      <div>
+                        <span className="opacity-75">Total Contributed: </span>
+                        <span className="font-extrabold">
+                          {currency}{liveCalc.totalPaidByParticipants.toFixed(2)}
+                        </span>
+                        <span className="opacity-65">
+                          {' '}/ Bill {currency}{liveCalc.finalTotal.toFixed(2)}
+                        </span>
                       </div>
-                    ))}
+                      {liveCalc.overpaidPoolAmount > 0.005 ? (
+                        <span className="px-2.5 py-1 rounded-full font-extrabold bg-[#B3EFB2] text-[#001A23]">
+                          Excess Overpaid: +{currency}{liveCalc.overpaidPoolAmount.toFixed(2)} to return
+                        </span>
+                      ) : liveCalc.unallocatedPaymentDiff > 0.005 ? (
+                        <span className="px-2.5 py-1 rounded-full font-extrabold bg-[#D52073] text-white">
+                          Shortfall: {currency}{liveCalc.unallocatedPaymentDiff.toFixed(2)} more needed
+                        </span>
+                      ) : (
+                        <span className="px-2.5 py-1 rounded-full font-bold bg-[#31493C] text-[#B3EFB2]">
+                          Exact Bill Covered
+                        </span>
+                      )}
+                    </div>
                   </div>
                 )}
               </section>
@@ -1609,22 +1660,60 @@ export default function BillSplittingPage() {
                   </div>
                 </div>
 
+                {/* Group Pool Collection Status */}
+                <div className="p-2.5 rounded-xl bg-[#7A9E7E]/10 border border-[#7A9E7E]/25 text-xs space-y-1">
+                  <div className="flex justify-between">
+                    <span className="opacity-75">Total Paid by Group</span>
+                    <span className="font-extrabold">
+                      {currency}{liveCalc.totalPaidByParticipants.toFixed(2)}
+                    </span>
+                  </div>
+                  {liveCalc.overpaidPoolAmount > 0.005 && (
+                    <div className="flex justify-between font-bold text-[#31493C] dark:text-[#B3EFB2]">
+                      <span>Excess Pool Refund</span>
+                      <span>+{currency}{liveCalc.overpaidPoolAmount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  {liveCalc.unallocatedPaymentDiff > 0.005 && (
+                    <div className="flex justify-between font-bold text-[#D52073]">
+                      <span>Remaining Shortfall</span>
+                      <span>-{currency}{liveCalc.unallocatedPaymentDiff.toFixed(2)}</span>
+                    </div>
+                  )}
+                </div>
+
                 {/* Individual Participant Breakdowns */}
                 <div className="space-y-2.5">
                   <span className="text-[11px] font-bold uppercase tracking-wider opacity-65 block">
-                    Individual Shares ({participants.length})
+                    Individual Shares, Returns &amp; Balance Due ({participants.length})
                   </span>
                   {liveCalc.participantBreakdowns.map((b) => (
                     <div
                       key={b.participantId}
-                      className="p-3 rounded-xl border border-[#7A9E7E]/25 bg-[#7A9E7E]/5 space-y-1 text-xs"
+                      className="p-3 rounded-xl border border-[#7A9E7E]/25 bg-[#7A9E7E]/5 space-y-1.5 text-xs"
                     >
                       <div className="flex justify-between items-center font-extrabold">
                         <span>{b.name}</span>
                         <span className="text-sm text-[#31493C] dark:text-[#B3EFB2]">
-                          {currency}
+                          Share: {currency}
                           {b.finalOwed.toFixed(2)}
                         </span>
+                      </div>
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="opacity-75">
+                          Paid: <strong>{currency}{b.paidAmount.toFixed(2)}</strong>
+                        </span>
+                        {b.netBalance > 0.005 ? (
+                          <span className="px-2 py-0.5 rounded-full font-extrabold bg-[#B3EFB2] text-[#001A23]">
+                            Gets back in return: +{currency}{b.netBalance.toFixed(2)}
+                          </span>
+                        ) : b.netBalance < -0.005 ? (
+                          <span className="px-2 py-0.5 rounded-full font-extrabold bg-[#D52073]/15 text-[#D52073]">
+                            Has to pay more: {currency}{Math.abs(b.netBalance).toFixed(2)}
+                          </span>
+                        ) : (
+                          <span className="opacity-70 font-semibold">Settled</span>
+                        )}
                       </div>
                       <div className="text-[11px] opacity-75 flex flex-wrap gap-x-3 gap-y-0.5">
                         {splitMode === 'ITEMIZED' && (
@@ -1645,11 +1734,11 @@ export default function BillSplittingPage() {
                   ))}
                 </div>
 
-                {/* Netted Settlement Preview */}
-                {liveCalc.nettedTransfers.length > 0 && (
+                {/* Netted Settlement & Excess Pool Refund Preview */}
+                {(liveCalc.nettedTransfers.length > 0 || liveCalc.overpaidPoolAmount > 0.005) && (
                   <div className="space-y-1.5 pt-2 border-t border-[#7A9E7E]/20">
                     <span className="text-[11px] font-bold uppercase tracking-wider opacity-65 block">
-                      Who Pays Whom
+                      Who Pays Whom &amp; Excess Refunds
                     </span>
                     {liveCalc.nettedTransfers.map((tr, idx) => (
                       <div
@@ -1665,6 +1754,32 @@ export default function BillSplittingPage() {
                         </span>
                       </div>
                     ))}
+                    {liveCalc.overpaidPoolAmount > 0.005 &&
+                      liveCalc.participantBreakdowns
+                        .filter((b) => b.netBalance > 0.005)
+                        .map((creditor) => {
+                          const coveredByPeers = liveCalc.nettedTransfers
+                            .filter((t) => t.toParticipantId === creditor.participantId)
+                            .reduce((s, t) => s + t.amount, 0);
+                          const poolRefund = Math.max(
+                            0,
+                            Math.round((creditor.netBalance - coveredByPeers) * 100) / 100
+                          );
+                          if (poolRefund <= 0.005) return null;
+                          return (
+                            <div
+                              key={`pool-${creditor.participantId}`}
+                              className="flex items-center justify-between text-xs p-2 rounded-lg bg-[#B3EFB2]/20 border border-[#7A9E7E]/30 font-bold"
+                            >
+                              <span className="truncate">
+                                Excess Pool Refund &rarr; {creditor.name}
+                              </span>
+                              <span className="text-[#31493C] dark:text-[#B3EFB2] shrink-0">
+                                +{currency}{poolRefund.toFixed(2)}
+                              </span>
+                            </div>
+                          );
+                        })}
                   </div>
                 )}
 
