@@ -149,7 +149,7 @@ export default function PocketQApp() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useThemePreference();
-  const [simAmount, setSimAmount] = useState<number>(850);
+  const [simAmount, setSimAmount] = useState<number>(0);
   const [dailySafeThreshold, setDailySafeThreshold] = useState<number>(200);
   const [dailyCrazyThreshold, setDailyCrazyThreshold] = useState<number>(50);
   const [editingSimLimits, setEditingSimLimits] = useState<boolean>(false);
