@@ -16,7 +16,7 @@
  *    of all wallets, transactions, obligations, savings, loans, and budgets.
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
   ArrowLeft,
@@ -25,6 +25,8 @@ import {
   Settings,
   Bell,
   Tag,
+  ChevronDown,
+  Check,
   Download,
   CheckCircle2,
   Plus,
@@ -137,6 +139,21 @@ export default function SettingsPage() {
   const [currencySymbol, setCurrencySymbol] = useState('৳');
   const [currencyCode, setCurrencyCode] = useState('BDT');
   const [currencySearch, setCurrencySearch] = useState('');
+  const [currencyDropdownOpen, setCurrencyDropdownOpen] = useState(false);
+  const currencyPickerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        currencyPickerRef.current &&
+        !currencyPickerRef.current.contains(e.target as Node)
+      ) {
+        setCurrencyDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
   const [lowBalanceThreshold, setLowBalanceThreshold] = useState('2000');
   const [enableReminders, setEnableReminders] = useState(true);
   const [enableBudgetAlerts, setEnableBudgetAlerts] = useState(true);
@@ -153,9 +170,22 @@ export default function SettingsPage() {
     const q = currencySearch.trim().toLowerCase();
     if (!q) return allCurrencies;
     return allCurrencies.filter(
-      (c) => c.code === currencyCode || c.label.toLowerCase().includes(q)
+      (c) =>
+        c.code.toLowerCase().includes(q) ||
+        c.symbol.toLowerCase().includes(q) ||
+        c.label.toLowerCase().includes(q)
     );
-  }, [allCurrencies, currencySearch, currencyCode]);
+  }, [allCurrencies, currencySearch]);
+
+  const selectedCurrencyObj = useMemo(
+    () =>
+      allCurrencies.find((c) => c.code === currencyCode) || {
+        code: currencyCode,
+        symbol: currencySymbol,
+        label: `${currencyCode} (${currencySymbol})`,
+      },
+    [allCurrencies, currencyCode, currencySymbol]
+  );
 
   /**
    * Fetches current settings, custom categories, and full financial state from `/api/dashboard`.
@@ -397,35 +427,90 @@ export default function SettingsPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Searchable Global ISO 4217 Currency Selector */}
-            <div className="space-y-2">
+            {/* Searchable Global ISO 4217 Currency Combobox + Selected Display */}
+            <div className="space-y-2" ref={currencyPickerRef}>
               <label className="text-xs font-semibold block">
                 Preferred Currency ({allCurrencies.length} Available)
               </label>
-              <input
-                type="text"
-                placeholder="Filter by code or name (e.g., BDT, USD, EUR, SAR, JPY)..."
-                value={currencySearch}
-                onChange={(e) => setCurrencySearch(e.target.value)}
-                className="w-full rounded-xl px-3.5 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
-              />
-              <select
-                value={currencyCode}
-                onChange={(e) => {
-                  const chosen = allCurrencies.find((c) => c.code === e.target.value);
-                  if (chosen) {
-                    setCurrencyCode(chosen.code);
-                    setCurrencySymbol(chosen.symbol);
-                  }
-                }}
-                className="w-full rounded-xl px-3.5 py-2.5 text-sm border border-[#7A9E7E]/30 bg-transparent outline-none"
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Type code or name (e.g., BDT, USD, EUR, SAR, JPY)..."
+                  value={currencySearch}
+                  onFocus={() => setCurrencyDropdownOpen(true)}
+                  onChange={(e) => {
+                    setCurrencySearch(e.target.value);
+                    setCurrencyDropdownOpen(true);
+                  }}
+                  className="w-full rounded-xl pl-3.5 pr-9 py-2.5 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none focus:border-[#7A9E7E]"
+                />
+                <button
+                  type="button"
+                  aria-label="Toggle currency list"
+                  onClick={() => setCurrencyDropdownOpen((prev) => !prev)}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 opacity-70 hover:opacity-100 cursor-pointer"
+                >
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform ${
+                      currencyDropdownOpen ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+
+                {currencyDropdownOpen && (
+                  <div
+                    className={`absolute z-30 left-0 right-0 mt-1 max-h-56 overflow-y-auto rounded-xl border shadow-lg ${
+                      darkMode
+                        ? 'bg-[#071E22] border-[#31493C] text-[#E8F1F2]'
+                        : 'bg-white border-[#7A9E7E]/35 text-[#001A23]'
+                    }`}
+                  >
+                    {filteredCurrencies.length === 0 ? (
+                      <div className="px-3.5 py-3 text-xs opacity-65">
+                        No currencies matching &ldquo;{currencySearch}&rdquo;
+                      </div>
+                    ) : (
+                      filteredCurrencies.map((currency) => {
+                        const isSelected = currency.code === currencyCode;
+                        return (
+                          <button
+                            key={currency.code}
+                            type="button"
+                            onClick={() => {
+                              setCurrencyCode(currency.code);
+                              setCurrencySymbol(currency.symbol);
+                              setCurrencySearch('');
+                              setCurrencyDropdownOpen(false);
+                            }}
+                            className={`w-full text-left px-3.5 py-2 text-xs flex items-center justify-between gap-2 transition cursor-pointer ${
+                              isSelected
+                                ? 'bg-[#31493C] text-[#B3EFB2] font-bold'
+                                : darkMode
+                                ? 'hover:bg-[#31493C]/40'
+                                : 'hover:bg-[#E8F1F2]'
+                            }`}
+                          >
+                            <span className="truncate">{currency.label}</span>
+                            {isSelected && <Check className="w-3.5 h-3.5 shrink-0" />}
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Read-only Selected Currency Display */}
+              <div
+                className={`w-full rounded-xl px-3.5 py-2.5 text-xs border flex items-center justify-between gap-2 ${
+                  darkMode
+                    ? 'bg-[#31493C]/30 border-[#31493C] text-[#E8F1F2]'
+                    : 'bg-[#E8F1F2]/70 border-[#7A9E7E]/25 text-[#001A23]'
+                }`}
               >
-                {filteredCurrencies.map((currency) => (
-                  <option key={currency.code} value={currency.code}>
-                    {currency.label}
-                  </option>
-                ))}
-              </select>
+                <span className="opacity-70 shrink-0">Selected Currency:</span>
+                <span className="font-bold truncate">{selectedCurrencyObj.label}</span>
+              </div>
             </div>
 
             {/* Low-Balance Threshold Input */}
