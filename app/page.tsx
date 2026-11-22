@@ -1098,8 +1098,8 @@ export default function PocketQApp() {
               const isTight = !isDanger && rawDaily < dailySafeThreshold;
 
               return (
-                <div className="pt-3 border-t border-[#7A9E7E]/20 flex flex-wrap items-center justify-between gap-2 text-xs">
-                  <div className="flex items-center gap-3">
+                <div className="pt-3 border-t border-[#7A9E7E]/20 flex flex-nowrap items-center justify-between gap-2 text-xs">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                     <div>
                       <span className="opacity-70 block">Left After Spend</span>
                       <span
