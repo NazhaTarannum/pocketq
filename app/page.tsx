@@ -3,7 +3,7 @@ import { FX_RATES_FROM_BDT, convertCurrencyAmount, formatCurrency } from '@/lib/
 
 /**
  * @file app/page.tsx
- * @description Primary financial command dashboard displaying Safe Available-to-Spend, wallets, obligations, savings, impulse simulator, and daily ledger activity.
+ * @description Primary financial command dashboard displaying Safe Spendable Cash, wallets, obligations, savings, impulse simulator, and daily ledger activity.
  */
 
 import DDMMYYYYInput from '@/components/DDMMYYYYInput';
@@ -898,13 +898,13 @@ export default function PocketQApp() {
             </Link>
           </div>
 
-          {/* CENTER COLUMN on Desktop (6 cols), 1st & 2nd on Mobile: Safe Available-to-Spend + Can I Afford It? */}
+          {/* CENTER COLUMN on Desktop (6 cols), 1st & 2nd on Mobile: Safe Spendable Cash + Can I Afford It? */}
           <div className="order-1 lg:order-2 lg:col-span-6 flex flex-col gap-4">
           <div className="rounded-3xl p-5 bg-[#31493C] text-[#E8F1F2] shadow-md relative overflow-hidden">
             <div className="flex flex-col items-start gap-1.5">
               <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-[#B3EFB2]/20 text-[#B3EFB2]">
                 <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                Safe Available-to-Spend
+                Safe Spendable Cash
               </span>
               <span className="text-xs opacity-75 pl-0.5">
                 After upcoming obligations
@@ -1122,7 +1122,7 @@ export default function PocketQApp() {
                   </div>
 
                   <span
-                    className={`px-3 py-1 rounded-full font-bold ${
+                    className={`px-2.5 py-1 rounded-full font-bold text-[11px] whitespace-nowrap shrink-0 ${
                       isDanger
                         ? "bg-[#D52073] text-white"
                         : isTight

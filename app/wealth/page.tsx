@@ -288,6 +288,18 @@ export default function WealthPage() {
             </span>
           </div>
 
+          <div className="rounded-3xl p-4 bg-[#31493C] text-[#E8F1F2] shadow-xs">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#B3EFB2] flex items-center gap-1">
+              <ShieldCheck className="w-3.5 h-3.5" /> Safe Spendable Cash
+            </span>
+            <p className="text-xl font-extrabold mt-1">
+              {formatMoney(data.summary?.availableToSpend || 0)}
+            </p>
+            <span className="text-[11px] opacity-80 block mt-0.5">
+              Excludes non-liquid investments
+            </span>
+          </div>
+
           <div
             className={`rounded-3xl p-4 border ${
               darkMode
@@ -303,18 +315,6 @@ export default function WealthPage() {
             </p>
             <span className="text-[11px] opacity-75">
               Liquid wallets + investment assets
-            </span>
-          </div>
-
-          <div className="rounded-3xl p-4 bg-[#31493C] text-[#E8F1F2] shadow-xs">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#B3EFB2] flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5" /> Safe Spendable Cash
-            </span>
-            <p className="text-xl font-extrabold mt-1">
-              {formatMoney(data.summary?.availableToSpend || 0)}
-            </p>
-            <span className="text-[11px] opacity-80 block mt-0.5">
-              Excludes non-liquid investments
             </span>
           </div>
         </section>
@@ -398,14 +398,14 @@ export default function WealthPage() {
                 className="rounded-xl px-2.5 py-1.5 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
               />
             </div>
-            <div className="sm:col-span-2 lg:col-span-3 flex items-center gap-2">
-              <span className="text-[11px] opacity-70 shrink-0">Deduct from Wallet:</span>
+            <div className="sm:col-span-2 lg:col-span-3 flex items-center gap-2 min-w-0">
+              <span className="text-[11px] opacity-70 shrink-0">Deduction from:</span>
               <select
                 value={invWalletId}
                 onChange={(e) => setInvWalletId(e.target.value)}
-                className="flex-1 rounded-xl px-2.5 py-1.5 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
+                className="flex-1 min-w-0 w-full truncate rounded-xl px-2.5 py-1.5 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
               >
-                <option value="">Track externally only (no wallet deduction)</option>
+                <option value="">No wallet deduction (external)</option>
                 {data.wallets.map((w) => (
                   <option key={w.id} value={w.id}>
                     {w.name} ({formatMoney(w.balance)})
@@ -551,7 +551,7 @@ export default function WealthPage() {
                             onChange={(e) => setInvActionWalletId(e.target.value)}
                             className="rounded-lg px-2.5 py-1.5 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
                           >
-                            <option value="">No wallet adjustment</option>
+                            <option value="">No wallet deduction (external)</option>
                             {data.wallets.map((w) => (
                               <option key={w.id} value={w.id}>
                                 {w.name}
