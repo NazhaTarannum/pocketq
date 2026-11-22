@@ -213,6 +213,7 @@ export default function SettingsPage() {
         }),
       });
       if (res.ok) {
+        try { sessionStorage.removeItem('pocketq_dashboard_cache'); sessionStorage.removeItem('pocketq_splits_cache'); } catch {}
         setSavedBanner(true);
         await fetchSettings();
         setTimeout(() => setSavedBanner(false), 3000);

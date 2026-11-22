@@ -37,7 +37,7 @@ export async function GET() {
       investments,
     ] = await Promise.all([
       prisma.userSettings.findUnique({ where: { userId } }),
-      prisma.wallet.findMany({ where: { userId }, orderBy: { createdAt: 'asc' } }),
+      prisma.wallet.findMany({ where: { userId }, orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] }),
       prisma.transaction.findMany({
         where: { wallet: { userId } },
         include: { wallet: true, targetWallet: true },
@@ -62,7 +62,7 @@ export async function GET() {
           installments: { orderBy: { dueDate: 'asc' } },
           targetWallet: true,
         },
-        orderBy: { dueDate: 'asc' },
+        orderBy: [{ isPaid: 'asc' }, { createdAt: 'asc' }],
       }),
       prisma.savingsGoal.findMany({
         where: { userId },
@@ -72,7 +72,7 @@ export async function GET() {
       prisma.loan.findMany({
         where: { userId },
         include: { payments: { orderBy: { date: 'desc' }, take: 15 } },
-        orderBy: [{ isClosed: 'asc' }, { nextDueDate: 'asc' }],
+        orderBy: [{ isClosed: 'asc' }, { createdAt: 'desc' }],
       }),
       prisma.purchasePlan.findMany({
         where: { userId },
@@ -224,11 +224,14 @@ export async function GET() {
         : Math.max(0, outstandingTotal - ob.reservedAmount);
 
       const nextUnpaidInst = ob.installments.find((i) => !i.isPaid);
-      const effectiveDueDate = nextUnpaidInst ? new Date(nextUnpaidInst.dueDate) : new Date(ob.dueDate);
-      const daysRemaining = Math.ceil(
-        (effectiveDueDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)
-      );
-      const monthsRemaining = Math.max(1, Math.ceil(Math.max(1, daysRemaining) / 30));
+      const rawDue = nextUnpaidInst ? nextUnpaidInst.dueDate : ob.dueDate;
+      const hasDeadline = Boolean(rawDue);
+      const effectiveDueDate = rawDue ? new Date(rawDue) : null;
+      const daysRemaining = effectiveDueDate
+        ? Math.ceil((effectiveDueDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000))
+        : null;
+      const monthsRemaining =
+        daysRemaining !== null ? Math.max(1, Math.ceil(Math.max(1, daysRemaining) / 30)) : 1;
 
       let customSchedule: Array<{ monthIndex: number; label: string; amount: number }> | null = null;
       if (ob.customPlanJson) {
@@ -242,11 +245,11 @@ export async function GET() {
         }
       }
 
-      if (ob.isPaid || remainingToReserve <= 0) {
+      if (ob.isPaid || remainingToReserve <= 0 || !hasDeadline) {
         return {
           ...ob,
           outstandingTotal,
-          remainingToReserve: 0,
+          remainingToReserve: ob.isPaid ? 0 : remainingToReserve,
           daysRemaining,
           monthsRemaining,
           fundingPlan: {
@@ -513,7 +516,7 @@ export async function GET() {
     }> = [];
 
     for (const ob of enrichedObligations) {
-      if (!ob.isPaid) {
+      if (!ob.isPaid && ob.dueDate) {
         calendarEvents.push({
           id: `ob-${ob.id}`,
           date: new Date(ob.dueDate).toISOString(),
@@ -537,7 +540,7 @@ export async function GET() {
       }
     }
     for (const loan of loans) {
-      if (!loan.isClosed && loan.remaining > 0) {
+      if (!loan.isClosed && loan.remaining > 0 && loan.nextDueDate) {
         calendarEvents.push({
           id: `loan-${loan.id}`,
           date: new Date(loan.nextDueDate).toISOString(),
@@ -607,14 +610,20 @@ export async function GET() {
           title: `Deadline Alert: ${ob.title}`,
           message: ob.fundingPlan.shortfallMessage,
         });
-      } else if (!ob.isPaid && ob.daysRemaining <= 10 && ob.daysRemaining >= 0) {
+      } else if (
+        !ob.isPaid &&
+        ob.dueDate &&
+        ob.daysRemaining !== null &&
+        ob.daysRemaining <= 10 &&
+        ob.daysRemaining >= 0
+      ) {
         notifications.push({
           id: `due-soon-${ob.id}`,
           severity: 'INFO',
           title: `Upcoming Deadline (${ob.daysRemaining}d left)`,
           message: `${ob.title} is due on ${new Date(ob.dueDate).toLocaleDateString(
             'en-GB'
-          )}. Reserved: ৳${ob.reservedAmount.toLocaleString('en-IN')} / ৳${ob.outstandingTotal.toLocaleString('en-IN')}.`,
+          )}. Reserved: ${ob.reservedAmount.toFixed(2)} / ${ob.outstandingTotal.toFixed(2)}.`,
         });
       }
     }
@@ -776,7 +785,7 @@ export async function POST(request: Request) {
           title: title.trim(),
           sourceType: sourceType || 'FIXED',
           amount: Math.max(0, Number(amount) || 0),
-          expectedDate: new Date(expectedDate),
+          expectedDate: new Date(`${String(expectedDate).slice(0, 10)}T00:00:00.000Z`),
           isRecurring: Boolean(isRecurring),
           targetWalletId: targetWalletId || null,
           notes: notes?.trim() || null,
@@ -896,7 +905,7 @@ export async function POST(request: Request) {
           title: title.trim(),
           totalAmount: numTotal,
           reservedAmount: numReserved,
-          dueDate: new Date(dueDate),
+          dueDate: dueDate ? new Date(`${String(dueDate).slice(0, 10)}T00:00:00.000Z`) : null,
           category: category || 'OBLIGATION',
           targetWalletId: targetWalletId || null,
           notes: notes?.trim() || null,
@@ -1046,7 +1055,7 @@ export async function POST(request: Request) {
           name: name.trim(),
           currentBalance: initAmt,
           targetAmount: targetAmount ? Number(targetAmount) : null,
-          targetDate: targetDate ? new Date(targetDate) : null,
+          targetDate: targetDate ? new Date(`${String(targetDate).slice(0, 10)}T00:00:00.000Z`) : null,
           notes: notes?.trim() || null,
           transactions:
             initAmt > 0
@@ -1159,44 +1168,143 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true });
     }
 
-    // Loans (BORROWED & LENT) + Repayment History
+    // Loans (BORROWED & LENT: Active Now vs Historical Before App) + Repayment History
     if (action === 'CREATE_LOAN') {
-      const { direction, title, lender, principal, monthlyEmi, reservedAmount, nextDueDate, notes } =
-        body;
-      const numPrincipal = Number(principal) || 0;
-      const numEmi = Number(monthlyEmi) || numPrincipal;
-      const numReserved = Number(reservedAmount) || 0;
+      const {
+        direction,
+        isHistorical,
+        sourceType,
+        sourceWalletId,
+        sourceSavingsId,
+        confirmedReceived,
+        title,
+        lender,
+        principal,
+        monthlyEmi,
+        reservedAmount,
+        nextDueDate,
+        notes,
+      } = body;
+
+      const cleanDir = direction === 'LENT' ? 'LENT' : 'BORROWED';
+      const historical = Boolean(isHistorical);
+      const cleanSourceType = historical
+        ? 'NONE'
+        : sourceType === 'WALLET' || sourceType === 'SAVINGS'
+        ? sourceType
+        : 'NONE';
+
+      const numPrincipal = Math.round((Number(principal) || 0) * 100) / 100;
+      const numEmi = Math.round((Number(monthlyEmi) || numPrincipal) * 100) / 100;
+      const numReserved = Math.round((Number(reservedAmount) || 0) * 100) / 100;
+      const parsedDue = nextDueDate
+        ? new Date(`${String(nextDueDate).slice(0, 10)}T00:00:00.000Z`)
+        : null;
 
       const loan = await prisma.loan.create({
         data: {
           userId,
-          direction: direction === 'LENT' ? 'LENT' : 'BORROWED',
+          direction: cleanDir,
+          isHistorical: historical,
+          sourceType: cleanSourceType,
+          sourceWalletId: cleanSourceType === 'WALLET' ? sourceWalletId || null : null,
+          sourceSavingsId: cleanSourceType === 'SAVINGS' ? sourceSavingsId || null : null,
           title: title.trim(),
           lender: lender?.trim() || null,
           principal: numPrincipal,
           remaining: numPrincipal,
           monthlyEmi: numEmi,
           reservedAmount: numReserved,
-          nextDueDate: new Date(nextDueDate),
+          nextDueDate: parsedDue,
           notes: notes?.trim() || null,
         },
       });
+
+      // Only actual, confirmed money movements for non-historical loans adjust wallet or savings balances
+      if (!historical && numPrincipal > 0) {
+        if (cleanDir === 'LENT') {
+          if (cleanSourceType === 'WALLET' && sourceWalletId) {
+            await prisma.wallet.update({
+              where: { id: sourceWalletId },
+              data: { balance: { decrement: numPrincipal } },
+            });
+            await prisma.transaction.create({
+              data: {
+                type: 'EXPENSE',
+                amount: numPrincipal,
+                category: 'Money Lent',
+                note: `Lent to ${lender?.trim() || 'borrower'}: ${title.trim()}`,
+                walletId: sourceWalletId,
+              },
+            });
+          } else if (cleanSourceType === 'SAVINGS' && sourceSavingsId) {
+            const sg = await prisma.savingsGoal.findUnique({ where: { id: sourceSavingsId } });
+            if (sg) {
+              await prisma.savingsGoal.update({
+                where: { id: sg.id },
+                data: { currentBalance: Math.max(0, Math.round((sg.currentBalance - numPrincipal) * 100) / 100) },
+              });
+              await prisma.savingsTransaction.create({
+                data: {
+                  type: 'WITHDRAW',
+                  amount: numPrincipal,
+                  note: `Lent from savings (${sg.name}): ${title.trim()}`,
+                  savingsGoalId: sg.id,
+                },
+              });
+            }
+          }
+        } else if (cleanDir === 'BORROWED' && confirmedReceived !== false) {
+          if (cleanSourceType === 'WALLET' && sourceWalletId) {
+            await prisma.wallet.update({
+              where: { id: sourceWalletId },
+              data: { balance: { increment: numPrincipal } },
+            });
+            await prisma.transaction.create({
+              data: {
+                type: 'INCOME',
+                amount: numPrincipal,
+                category: 'Loan Received',
+                note: `Borrowed from ${lender?.trim() || 'lender'}: ${title.trim()}`,
+                walletId: sourceWalletId,
+              },
+            });
+          }
+        }
+      }
+
       return NextResponse.json({ success: true, loan });
     }
 
     if (action === 'PAY_LOAN') {
-      const { loanId, amount, walletId, paymentDate, note } = body;
-      const payAmt = Number(amount) || 0;
+      const { loanId, amount, sourceType, walletId, savingsGoalId, paymentDate, note } = body;
+      const payAmt = Math.round((Number(amount) || 0) * 100) / 100;
       if (payAmt <= 0) return NextResponse.json({ error: 'Invalid payment amount' }, { status: 400 });
 
       const loan = await prisma.loan.findUnique({ where: { id: loanId } });
       if (!loan) return NextResponse.json({ error: 'Loan not found' }, { status: 404 });
 
-      const nextRemaining = Math.max(0, loan.remaining - payAmt);
-      const nextReserved = Math.max(0, loan.reservedAmount - payAmt);
+      const nextRemaining = Math.max(0, Math.round((loan.remaining - payAmt) * 100) / 100);
+      const nextReserved = Math.max(0, Math.round((loan.reservedAmount - payAmt) * 100) / 100);
       const isClosed = nextRemaining <= 0.01;
-      const nextMonthDue = new Date(new Date(loan.nextDueDate).getTime() + 30 * 24 * 60 * 60 * 1000);
-      const wallet = walletId ? await prisma.wallet.findUnique({ where: { id: walletId } }) : null;
+      const nextMonthDue = loan.nextDueDate
+        ? new Date(new Date(loan.nextDueDate).getTime() + 30 * 24 * 60 * 60 * 1000)
+        : null;
+
+      const resolvedSource =
+        sourceType === 'SAVINGS' ? 'SAVINGS' : sourceType === 'NONE' ? 'NONE' : 'WALLET';
+      const wallet =
+        resolvedSource === 'WALLET' && walletId
+          ? await prisma.wallet.findUnique({ where: { id: walletId } })
+          : null;
+      const savings =
+        resolvedSource === 'SAVINGS' && savingsGoalId
+          ? await prisma.savingsGoal.findUnique({ where: { id: savingsGoalId } })
+          : null;
+
+      const txDate = paymentDate
+        ? new Date(`${String(paymentDate).slice(0, 10)}T00:00:00.000Z`)
+        : new Date();
 
       await prisma.loan.update({
         where: { id: loan.id },
@@ -1212,14 +1320,16 @@ export async function POST(request: Request) {
         data: {
           loanId: loan.id,
           amount: payAmt,
-          date: paymentDate ? new Date(paymentDate) : new Date(),
+          date: txDate,
+          sourceType: resolvedSource,
           walletName: wallet?.name || null,
+          savingsName: savings?.name || null,
           note: note?.trim() || null,
         },
       });
 
-      if (wallet) {
-        const isLent = loan.direction === 'LENT';
+      const isLent = loan.direction === 'LENT';
+      if (resolvedSource === 'WALLET' && wallet) {
         await prisma.wallet.update({
           where: { id: wallet.id },
           data: {
@@ -1230,12 +1340,28 @@ export async function POST(request: Request) {
           data: {
             type: isLent ? 'INCOME' : 'EXPENSE',
             amount: payAmt,
-            category: isLent ? 'Loan Repaid to Me' : 'Loan EMI',
+            category: isLent ? 'Loan Repaid to Me' : 'Loan Repayment',
             note: note?.trim()
               ? `${loan.title} — ${note.trim()}`
-              : `${isLent ? 'Loan repayment received' : 'Loan payment'}: ${loan.title}`,
-            date: paymentDate ? new Date(paymentDate) : new Date(),
+              : `${isLent ? 'Loan repayment received' : 'Loan repaid'}: ${loan.title}`,
+            date: txDate,
             walletId: wallet.id,
+          },
+        });
+      } else if (resolvedSource === 'SAVINGS' && savings) {
+        const nextSavBal = isLent
+          ? Math.round((savings.currentBalance + payAmt) * 100) / 100
+          : Math.max(0, Math.round((savings.currentBalance - payAmt) * 100) / 100);
+        await prisma.savingsGoal.update({
+          where: { id: savings.id },
+          data: { currentBalance: nextSavBal },
+        });
+        await prisma.savingsTransaction.create({
+          data: {
+            type: isLent ? 'DEPOSIT' : 'WITHDRAW',
+            amount: payAmt,
+            note: `${isLent ? 'Loan repaid into savings' : 'Loan repaid from savings'}: ${loan.title}`,
+            savingsGoalId: savings.id,
           },
         });
       }
@@ -1259,7 +1385,7 @@ export async function POST(request: Request) {
           estimatedCost: Number(estimatedCost) || 0,
           savedSoFar: Number(savedSoFar) || 0,
           priority: priority || 'MEDIUM',
-          targetDate: targetDate ? new Date(targetDate) : null,
+          targetDate: targetDate ? new Date(`${String(targetDate).slice(0, 10)}T00:00:00.000Z`) : null,
           notes: notes?.trim() || null,
         },
       });
@@ -1549,7 +1675,7 @@ export async function POST(request: Request) {
           billingCycle: billingCycle || 'MONTHLY',
           customCycleDays:
             billingCycle === 'CUSTOM' ? Math.max(1, Number(customCycleDays) || 30) : null,
-          nextRenewalDate: nextRenewalDate ? new Date(nextRenewalDate) : new Date(),
+          nextRenewalDate: nextRenewalDate ? new Date(`${String(nextRenewalDate).slice(0, 10)}T00:00:00.000Z`) : new Date(),
           status: 'ACTIVE',
           note: note ? String(note).trim() : null,
         },

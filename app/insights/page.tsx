@@ -1,5 +1,7 @@
 'use client';
 
+import { formatCurrency } from '@/lib/format';
+
 /**
  * @file app/insights/page.tsx
  * @description Calendar timeline, cash-flow analytics, and 30/60/90-day scenario forecasting workspace.
@@ -32,6 +34,7 @@ interface ForecastPoint {
 }
 
 interface InsightsData {
+  settings?: { currencySymbol?: string; currencyCode?: string };
   plannerContext: {
     scenarios: {
       OPTIMISTIC: ForecastPoint[];
@@ -96,7 +99,8 @@ export default function InsightsAndCalendarPage() {
   const [darkMode, setDarkMode] = useThemePreference();
   const [scenario, setScenario] = useState<'OPTIMISTIC' | 'EXPECTED' | 'CONSERVATIVE'>('EXPECTED');
 
-  const formatBDT = (num: number) => `৳${Math.round(num).toLocaleString('en-IN')}`;
+  const currencySymbol = data?.settings?.currencySymbol || '৳';
+  const formatBDT = (num: number) => formatCurrency(num, currencySymbol);
   const formatDateDDMMYYYY = (dateStr: string) => {
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return dateStr;

@@ -1,5 +1,7 @@
 'use client';
 
+import { formatCurrency } from '@/lib/format';
+
 /**
  * @file app/reserved/page.tsx
  * @description Dedicated management view for upcoming obligations, reserved bills, and savings buckets.
@@ -93,6 +95,7 @@ interface SavingsGoalItem {
 }
 
 interface DashboardData {
+  settings?: { currencySymbol?: string; currencyCode?: string };
   summary: {
     totalBalance: number;
     totalReserved: number;
@@ -194,7 +197,8 @@ export default function ReservedManagementPage() {
   const [savActionCategory, setSavActionCategory] = useState('Shopping');
   const [savActionNote, setSavActionNote] = useState('');
 
-  const formatBDT = (num: number) => `৳${Math.round(num).toLocaleString('en-IN')}`;
+  const currencySymbol = data?.settings?.currencySymbol || '৳';
+  const formatBDT = (num: number) => formatCurrency(num, currencySymbol);
   const formatDateDDMMYYYY = (dateStr: string | Date) => {
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return String(dateStr);
@@ -223,7 +227,7 @@ export default function ReservedManagementPage() {
 
   const handleObligationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!obTitle || !obAmount || !obDueDate) return;
+    if (!obTitle.trim() || !obAmount || submitting) return;
     setSubmitting(true);
     await fetch('/api/dashboard', {
       method: 'POST',
@@ -233,7 +237,7 @@ export default function ReservedManagementPage() {
         title: obTitle,
         totalAmount: Number(obAmount),
         reservedAmount: Number(obInitialReserved) || 0,
-        dueDate: obDueDate,
+        dueDate: obDueDate || null,
         targetWalletId: obTargetWalletId || null,
         category: 'OBLIGATION',
         notes: obNotes,
@@ -907,7 +911,7 @@ export default function ReservedManagementPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold block mb-1">Total Amount Required (৳)</label>
+                  <label className="text-xs font-semibold block mb-1">Total Amount Required ({currencySymbol})</label>
                   <input
                     type="number"
                     required
@@ -919,7 +923,7 @@ export default function ReservedManagementPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold block mb-1">Already Reserved (৳)</label>
+                  <label className="text-xs font-semibold block mb-1">Already Reserved ({currencySymbol})</label>
                   <input
                     type="number"
                     min="0"
@@ -990,7 +994,7 @@ export default function ReservedManagementPage() {
                     />
                     <input
                       type="number"
-                      placeholder="Amount (৳)"
+                      placeholder="Amount ({currencySymbol})"
                       value={inst.amount}
                       onChange={(e) => {
                         const copy = [...obInstallments];
@@ -1065,7 +1069,7 @@ export default function ReservedManagementPage() {
                 ))}
               </div>
               <div>
-                <label className="text-xs font-semibold block mb-1">Amount (৳)</label>
+                <label className="text-xs font-semibold block mb-1">Amount ({currencySymbol})</label>
                 <input
                   type="number"
                   required
@@ -1199,7 +1203,7 @@ export default function ReservedManagementPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold block mb-1">Amount Paid (৳)</label>
+                  <label className="text-xs font-semibold block mb-1">Amount Paid ({currencySymbol})</label>
                   <input
                     type="number"
                     required
@@ -1296,7 +1300,7 @@ export default function ReservedManagementPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold block mb-1">Initial Amount (৳)</label>
+                  <label className="text-xs font-semibold block mb-1">Initial Amount ({currencySymbol})</label>
                   <input
                     type="number"
                     min="0"
@@ -1307,7 +1311,7 @@ export default function ReservedManagementPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold block mb-1">Optional Target (৳)</label>
+                  <label className="text-xs font-semibold block mb-1">Optional Target ({currencySymbol})</label>
                   <input
                     type="number"
                     min="0"
@@ -1358,7 +1362,7 @@ export default function ReservedManagementPage() {
             </h3>
             <form onSubmit={handleSavingsActionSubmit} className="space-y-3 mt-3">
               <div>
-                <label className="text-xs font-semibold block mb-1">Amount (৳)</label>
+                <label className="text-xs font-semibold block mb-1">Amount ({currencySymbol})</label>
                 <input
                   type="number"
                   required

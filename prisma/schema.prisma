@@ -106,7 +106,7 @@ model Obligation {
   totalAmount    Float
   reservedAmount Float                   @default(0)
   paidAmount     Float                   @default(0)
-  dueDate        DateTime
+  dueDate        DateTime?
   category       String                  @default("OBLIGATION")
   notes          String?
   targetWalletId String?
@@ -167,7 +167,11 @@ model Loan {
   remaining      Float
   monthlyEmi     Float
   reservedAmount Float         @default(0)
-  nextDueDate    DateTime
+  isHistorical   Boolean       @default(false)
+  sourceType     String        @default("NONE")
+  sourceWalletId String?
+  sourceSavingsId String?
+  nextDueDate    DateTime?
   notes          String?
   isClosed       Boolean       @default(false)
   payments       LoanPayment[]
@@ -181,6 +185,8 @@ model LoanPayment {
   amount     Float
   date       DateTime @default(now())
   walletName String?
+  sourceType String   @default("WALLET")
+  savingsName String?
   note       String?
   loanId     String
   loan       Loan     @relation(fields: [loanId], references: [id], onDelete: Cascade)

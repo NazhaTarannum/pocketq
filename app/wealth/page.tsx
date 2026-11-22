@@ -120,7 +120,7 @@ export default function WealthPage() {
 
   const symbol = data?.settings?.currencySymbol || '৳';
   const formatMoney = (n: number) =>
-    `${symbol}${Math.round(n).toLocaleString('en-IN')}`;
+    `${symbol}${Math.round(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   const fetchWealthData = async () => {
     try {

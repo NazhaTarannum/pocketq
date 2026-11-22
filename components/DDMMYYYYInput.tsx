@@ -2,10 +2,11 @@
 
 /**
  * @file components/DDMMYYYYInput.tsx
- * @description Controlled text input that accepts dates in DD/MM/YYYY format and emits YYYY-MM-DD ISO strings.
+ * @description Reliable cross-platform calendar/date-picker input with DD/MM/YYYY preview and timezone-safe YYYY-MM-DD emission.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useRef } from 'react';
+import { Calendar } from 'lucide-react';
 
 interface DDMMYYYYInputProps {
   value: string;
@@ -15,21 +16,15 @@ interface DDMMYYYYInputProps {
   className?: string;
 }
 
-function isoToDisplay(iso: string): string {
-  if (!iso || !/^\d{4}-\d{2}-\d{2}/.test(iso)) return '';
-  const [y, m, d] = iso.slice(0, 10).split('-');
-  return `${d}/${m}/${y}`;
-}
-
-function displayToIso(display: string): string | null {
-  const match = display.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if (!match) return null;
-  const dd = match[1].padStart(2, '0');
-  const mm = match[2].padStart(2, '0');
-  const yyyy = match[3];
-  const dt = new Date(`${yyyy}-${mm}-${dd}T00:00:00Z`);
-  if (Number.isNaN(dt.getTime())) return null;
-  return `${yyyy}-${mm}-${dd}`;
+function normalizeIsoDate(raw: string): string {
+  if (!raw) return '';
+  if (/^\d{4}-\d{2}-\d{2}/.test(raw)) return raw.slice(0, 10);
+  const dt = new Date(raw);
+  if (Number.isNaN(dt.getTime())) return '';
+  const y = dt.getUTCFullYear();
+  const m = String(dt.getUTCMonth() + 1).padStart(2, '0');
+  const d = String(dt.getUTCDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
 }
 
 export default function DDMMYYYYInput({
@@ -39,27 +34,41 @@ export default function DDMMYYYYInput({
   required = false,
   className = '',
 }: DDMMYYYYInputProps) {
-  const [text, setText] = useState(() => isoToDisplay(value));
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const normalized = normalizeIsoDate(value);
 
-  useEffect(() => {
-    setText(isoToDisplay(value));
-  }, [value]);
-
-  const handleChange = (raw: string) => {
-    setText(raw);
-    const parsed = displayToIso(raw);
-    if (parsed) onChange(parsed);
+  const openPicker = () => {
+    const el = inputRef.current;
+    if (!el) return;
+    if (typeof (el as HTMLInputElement & { showPicker?: () => void }).showPicker === 'function') {
+      try {
+        (el as HTMLInputElement & { showPicker: () => void }).showPicker();
+        return;
+      } catch {}
+    }
+    el.focus();
   };
 
   return (
-    <input
-      type="text"
-      inputMode="numeric"
-      value={text}
-      onChange={(e) => handleChange(e.target.value)}
-      placeholder={placeholder}
-      required={required}
-      className={className}
-    />
+    <div className={`relative flex items-center ${className}`}>
+      <input
+        ref={inputRef}
+        type="date"
+        value={normalized}
+        required={required}
+        aria-label={placeholder}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full bg-transparent outline-none text-inherit pr-6 cursor-pointer"
+      />
+      <button
+        type="button"
+        onClick={openPicker}
+        tabIndex={-1}
+        aria-label="Open calendar"
+        className="absolute right-2 opacity-65 hover:opacity-100 cursor-pointer"
+      >
+        <Calendar className="w-3.5 h-3.5" />
+      </button>
+    </div>
   );
 }
