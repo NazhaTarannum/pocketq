@@ -1747,7 +1747,7 @@ export default function PocketQApp() {
                   value={txAmount}
                   onChange={(e) => setTxAmount(e.target.value)}
                   placeholder="e.g. 500"
-                  className="w-full px-3.5 py-2.5 rounded-xl border bg-transparent text-sm"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                 />
               </div>
 
@@ -1758,7 +1758,7 @@ export default function PocketQApp() {
                 <select
                   value={txWalletId}
                   onChange={(e) => setTxWalletId(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border bg-transparent text-sm"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                 >
                   {data.wallets.map((w) => (
                     <option key={w.id} value={w.id} className="text-[#001A23]">
@@ -1774,7 +1774,7 @@ export default function PocketQApp() {
                   <select
                     value={txTargetWalletId}
                     onChange={(e) => setTxTargetWalletId(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border bg-transparent text-sm"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                   >
                     {data.wallets.map((w) => (
                       <option key={w.id} value={w.id} className="text-[#001A23]">
@@ -1792,7 +1792,7 @@ export default function PocketQApp() {
                     value={txCategory}
                     onChange={(e) => setTxCategory(e.target.value)}
                     placeholder="e.g. Food, Private Tuition, Transport"
-                    className="w-full px-3.5 py-2.5 rounded-xl border bg-transparent text-sm"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                   />
                 </div>
               )}
@@ -1804,7 +1804,7 @@ export default function PocketQApp() {
                   value={txNote}
                   onChange={(e) => setTxNote(e.target.value)}
                   placeholder="Short description..."
-                  className="w-full px-3.5 py-2.5 rounded-xl border bg-transparent text-sm"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                 />
               </div>
 
@@ -1852,7 +1852,7 @@ export default function PocketQApp() {
                   value={obTitle}
                   onChange={(e) => setObTitle(e.target.value)}
                   placeholder="e.g. University Trimester Fee, House Rent"
-                  className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                  className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -1864,7 +1864,7 @@ export default function PocketQApp() {
                     value={obAmount}
                     onChange={(e) => setObAmount(e.target.value)}
                     placeholder="e.g. 30000"
-                    className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                   />
                 </div>
                 <div>
@@ -1874,7 +1874,7 @@ export default function PocketQApp() {
                     value={obInitialReserved}
                     onChange={(e) => setObInitialReserved(e.target.value)}
                     placeholder="e.g. 10000"
-                    className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                   />
                 </div>
               </div>
@@ -1885,7 +1885,7 @@ export default function PocketQApp() {
                     required
                     value={obDueDate}
                     onChange={setObDueDate}
-                    className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                   />
                 </div>
                 <div>
@@ -1895,7 +1895,7 @@ export default function PocketQApp() {
                     value={obNotes}
                     onChange={(e) => setObNotes(e.target.value)}
                     placeholder="e.g. Pay via bKash / Bank"
-                    className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                   />
                 </div>
               </div>
@@ -2028,7 +2028,7 @@ export default function PocketQApp() {
                   value={reserveAmtInput}
                   onChange={(e) => setReserveAmtInput(e.target.value)}
                   placeholder="e.g. 5000"
-                  className="w-full px-3.5 py-2.5 rounded-xl border bg-transparent text-sm"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                 />
               </div>
               <div className="flex justify-end gap-2">
@@ -2077,7 +2077,7 @@ export default function PocketQApp() {
                       const found = selectedOb.installments.find((i) => i.id === e.target.value);
                       if (found) setPayAmountInput(String(Math.max(0, found.amount - found.paidAmount)));
                     }}
-                    className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                   >
                     <option value="" className="text-[#001A23]">General Obligation Payment</option>
                     {selectedOb.installments
@@ -2099,7 +2099,7 @@ export default function PocketQApp() {
                     required
                     value={payAmountInput}
                     onChange={(e) => setPayAmountInput(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                   />
                 </div>
                 <div>
@@ -2108,7 +2108,7 @@ export default function PocketQApp() {
                     required
                     value={payDateInput}
                     onChange={setPayDateInput}
-                    className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                   />
                 </div>
               </div>
@@ -2118,7 +2118,7 @@ export default function PocketQApp() {
                 <select
                   value={payWalletId}
                   onChange={(e) => setPayWalletId(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                  className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                 >
                   {data.wallets.map((w) => (
                     <option key={w.id} value={w.id} className="text-[#001A23]">
@@ -2135,7 +2135,7 @@ export default function PocketQApp() {
                   value={payNoteInput}
                   onChange={(e) => setPayNoteInput(e.target.value)}
                   placeholder="e.g. TrxID 9A8B7C"
-                  className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                  className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                 />
               </div>
 
@@ -2183,7 +2183,7 @@ export default function PocketQApp() {
                   value={savName}
                   onChange={(e) => setSavName(e.target.value)}
                   placeholder="e.g. Japan Trip, New Laptop, Emergency Funds"
-                  className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                  className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -2194,7 +2194,7 @@ export default function PocketQApp() {
                     value={savInitial}
                     onChange={(e) => setSavInitial(e.target.value)}
                     placeholder="e.g. 5000"
-                    className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                   />
                 </div>
                 <div>
@@ -2204,7 +2204,7 @@ export default function PocketQApp() {
                     value={savTarget}
                     onChange={(e) => setSavTarget(e.target.value)}
                     placeholder="Optional"
-                    className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                   />
                 </div>
               </div>
@@ -2214,7 +2214,7 @@ export default function PocketQApp() {
                   <DDMMYYYYInput
                     value={savTargetDate}
                     onChange={setSavTargetDate}
-                    className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                   />
                 </div>
                 <div>
@@ -2224,7 +2224,7 @@ export default function PocketQApp() {
                     value={savNotes}
                     onChange={(e) => setSavNotes(e.target.value)}
                     placeholder="Optional note"
-                    className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                   />
                 </div>
               </div>
@@ -2308,7 +2308,7 @@ export default function PocketQApp() {
                   value={savActionAmount}
                   onChange={(e) => setSavActionAmount(e.target.value)}
                   placeholder="e.g. 2000"
-                  className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                  className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                 />
               </div>
 
@@ -2320,7 +2320,7 @@ export default function PocketQApp() {
                   <select
                     value={savActionWalletId}
                     onChange={(e) => setSavActionWalletId(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                   >
                     {data.wallets.map((w) => (
                       <option key={w.id} value={w.id} className="text-[#001A23]">
@@ -2337,7 +2337,7 @@ export default function PocketQApp() {
                   <select
                     value={savActionCategory}
                     onChange={(e) => setSavActionCategory(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                   >
                     <option value="Shopping" className="text-[#001A23]">Shopping</option>
                     <option value="Travel" className="text-[#001A23]">Travel</option>
@@ -2356,7 +2356,7 @@ export default function PocketQApp() {
                   value={savActionNote}
                   onChange={(e) => setSavActionNote(e.target.value)}
                   placeholder="Optional description"
-                  className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                  className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                 />
               </div>
 
@@ -2466,7 +2466,7 @@ export default function PocketQApp() {
                   value={splitTitle}
                   onChange={(e) => setSplitTitle(e.target.value)}
                   placeholder="e.g. Sultan's Dine Lunch"
-                  className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                  className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                 />
               </div>
 
@@ -2506,7 +2506,7 @@ export default function PocketQApp() {
                     value={equalTotalBill}
                     onChange={(e) => setEqualTotalBill(e.target.value)}
                     placeholder="e.g. 2000"
-                    className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                   />
                 </div>
               )}
@@ -2522,7 +2522,7 @@ export default function PocketQApp() {
                     value={splitVatInput}
                     onChange={(e) => setSplitVatInput(e.target.value)}
                     placeholder={vatIsPercent ? 'e.g. 15' : 'e.g. 300'}
-                    className="w-full px-3.5 py-2 rounded-xl border bg-transparent text-sm"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                   />
                 </div>
                 <button
@@ -2687,7 +2687,7 @@ export default function PocketQApp() {
                     <select
                       value={splitWalletId}
                       onChange={(e) => setSplitWalletId(e.target.value)}
-                      className="px-2.5 py-1.5 rounded-lg border bg-transparent text-xs"
+                      className="px-2.5 py-1.5 rounded-lg border border-[#7A9E7E]/30 bg-transparent text-xs outline-none"
                     >
                       {data.wallets.map((w) => (
                         <option key={w.id} value={w.id} className="text-[#001A23]">

@@ -461,8 +461,8 @@ export default function SettingsPage() {
                   <div
                     className={`absolute z-30 left-0 right-0 mt-1 max-h-56 overflow-y-auto rounded-xl border shadow-lg ${
                       darkMode
-                        ? 'bg-[#071E22] border-[#31493C] text-[#E8F1F2]'
-                        : 'bg-white border-[#7A9E7E]/35 text-[#001A23]'
+                        ? 'bg-[#071E22]/75 backdrop-blur-xl border-[#7A9E7E]/30 text-[#E8F1F2]'
+                        : 'bg-[#E8F1F2]/75 backdrop-blur-xl border-[#7A9E7E]/30 text-[#001A23]'
                     }`}
                   >
                     {filteredCurrencies.length === 0 ? (
@@ -502,11 +502,7 @@ export default function SettingsPage() {
 
               {/* Read-only Selected Currency Display */}
               <div
-                className={`w-full rounded-xl px-3.5 py-2.5 text-xs border flex items-center justify-between gap-2 ${
-                  darkMode
-                    ? 'bg-[#31493C]/30 border-[#31493C] text-[#E8F1F2]'
-                    : 'bg-[#E8F1F2]/70 border-[#7A9E7E]/25 text-[#001A23]'
-                }`}
+                className="w-full rounded-xl px-3.5 py-2.5 text-xs border border-[#7A9E7E]/30 bg-transparent flex items-center justify-between gap-2" 
               >
                 <span className="opacity-70 shrink-0">Selected Currency:</span>
                 <span className="font-bold truncate">{selectedCurrencyObj.label}</span>
