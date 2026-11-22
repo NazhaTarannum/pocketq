@@ -994,7 +994,7 @@ export default function ReservedManagementPage() {
                     />
                     <input
                       type="number"
-                      placeholder="Amount ({currencySymbol})"
+                      placeholder={`Amount (${currencySymbol})`}
                       value={inst.amount}
                       onChange={(e) => {
                         const copy = [...obInstallments];

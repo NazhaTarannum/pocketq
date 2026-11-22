@@ -445,7 +445,7 @@ export default function PlanningWorkspacePage() {
                 type="number"
                 required
                 min="1"
-                placeholder="Monthly Limit ({currencySymbol})"
+                placeholder={`Monthly Limit (${currencySymbol})`}
                 value={budLimit}
                 onChange={(e) => setBudLimit(e.target.value)}
                 className="rounded-xl px-3 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
@@ -555,7 +555,7 @@ export default function PlanningWorkspacePage() {
                   type="number"
                   required
                   min="1"
-                  placeholder="Amount ({currencySymbol})"
+                  placeholder={`Amount (${currencySymbol})`}
                   value={eiAmount}
                   onChange={(e) => setEiAmount(e.target.value)}
                   className="rounded-xl px-3 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
