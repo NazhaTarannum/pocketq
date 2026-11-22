@@ -1889,6 +1889,54 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, investment: updated });
     }
 
+    if (action === 'EDIT_INVESTMENT_PRINCIPAL') {
+      const { investmentId, investedAmount, walletId, note } = body;
+      const inv = await prisma.investment.findUnique({ where: { id: investmentId } });
+      if (!inv) return NextResponse.json({ error: 'Investment not found' }, { status: 404 });
+
+      const newInvested = Math.max(0, Math.round((Number(investedAmount) || 0) * 100) / 100);
+      const diff = Math.round((inv.investedAmount - newInvested) * 100) / 100;
+
+      if (walletId && Math.abs(diff) > 0) {
+        await prisma.wallet.update({
+          where: { id: walletId },
+          data: { balance: { increment: diff } },
+        });
+        await prisma.transaction.create({
+          data: {
+            type: diff > 0 ? 'INCOME' : 'EXPENSE',
+            amount: Math.abs(diff),
+            category: 'Investment Adjustment',
+            note: note
+              ? String(note).trim()
+              : `Principal corrected on ${inv.name} (${inv.investedAmount.toFixed(2)} -> ${newInvested.toFixed(2)})`,
+            date: new Date(),
+            walletId,
+          },
+        });
+      }
+
+      const updated = await prisma.investment.update({
+        where: { id: investmentId },
+        data: {
+          investedAmount: newInvested,
+          events: {
+            create: {
+              eventType: 'PRINCIPAL_CORRECTION',
+              amount: newInvested,
+              valueAfter: inv.currentValue,
+              note: note
+                ? String(note).trim()
+                : `Invested principal updated from ${inv.investedAmount.toFixed(2)} to ${newInvested.toFixed(2)}`,
+              eventDate: new Date(),
+            },
+          },
+        },
+      });
+
+      return NextResponse.json({ success: true, investment: updated });
+    }
+
     if (action === 'UPDATE_INVESTMENT_VALUE') {
       const { investmentId, currentValue, eventDate, note } = body;
       const inv = await prisma.investment.findUnique({ where: { id: investmentId } });

@@ -1,4 +1,6 @@
 'use client';
+
+import { formatCurrency } from '@/lib/format';
 import Link from 'next/link';
 
 /**
@@ -112,15 +114,14 @@ export default function WealthPage() {
 
   const [activeInvId, setActiveInvId] = useState<string | null>(null);
   const [invActionType, setInvActionType] = useState<
-    'INVESTMENT_CONTRIBUTION' | 'INVESTMENT_WITHDRAWAL' | 'UPDATE_INVESTMENT_VALUE'
+    'INVESTMENT_CONTRIBUTION' | 'INVESTMENT_WITHDRAWAL' | 'UPDATE_INVESTMENT_VALUE' | 'EDIT_INVESTMENT_PRINCIPAL'
   >('INVESTMENT_CONTRIBUTION');
   const [invActionAmount, setInvActionAmount] = useState('');
   const [invActionWalletId, setInvActionWalletId] = useState('');
   const [invActionNote, setInvActionNote] = useState('');
 
   const symbol = data?.settings?.currencySymbol || '৳';
-  const formatMoney = (n: number) =>
-    `${symbol}${Math.round(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const formatMoney = (n: number) => formatCurrency(n, symbol);
 
   const fetchWealthData = async () => {
     try {
@@ -185,6 +186,7 @@ export default function WealthPage() {
           action: invActionType,
           investmentId: activeInvId,
           amount: Number(invActionAmount),
+          investedAmount: Number(invActionAmount),
           currentValue: Number(invActionAmount),
           walletId:
             invActionType === 'UPDATE_INVESTMENT_VALUE'
@@ -503,6 +505,19 @@ export default function WealthPage() {
                       >
                         Update Current Value
                       </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveInvId(inv.id);
+                          setInvActionType('EDIT_INVESTMENT_PRINCIPAL');
+                          setInvActionAmount(String(inv.investedAmount));
+                          setInvActionWalletId('');
+                          setInvActionNote('');
+                        }}
+                        className="px-3 py-1.5 rounded-xl text-xs font-bold border border-[#7A9E7E]/40 cursor-pointer"
+                      >
+                        Edit Invested Principal
+                      </button>
                     </div>
 
                     {/* Inline Action Form */}
@@ -516,6 +531,8 @@ export default function WealthPage() {
                             ? 'Add Contribution:'
                             : invActionType === 'INVESTMENT_WITHDRAWAL'
                             ? 'Record Withdrawal:'
+                            : invActionType === 'EDIT_INVESTMENT_PRINCIPAL'
+                            ? 'Corrected Invested Principal:'
                             : 'New Current Value:'}
                         </span>
                         <input
