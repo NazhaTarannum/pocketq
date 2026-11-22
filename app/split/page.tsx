@@ -1445,7 +1445,7 @@ export default function BillSplittingPage() {
                           {wallets.map((w) => (
                             <option key={w.id} value={w.id}>
                               {w.name} ({currency}
-                              {w.balance.toLocaleString()})
+                              {w.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})
                             </option>
                           ))}
                         </select>
@@ -1521,7 +1521,7 @@ export default function BillSplittingPage() {
                                 {wallets.map((w) => (
                                   <option key={w.id} value={w.id}>
                                     {w.name} ({currency}
-                                    {w.balance.toLocaleString()})
+                                    {w.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})
                                   </option>
                                 ))}
                               </select>
@@ -2024,7 +2024,7 @@ export default function BillSplittingPage() {
                     {wallets.map((w) => (
                       <option key={w.id} value={w.id}>
                         {w.name} ({currency}
-                        {w.balance.toLocaleString()})
+                        {w.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})
                       </option>
                     ))}
                   </select>

@@ -1,4 +1,5 @@
 'use client';
+import { FX_RATES_FROM_BDT, convertCurrencyAmount, formatCurrency } from '@/lib/format';
 
 /**
  * @file app/page.tsx
@@ -129,6 +130,7 @@ interface BillSplitItem {
 }
 
 interface DashboardData {
+  settings?: { currencySymbol?: string; currencyCode?: string; dailySafeThreshold?: number; dailyCrazyThreshold?: number };
   summary: {
     totalBalance: number;
     totalReserved: number;
@@ -181,6 +183,7 @@ export default function PocketQApp() {
   const [draftCrazyLimit, setDraftCrazyLimit] = useState<string>('50');
   const [savingSimLimits, setSavingSimLimits] = useState<boolean>(false);
   const [runwayDays, setRunwayDays] = useState<number>(15);
+  const [displayCurrencyCode, setDisplayCurrencyCode] = useState<string>('');
   const [walletModalOpen, setWalletModalOpen] = useState(false);
   const [editingWallet, setEditingWallet] = useState<WalletItem | null>(null);
   const [walletName, setWalletName] = useState("");
@@ -302,8 +305,17 @@ export default function PocketQApp() {
     }
   }, [darkMode]);
 
-  const formatBDT = (amount: number) =>
-    `৳${amount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+  const baseCurrencyCode = data?.settings?.currencyCode || 'BDT';
+  const baseCurrencySymbol = data?.settings?.currencySymbol || '৳';
+  const activeCurrencyCode = displayCurrencyCode || baseCurrencyCode;
+  const activeCurrencySymbol =
+    activeCurrencyCode === baseCurrencyCode
+      ? baseCurrencySymbol
+      : FX_RATES_FROM_BDT[activeCurrencyCode]?.symbol || activeCurrencyCode;
+  const formatBDT = (amount: number) => {
+    const converted = convertCurrencyAmount(amount, baseCurrencyCode, activeCurrencyCode);
+    return formatCurrency(converted, activeCurrencySymbol);
+  };
 
   // Live Preview Calculation for Bill Splitter
   const computeSplitPreview = () => {
@@ -2599,8 +2611,8 @@ export default function PocketQApp() {
               {/* Live Calculation Breakdown Box */}
               <div className="p-3.5 rounded-2xl bg-[#31493C] text-[#E8F1F2] text-xs space-y-1.5">
                 <div className="flex justify-between font-bold text-sm text-[#B3EFB2]">
-                  <span>Grand Total (incl. ৳{preview.vatAmount.toFixed(0)} VAT):</span>
-                  <span>৳{preview.grandTotal.toFixed(2)}</span>
+                  <span>Grand Total (incl. {activeCurrencySymbol}{preview.vatAmount.toFixed(2)} VAT):</span>
+                  <span>{activeCurrencySymbol}{preview.grandTotal.toFixed(2)}</span>
                 </div>
                 {preview.breakdown.map((b, i) => {
                   const hasCash = b.cashGiven > 0;
@@ -2608,8 +2620,8 @@ export default function PocketQApp() {
                   return (
                     <div key={i} className="flex justify-between items-center opacity-95 gap-2">
                       <span>
-                        {b.name}: Share ৳{b.finalOwed.toFixed(2)}
-                        {hasCash ? ` (Gave ৳${b.cashGiven.toFixed(0)})` : ""}
+                        {b.name}: Share {activeCurrencySymbol}{b.finalOwed.toFixed(2)}
+                        {hasCash ? ` (Gave ৳${b.cashGiven.toFixed(2)})` : ""}
                       </span>
                       <span className="font-bold text-right">
                         {hasCash ? (
@@ -2630,7 +2642,7 @@ export default function PocketQApp() {
                   const totalChange = totalCashGiven - preview.grandTotal;
                   return (
                     <div className="pt-1.5 mt-1.5 border-t border-[#E8F1F2]/20 flex justify-between font-bold text-[#FFEF5C]">
-                      <span>Total Cash Given: ৳{totalCashGiven.toFixed(0)}</span>
+                      <span>Total Cash Given: {activeCurrencySymbol}{totalCashGiven.toFixed(2)}</span>
                       <span>
                         {totalChange >= 0
                           ? `Total Change Back: ৳${totalChange.toFixed(2)}`

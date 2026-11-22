@@ -301,9 +301,7 @@ export async function GET() {
       const isShortfall = projectedShortfall > 0;
 
       const shortfallMessage = isShortfall
-        ? `Based on your current income and expenses, you may be short by ৳${projectedShortfall.toLocaleString(
-            'en-IN'
-          )} for ${ob.title}. Consider reducing discretionary spending or adjusting your plan.`
+        ? `Based on your current income and expenses, you may be short by ৳${projectedShortfall.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} for ${ob.title}. Consider reducing discretionary spending or adjusting your plan.`
         : null;
 
       return {
@@ -523,7 +521,7 @@ export async function GET() {
           title: ob.title,
           amount: ob.outstandingTotal,
           kind: 'OBLIGATION',
-          status: ob.remainingToReserve === 0 ? 'Fully Reserved' : `৳${ob.remainingToReserve.toLocaleString('en-IN')} to reserve`,
+          status: ob.remainingToReserve === 0 ? 'Fully Reserved' : `৳${ob.remainingToReserve.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} to reserve`,
         });
       }
     }
@@ -580,10 +578,10 @@ export async function GET() {
           title: `Subscription Renewal: ${sub.name}`,
           message:
             sub.daysUntilRenewal < 0
-              ? `${sub.name} renewal of ৳${sub.amount.toLocaleString('en-IN')} is overdue by ${Math.abs(
+              ? `${sub.name} renewal of ৳${sub.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} is overdue by ${Math.abs(
                   sub.daysUntilRenewal
                 )} day(s).`
-              : `${sub.name} (৳${sub.amount.toLocaleString('en-IN')}) renews in ${
+              : `${sub.name} (৳${sub.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}) renews in ${
                   sub.daysUntilRenewal
                 } day(s).`,
         });
@@ -596,9 +594,9 @@ export async function GET() {
         id: 'low-avail',
         severity: 'WARNING',
         title: 'Low Available-to-Spend Balance',
-        message: `Your unreserved cash is ৳${Math.round(availableToSpend).toLocaleString(
+        message: `Your unreserved cash is ৳${(Math.round(availableToSpend * 100) / 100).toLocaleString(
           'en-IN'
-        )}, below your ৳${lowThresh.toLocaleString('en-IN')} comfort threshold.`,
+        )}, below your ৳${lowThresh.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} comfort threshold.`,
       });
     }
 
@@ -634,14 +632,14 @@ export async function GET() {
           id: `budget-over-${b.id}`,
           severity: 'WARNING',
           title: `${b.category} Budget Exceeded`,
-          message: `You spent ৳${b.spent.toLocaleString('en-IN')} against your adjusted limit of ৳${b.adjustedLimit.toLocaleString('en-IN')}.`,
+          message: `You spent ৳${b.spent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} against your adjusted limit of ৳${b.adjustedLimit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.`,
         });
       } else if (b.isNearLimit) {
         notifications.push({
           id: `budget-near-${b.id}`,
           severity: 'INFO',
           title: `${b.category} Budget at ${b.usagePercent}%`,
-          message: `৳${b.remaining.toLocaleString('en-IN')} remaining in your ${b.category} budget this month.`,
+          message: `৳${b.remaining.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} remaining in your ${b.category} budget this month.`,
         });
       }
     }

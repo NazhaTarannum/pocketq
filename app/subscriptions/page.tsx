@@ -539,7 +539,7 @@ export default function SubscriptionsPage() {
             </p>
             <p className="text-2xl font-extrabold mt-1">
               {currency}
-              {data.summary.totalMonthlyCost.toLocaleString()}
+              {data.summary.totalMonthlyCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
             <p className="text-xs text-slate-500 mt-1">Normalized across cycles</p>
           </div>
@@ -550,7 +550,7 @@ export default function SubscriptionsPage() {
             </p>
             <p className="text-2xl font-extrabold mt-1">
               {currency}
-              {data.summary.totalYearlyCost.toLocaleString()}
+              {data.summary.totalYearlyCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
             <p className="text-xs text-white/75 mt-1">12-month projected spend</p>
           </div>
@@ -693,7 +693,7 @@ export default function SubscriptionsPage() {
                   {data.wallets.map((w) => (
                     <option key={w.id} value={w.id}>
                       {w.name} ({currency}
-                      {w.balance.toLocaleString()})
+                      {w.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})
                     </option>
                   ))}
                 </select>
@@ -813,7 +813,7 @@ export default function SubscriptionsPage() {
                       <div className="text-right">
                         <div className="text-lg font-extrabold">
                           {currency}
-                          {sub.amount.toLocaleString()}
+                          {sub.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
                         <div className="text-[11px] text-slate-500">
                           Next due: <span className="font-semibold">{formatDateDDMMYYYY(sub.nextRenewalDate)}</span>
@@ -946,7 +946,7 @@ export default function SubscriptionsPage() {
                       </div>
                       <div className="font-extrabold text-rose-600 dark:text-rose-400">
                         -{currency}
-                        {item.amount.toLocaleString()}
+                        {item.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </div>
                     </div>
                   ))}
@@ -992,7 +992,7 @@ export default function SubscriptionsPage() {
                     {data.wallets.map((w) => (
                       <option key={w.id} value={w.id}>
                         {w.name} — Balance: {currency}
-                        {w.balance.toLocaleString()}
+                        {w.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </option>
                     ))}
                   </select>
