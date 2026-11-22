@@ -135,9 +135,31 @@ export default function SettingsPage() {
   // Full dashboard snapshot held in state for one-click JSON backup export
   const [rawSnapshot, setRawSnapshot] = useState<unknown>(null);
 
-  // Controlled form state for UserSettings
-  const [currencySymbol, setCurrencySymbol] = useState('৳');
-  const [currencyCode, setCurrencyCode] = useState('BDT');
+  // Controlled form state for UserSettings (hydrated immediately from session cache if available)
+  const [currencySymbol, setCurrencySymbol] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const cached = sessionStorage.getItem('pocketq_dashboard_cache');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed?.settings?.currencySymbol) return parsed.settings.currencySymbol;
+        }
+      } catch {}
+    }
+    return '৳';
+  });
+  const [currencyCode, setCurrencyCode] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const cached = sessionStorage.getItem('pocketq_dashboard_cache');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed?.settings?.currencyCode) return parsed.settings.currencyCode;
+        }
+      } catch {}
+    }
+    return 'BDT';
+  });
   const [currencySearch, setCurrencySearch] = useState('');
   const [currencyDropdownOpen, setCurrencyDropdownOpen] = useState(false);
   const currencyPickerRef = useRef<HTMLDivElement | null>(null);
@@ -192,7 +214,7 @@ export default function SettingsPage() {
    */
   const fetchSettings = async () => {
     try {
-      const res = await fetch('/api/dashboard');
+      const res = await fetch('/api/dashboard', { cache: 'no-store' });
       const json = await res.json();
       if (res.ok && json) {
         setRawSnapshot(json);
@@ -243,10 +265,27 @@ export default function SettingsPage() {
         }),
       });
       if (res.ok) {
-        try { sessionStorage.removeItem('pocketq_dashboard_cache'); sessionStorage.removeItem('pocketq_splits_cache'); } catch {}
+        try {
+          const cached = sessionStorage.getItem('pocketq_dashboard_cache');
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            parsed.settings = {
+              ...(parsed.settings || {}),
+              currencySymbol,
+              currencyCode,
+              lowBalanceThreshold: Number(lowBalanceThreshold) || 0,
+              enableReminders,
+              enableBudgetAlerts,
+              dailySafeThreshold: Number(dailySafeThreshold) || 200,
+              dailyCrazyThreshold: Number(dailyCrazyThreshold) ?? 50,
+            };
+            sessionStorage.setItem('pocketq_dashboard_cache', JSON.stringify(parsed));
+          }
+          sessionStorage.removeItem('pocketq_splits_cache');
+        } catch {}
         setSavedBanner(true);
-        await fetchSettings();
-        setTimeout(() => setSavedBanner(false), 3000);
+        fetchSettings();
+        setTimeout(() => setSavedBanner(false), 2500);
       }
     } finally {
       setSaving(false);
@@ -600,7 +639,16 @@ export default function SettingsPage() {
             </label>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex items-center justify-end gap-3">
+            {savedBanner && (
+              <span
+                role="status"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#B3EFB2]/25 text-[#31493C] dark:text-[#B3EFB2] border border-[#7A9E7E]/40 animate-fade-in"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                Saved
+              </span>
+            )}
             <button
               type="submit"
               disabled={saving}

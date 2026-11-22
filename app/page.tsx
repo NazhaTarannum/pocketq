@@ -263,7 +263,7 @@ export default function PocketQApp() {
 
   const fetchDashboard = async () => {
     try {
-      const res = await fetch('/api/dashboard');
+      const res = await fetch('/api/dashboard', { cache: 'no-store' });
       const json = await res.json();
       if (!res.ok || !json || !Array.isArray(json.transactions)) {
         console.error('Dashboard API error:', json);
@@ -369,26 +369,103 @@ export default function PocketQApp() {
 
   const handleTransactionSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!txAmount || !txWalletId) return;
-    setSubmitting(true);
-    await fetch('/api/dashboard', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'TRANSACTION',
-        type: txType,
-        amount: Number(txAmount),
-        category: txType === 'TRANSFER' ? 'Wallet Transfer' : txCategory,
-        note: txNote,
-        walletId: txWalletId,
-        targetWalletId: txType === 'TRANSFER' ? txTargetWalletId : null,
-      }),
+    const numericAmount = Number(txAmount);
+    if (!numericAmount || numericAmount <= 0 || !txWalletId) return;
+
+    const capturedType = txType;
+    const capturedCategory = capturedType === 'TRANSFER' ? 'Wallet Transfer' : txCategory;
+    const capturedNote = txNote;
+    const capturedWalletId = txWalletId;
+    const capturedTargetWalletId = capturedType === 'TRANSFER' ? txTargetWalletId : null;
+
+    // 1. Instant optimistic UI update so wallet balances & totals reflect immediately
+    setData((prev) => {
+      const updatedWallets = prev.wallets.map((w) => {
+        if (capturedType === 'TRANSFER') {
+          if (w.id === capturedWalletId && w.id === capturedTargetWalletId) return w;
+          if (w.id === capturedWalletId) return { ...w, balance: w.balance - numericAmount };
+          if (w.id === capturedTargetWalletId) return { ...w, balance: w.balance + numericAmount };
+          return w;
+        }
+        if (w.id === capturedWalletId) {
+          const delta = capturedType === 'INCOME' ? numericAmount : -numericAmount;
+          return { ...w, balance: w.balance + delta };
+        }
+        return w;
+      });
+
+      const balanceDelta =
+        capturedType === 'TRANSFER'
+          ? 0
+          : capturedType === 'INCOME'
+          ? numericAmount
+          : -numericAmount;
+
+      const sourceWallet = updatedWallets.find((w) => w.id === capturedWalletId) || {
+        id: capturedWalletId,
+        name: 'Wallet',
+        type: 'CASH',
+        balance: 0,
+        color: '#7A9E7E',
+      };
+      const targetWallet = capturedTargetWalletId
+        ? updatedWallets.find((w) => w.id === capturedTargetWalletId)
+        : undefined;
+
+      const optimisticTx: TransactionItem = {
+        id: `optimistic-${Date.now()}`,
+        type: capturedType,
+        amount: numericAmount,
+        category: capturedCategory,
+        note: capturedNote || undefined,
+        date: new Date().toISOString(),
+        wallet: sourceWallet,
+        targetWallet,
+      };
+
+      const nextData: DashboardData = {
+        ...prev,
+        summary: {
+          ...prev.summary,
+          totalBalance: prev.summary.totalBalance + balanceDelta,
+          availableToSpend: prev.summary.availableToSpend + balanceDelta,
+        },
+        wallets: updatedWallets,
+        transactions: [optimisticTx, ...prev.transactions],
+      };
+
+      try {
+        sessionStorage.setItem('pocketq_dashboard_cache', JSON.stringify(nextData));
+      } catch {}
+
+      return nextData;
     });
+
+    // 2. Close modal immediately without waiting on network round-trip
     setTxAmount('');
     setTxNote('');
-    setSubmitting(false);
     setActiveModal(null);
-    fetchDashboard();
+
+    // 3. Persist to backend and silently reconcile server state
+    try {
+      await fetch('/api/dashboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'TRANSACTION',
+          type: capturedType,
+          amount: numericAmount,
+          category: capturedCategory,
+          note: capturedNote,
+          walletId: capturedWalletId,
+          targetWalletId: capturedTargetWalletId,
+        }),
+      });
+      fetchDashboard();
+    } catch (err) {
+      console.error(err);
+      fetchDashboard();
+    }
   };
 
   const handleObligationSubmit = async (e: React.FormEvent) => {
