@@ -1196,3 +1196,9 @@ html:not(.dark) main .hero-spendable-card .hero-spendable-amount,
 html:not(.dark) body main .hero-spendable-card .hero-spendable-amount {
   color: #000000 !important;
 }
+
+
+html:not(.dark) body main .hero-spendable-card .hero-spendable-amount,
+html:not(.dark) body main .hero-spendable-card .hero-spendable-amount.text-\[\#3EE895\] {
+  color: #000000 !important;
+}
