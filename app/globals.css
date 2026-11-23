@@ -1147,14 +1147,27 @@ main a.pt-2\.5 {
   line-height: 1.2 !important;
 }
 
-
 /* Dedicated Pill-Round Liquid Glass Slider Track & Circular Thumb */
-.liquid-glass-slider-track,
-.liquid-glass-slider-fill,
-.liquid-glass-slider-thumb {
+html body main .liquid-glass-slider-track,
+html.dark body main .liquid-glass-slider-track,
+html:not(.dark) body main .liquid-glass-slider-track,
+html body main .liquid-glass-slider-fill,
+html.dark body main .liquid-glass-slider-fill,
+html:not(.dark) body main .liquid-glass-slider-fill {
   border-radius: 9999px !important;
+  clip-path: inset(0 round 9999px) !important;
+  -webkit-clip-path: inset(0 round 9999px) !important;
 }
-.liquid-glass-slider-thumb {
-  aspect-ratio: 1 / 1 !important;
+
+html body main .liquid-glass-slider-thumb,
+html.dark body main .liquid-glass-slider-thumb,
+html:not(.dark) body main .liquid-glass-slider-thumb {
+  width: 22px !important;
+  height: 22px !important;
+  min-width: 22px !important;
+  min-height: 22px !important;
+  border-radius: 9999px !important;
+  clip-path: circle(50% at 50% 50%) !important;
+  -webkit-clip-path: circle(50% at 50% 50%) !important;
   will-change: left, transform;
 }
