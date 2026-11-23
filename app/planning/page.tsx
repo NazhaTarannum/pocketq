@@ -138,7 +138,7 @@ export default function PlanningWorkspacePage() {
   const [eiWalletId, setEiWalletId] = useState('');
 
   // Budget Form
-  const [budCategory, setBudCategory] = useState('Food');
+  const [budCategory, setBudCategory] = useState('');
   const [budLimit, setBudLimit] = useState('');
   const [budFlexible, setBudFlexible] = useState(true);
 
@@ -463,6 +463,7 @@ export default function PlanningWorkspacePage() {
                 required
                 placeholder="Category (e.g., Food)"
                 value={budCategory}
+              placeholder="Category (e.g. Food, Transport, Rent)"
                 onChange={(e) => setBudCategory(e.target.value)}
                 className="rounded-xl px-3 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
               />
