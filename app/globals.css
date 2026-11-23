@@ -26,67 +26,143 @@
   font-display: swap;
 }
 
-/* Bind Tailwind v4 font-sans & font-mono utilities to your custom font stack */
 @theme inline {
   --font-sans: "Aeonik Pro", var(--font-inter), var(--font-geist-sans), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 }
 
 :root {
-  --bg-main: #F7F7F5;
-  --bg-card: #FFFFFF;
-  --text-primary: #363537;
-  --text-muted: #6B6A6D;
-  --border-subtle: #E5E5E2;
+  --bg-main: #FAF8F5;
+  --bg-card: rgba(255, 255, 255, 0.58);
+  --text-primary: #141413;
+  --text-muted: #5C5B57;
+  --border-subtle: rgba(20, 20, 19, 0.14);
 
-  /* PocketQ Custom Palette */
-  --pq-inkblack: #001A23;
+  /* Editorial + Apple Glass Palette */
+  --pq-inkblack: #141413;
   --pq-celadon: #B3EFB2;
-  --pq-aliceblue: #E8F1F2;
+  --pq-aliceblue: #FAF8F5;
   --pq-mutedteal: #7A9E7E;
-  --pq-pineteal: #31493C;
-  --pq-hotberry: #D52073;
+  --pq-pineteal: #141413;
+  --pq-hotberry: #D9383A;
   --pq-bananacream: #FFEF5C;
 }
 
 .dark {
-  --bg-main: #000000;
-  --bg-card: #363537;
-  --text-primary: #F7F7F5;
-  --text-muted: #B8B7BA;
-  --border-subtle: #4A484B;
+  --bg-main: #080A0C;
+  --bg-card: rgba(22, 26, 30, 0.56);
+  --text-primary: #F5F4F0;
+  --text-muted: #A3A19B;
+  --border-subtle: rgba(255, 255, 255, 0.14);
 }
 
+/* 1. Zero Rounded Corners Everywhere — Sharp Architectural Edges */
+*,
+*::before,
+*::after {
+  border-radius: 0px !important;
+}
+
+/* 2. Editorial Alabaster / Obsidian Canvas with Ambient Refraction Glows for Apple Liquid Glass */
 body {
   background-color: var(--bg-main);
+  background-image:
+    radial-gradient(at 12% 8%, rgba(217, 56, 58, 0.08) 0px, transparent 42%),
+    radial-gradient(at 88% 14%, rgba(179, 239, 178, 0.22) 0px, transparent 46%),
+    radial-gradient(at 52% 92%, rgba(255, 239, 92, 0.14) 0px, transparent 50%);
+  background-attachment: fixed;
   color: var(--text-primary);
   font-family: var(--font-sans);
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
+.dark body {
+  background-image:
+    radial-gradient(at 14% 10%, rgba(217, 56, 58, 0.16) 0px, transparent 44%),
+    radial-gradient(at 86% 18%, rgba(49, 73, 60, 0.34) 0px, transparent 48%),
+    radial-gradient(at 50% 90%, rgba(122, 158, 126, 0.14) 0px, transparent 52%);
+}
+
+/* Editorial Typography */
 h1, h2, h3 {
   font-family: "Aeonik Pro", var(--font-geist-sans), var(--font-inter), sans-serif;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
-/* Unified Transparent Dropdown Styling (matches Wealth & Assets) */
+/* 3. Apple Liquid Glass Panels, Cards & Sticky Bars */
+header,
+aside,
+section,
+[class*="bg-white"],
+[class*="bg-[#001A23]"],
+[class*="bg-[#E8F1F2]"],
+[class*="bg-[#363537]"] {
+  background-color: rgba(255, 255, 255, 0.56) !important;
+  backdrop-filter: blur(22px) saturate(185%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(185%) !important;
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.72),
+    0 10px 30px -12px rgba(20, 20, 19, 0.08);
+}
+
+.dark header,
+.dark aside,
+.dark section,
+.dark [class*="bg-white"],
+.dark [class*="bg-[#001A23]"],
+.dark [class*="bg-[#E8F1F2]"],
+.dark [class*="bg-[#363537]"] {
+  background-color: rgba(18, 22, 26, 0.56) !important;
+  backdrop-filter: blur(24px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.14),
+    0 12px 32px -12px rgba(0, 0, 0, 0.55);
+}
+
+/* Editorial Crimson Top Rule on Primary Sections */
+main section {
+  border-top: 2px solid #D9383A !important;
+}
+
+/* Crisp Interactive Buttons & Inputs */
+button,
+input,
+select,
+textarea {
+  transition: transform 0.14s ease, box-shadow 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #D9383A !important;
+  box-shadow: inset 0 0 0 1px #D9383A;
+}
+
+button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+/* Unified Transparent Dropdown Styling */
 select {
-  background-color: transparent;
+  background-color: rgba(255, 255, 255, 0.35);
   color: inherit;
   color-scheme: light;
 }
 
 .dark select {
+  background-color: rgba(255, 255, 255, 0.04);
   color-scheme: dark;
 }
 
 select option {
-  background-color: rgba(232, 241, 242, 0.92);
-  color: #001A23;
+  background-color: #FAF8F5;
+  color: #141413;
 }
 
 .dark select option {
-  background-color: rgba(7, 30, 34, 0.92);
-  color: #E8F1F2;
+  background-color: #12161A;
+  color: #F5F4F0;
 }
