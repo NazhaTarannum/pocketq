@@ -214,7 +214,7 @@ export default function PocketQApp() {
   // Transaction Form State
   const [txType, setTxType] = useState<'EXPENSE' | 'INCOME' | 'TRANSFER'>('EXPENSE');
   const [txAmount, setTxAmount] = useState('');
-  const [txCategory, setTxCategory] = useState('Food');
+  const [txCategory, setTxCategory] = useState('');
   const [txNote, setTxNote] = useState('');
   const [txWalletId, setTxWalletId] = useState('');
   const [txTargetWalletId, setTxTargetWalletId] = useState('');
