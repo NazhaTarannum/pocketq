@@ -283,14 +283,20 @@ export default function WealthPage() {
             </span>
           </div>
 
-          <div className="rounded-3xl p-4 bg-[#31493C] text-[#E8F1F2] shadow-xs">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#B3EFB2] flex items-center gap-1">
+          <div
+            className={`rounded-3xl p-4 border ${
+              darkMode
+                ? 'bg-[#31493C]/25 border-[#31493C]'
+                : 'bg-white border-[#7A9E7E]/25 shadow-xs'
+            }`}
+          >
+            <span className="text-[11px] font-bold uppercase tracking-wider opacity-70 flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5" /> Safe Spendable Cash
             </span>
-            <p className="text-xl font-extrabold mt-1">
+            <p className="text-2xl font-extrabold mt-1">
               {formatMoney(data.summary?.availableToSpend || 0)}
             </p>
-            <span className="text-[11px] opacity-80 block mt-0.5">
+            <span className="text-[11px] opacity-75 block mt-0.5">
               Excludes non-liquid investments
             </span>
           </div>
