@@ -164,15 +164,19 @@ const EMPTY_DASHBOARD_DATA: DashboardData = {
 };
 
 export default function PocketQApp() {
-  const [data, setData] = useState<DashboardData>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const cached = sessionStorage.getItem('pocketq_dashboard_cache');
-        if (cached) return JSON.parse(cached);
-      } catch {}
-    }
-    return EMPTY_DASHBOARD_DATA;
-  });
+  const [data, setData] = useState<DashboardData>(EMPTY_DASHBOARD_DATA);
+
+  useEffect(() => {
+    try {
+      const cached = sessionStorage.getItem('pocketq_dashboard_cache');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && Array.isArray(parsed.transactions)) {
+          setData(parsed);
+        }
+      }
+    } catch {}
+  }, []);
   const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useThemePreference();
   const [simAmount, setSimAmount] = useState<number>(0);
