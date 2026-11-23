@@ -445,7 +445,7 @@ export default function SubscriptionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#E8F1F2] dark:bg-[#31493C]/25 backdrop-blur-xl text-[#001A23] dark:text-[#E8F1F2] transition-colors duration-200">
+    <div className={`min-h-screen transition-colors duration-200 ${darkMode ? 'bg-[#001A23] text-[#E8F1F2]' : 'bg-[#E8F1F2] text-[#001A23]'}`}>
       {/* Top Header */}
       <AppHeader darkMode={darkMode} onToggleDarkMode={() => setDarkMode(!darkMode)} />
 
@@ -477,61 +477,61 @@ export default function SubscriptionsPage() {
 
         {/* Summary KPI Strip */}
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="rounded-3xl p-5 bg-white dark:bg-[#31493C]/25 border border-[#7A9E7E]/30 dark:border-[#7A9E7E]/30 backdrop-blur-xl">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#31493C]/80 dark:text-[#E8F1F2]/75">
+          <div className={`rounded-3xl p-5 border ${darkMode ? 'bg-[#31493C]/25 border-[#31493C]' : 'bg-white border-[#7A9E7E]/25 shadow-xs'}`}>
+            <p className="text-xs font-semibold uppercase tracking-wider opacity-75">
               Active Subscriptions
             </p>
             <p className="text-2xl font-extrabold mt-1">{data.summary.activeCount}</p>
-            <p className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/70 mt-1">
+            <p className="text-xs opacity-75 mt-1">
               {data.summary.cancelledCount} cancelled
             </p>
           </div>
 
-          <div className="rounded-3xl p-5 bg-white dark:bg-[#31493C]/25 border border-[#7A9E7E]/30 dark:border-[#7A9E7E]/30 backdrop-blur-xl">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#31493C]/80 dark:text-[#E8F1F2]/75">
+          <div className={`rounded-3xl p-5 border ${darkMode ? 'bg-[#31493C]/25 border-[#31493C]' : 'bg-white border-[#7A9E7E]/25 shadow-xs'}`}>
+            <p className="text-xs font-semibold uppercase tracking-wider opacity-75">
               Payable Today / Overdue
             </p>
             <p className="text-2xl font-extrabold mt-1">
               {data.summary.dueNowCount}
             </p>
-            <p className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/70 mt-1">
+            <p className="text-xs opacity-75 mt-1">
               Future cycles stay locked until due
             </p>
           </div>
 
-          <div className="rounded-3xl p-5 bg-white dark:bg-[#31493C]/25 border border-[#7A9E7E]/30 dark:border-[#7A9E7E]/30 backdrop-blur-xl">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#31493C]/80 dark:text-[#E8F1F2]/75">
+          <div className={`rounded-3xl p-5 border ${darkMode ? 'bg-[#31493C]/25 border-[#31493C]' : 'bg-white border-[#7A9E7E]/25 shadow-xs'}`}>
+            <p className="text-xs font-semibold uppercase tracking-wider opacity-75">
               Monthly Run-Rate
             </p>
             <p className="text-2xl font-extrabold mt-1">
               {currency}
               {data.summary.totalMonthlyCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
-            <p className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/70 mt-1">Normalized across cycles</p>
+            <p className="text-xs opacity-75 mt-1">Normalized across cycles</p>
           </div>
 
-          <div className="rounded-3xl p-5 bg-white dark:bg-[#31493C]/25 border border-[#7A9E7E]/30 dark:border-[#7A9E7E]/30 backdrop-blur-xl">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#31493C]/80 dark:text-[#E8F1F2]/75">
+          <div className={`rounded-3xl p-5 border ${darkMode ? 'bg-[#31493C]/25 border-[#31493C]' : 'bg-white border-[#7A9E7E]/25 shadow-xs'}`}>
+            <p className="text-xs font-semibold uppercase tracking-wider opacity-75">
               Annualized Commitment
             </p>
             <p className="text-2xl font-extrabold mt-1">
               {currency}
               {data.summary.totalYearlyCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
-            <p className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/70 mt-1">12-month projected spend</p>
+            <p className="text-xs opacity-75 mt-1">12-month projected spend</p>
           </div>
         </section>
 
         {/* Main 2-Column Layout: Setup Form + Schedule Workspace */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* LEFT: Add / Edit Subscription Setup Card */}
-          <div className="lg:col-span-5 rounded-3xl p-6 bg-white dark:bg-[#31493C]/25 border border-[#7A9E7E]/30 dark:border-[#7A9E7E]/30 backdrop-blur-xl shadow-xs">
+          <div className={`lg:col-span-5 rounded-3xl p-6 border ${darkMode ? 'bg-[#31493C]/25 border-[#31493C]' : 'bg-white border-[#7A9E7E]/25 shadow-xs'}`}>
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-base font-bold">
                   {editingSub ? `Edit "${editingSub.name}"` : 'Add a Subscription'}
                 </h2>
-                <p className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/75">
+                <p className="text-xs opacity-75">
                   Enter start date & frequency — PocketQ calculates all future due dates automatically.
                 </p>
               </div>
@@ -555,7 +555,7 @@ export default function SubscriptionsPage() {
                   placeholder="e.g. Netflix, Spotify, Google One"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-transparent border border-[#7A9E7E]/30 outline-none focus:outline-none focus:ring-2 focus:ring-[#31493C]"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#31493C]/15 border border-[#7A9E7E]/35 outline-none focus:outline-none focus:ring-2 focus:ring-[#31493C]"
                 />
               </div>
 
@@ -572,7 +572,7 @@ export default function SubscriptionsPage() {
                     placeholder="0.00"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-transparent border border-[#7A9E7E]/30 outline-none focus:outline-none focus:ring-2 focus:ring-[#31493C]"
+                    className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#31493C]/15 border border-[#7A9E7E]/35 outline-none focus:outline-none focus:ring-2 focus:ring-[#31493C]"
                   />
                 </div>
 
@@ -585,7 +585,7 @@ export default function SubscriptionsPage() {
                     required
                     value={startDate}
                     onChange={setStartDate}
-                    className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-transparent border border-[#7A9E7E]/30 outline-none focus:outline-none focus:ring-2 focus:ring-[#31493C]"
+                    className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#31493C]/15 border border-[#7A9E7E]/35 outline-none focus:outline-none focus:ring-2 focus:ring-[#31493C]"
                   />
                 </div>
               </div>
@@ -603,13 +603,13 @@ export default function SubscriptionsPage() {
                         className={`text-left px-3 py-2 rounded-xl border text-xs transition cursor-pointer ${
                           active
                             ? 'bg-[#31493C] text-white border-[#31493C] font-semibold'
-                            : 'bg-[#E8F1F2] dark:bg-[#31493C]/25 backdrop-blur-xl border-[#31493C]/15 dark:border-white/15 hover:border-[#31493C]/40'
+                            : darkMode ? 'bg-[#31493C]/20 border-[#31493C] text-[#E8F1F2] hover:border-[#7A9E7E]' : 'bg-[#E8F1F2] border-[#31493C]/15 text-[#001A23] hover:border-[#31493C]/40'
                         }`}
                       >
                         <div>{opt.label}</div>
                         <div
                           className={`text-[11px] ${
-                            active ? 'text-[#B3EFB2]' : 'text-[#31493C]/75 dark:text-[#E8F1F2]/75'
+                            active ? 'text-[#B3EFB2]' : 'opacity-75'
                           }`}
                         >
                           {opt.hint}
@@ -621,7 +621,7 @@ export default function SubscriptionsPage() {
               </div>
 
               {billingCycle === 'CUSTOM' && (
-                <div className="p-3.5 rounded-2xl bg-transparent border border-[#7A9E7E]/30 outline-none space-y-2">
+                <div className="p-3.5 rounded-2xl bg-[#31493C]/15 border border-[#7A9E7E]/35 outline-none space-y-2">
                   <label className="block text-xs font-semibold">Custom Billing Interval</label>
                   <div className="grid grid-cols-2 gap-2">
                     <input
@@ -630,12 +630,12 @@ export default function SubscriptionsPage() {
                       max="3650"
                       value={customIntervalValue}
                       onChange={(e) => setCustomIntervalValue(e.target.value)}
-                      className="px-3 py-2 rounded-xl text-sm bg-transparent border border-[#7A9E7E]/30 outline-none"
+                      className="px-3 py-2 rounded-xl text-sm bg-[#31493C]/15 border border-[#7A9E7E]/35 outline-none"
                     />
                     <select
                       value={customIntervalUnit}
                       onChange={(e) => setCustomIntervalUnit(e.target.value as CustomIntervalUnit)}
-                      className="px-3 py-2 rounded-xl text-sm bg-transparent border border-[#7A9E7E]/30 outline-none"
+                      className="px-3 py-2 rounded-xl text-sm bg-[#31493C]/15 border border-[#7A9E7E]/35 outline-none"
                     >
                       <option value="DAYS">Days</option>
                       <option value="WEEKS">Weeks</option>
@@ -653,7 +653,7 @@ export default function SubscriptionsPage() {
                 <select
                   value={defaultWalletId}
                   onChange={(e) => setDefaultWalletId(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-transparent border border-[#7A9E7E]/30 outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#31493C]/15 border border-[#7A9E7E]/35 outline-none"
                 >
                   <option value="">Select wallet at payment time</option>
                   {data.wallets.map((w) => (
@@ -672,7 +672,7 @@ export default function SubscriptionsPage() {
                   placeholder="e.g. Family plan, auto-debit card"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-transparent border border-[#7A9E7E]/30 outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#31493C]/15 border border-[#7A9E7E]/35 outline-none"
                 />
               </div>
 
@@ -687,7 +687,7 @@ export default function SubscriptionsPage() {
                       {formatDateDDMMYYYY(livePreview.firstDueISO)}
                     </span>
                   </div>
-                  <div className="text-[11px] text-slate-600 dark:text-slate-300">
+                  <div className="text-[11px] opacity-80">
                     Schedule ({livePreview.frequencyLabel}):{' '}
                     {livePreview.upcoming.map((d) => formatDateDDMMYYYY(d)).join(' → ')}
                   </div>
@@ -723,7 +723,7 @@ export default function SubscriptionsPage() {
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
                       statusFilter === tab
                         ? 'bg-[#31493C] text-white'
-                        : 'bg-transparent border border-[#7A9E7E]/30 outline-none'
+                        : darkMode ? 'bg-[#31493C]/20 border border-[#31493C] text-[#E8F1F2]' : 'bg-white border border-[#7A9E7E]/30 text-[#001A23]'
                     }`}
                   >
                     {tab === 'ALL'
@@ -734,17 +734,17 @@ export default function SubscriptionsPage() {
                   </button>
                 ))}
               </div>
-              <span className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/70">
+              <span className="text-xs opacity-75">
                 Settlement unlocks automatically on each due date
               </span>
             </div>
 
             {/* Subscription Cards */}
             {filteredSubscriptions.length === 0 ? (
-              <div className="rounded-3xl p-10 bg-white dark:bg-[#31493C]/25 border border-[#7A9E7E]/30 dark:border-[#7A9E7E]/30 backdrop-blur-xl text-center space-y-2">
-                <Repeat className="w-8 h-8 mx-auto text-[#31493C]/50 dark:text-[#31493C]/75 dark:text-[#E8F1F2]/70" />
+              <div className={`rounded-3xl p-10 border text-center space-y-2 ${darkMode ? 'bg-[#31493C]/25 border-[#31493C]' : 'bg-white border-[#7A9E7E]/25 shadow-xs'}`}>
+                <Repeat className="w-8 h-8 mx-auto text-[#31493C]/50 dark:opacity-75" />
                 <p className="font-bold text-sm">No subscriptions in this view</p>
-                <p className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/70">
+                <p className="text-xs opacity-75">
                   Add a subscription on the left to automatically generate its recurring due dates.
                 </p>
               </div>
@@ -753,7 +753,7 @@ export default function SubscriptionsPage() {
                 {filteredSubscriptions.map((sub) => (
                   <div
                     key={sub.id}
-                    className={`rounded-3xl p-5 bg-white dark:bg-[#31493C]/25 border transition ${
+                    className={`rounded-3xl p-5 ${darkMode ? 'bg-[#31493C]/25' : 'bg-white'} border transition ${
                       sub.canSettle
                         ? 'border-amber-400/70 dark:border-amber-500/40 shadow-sm'
                         : 'border-[#7A9E7E]/25 dark:border-[#7A9E7E]/30'
@@ -765,12 +765,12 @@ export default function SubscriptionsPage() {
                           <h3 className="text-base font-bold">{sub.name}</h3>
                           {renderStatusBadge(sub)}
                         </div>
-                        <p className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/75">
+                        <p className="text-xs opacity-75">
                           {sub.frequencyLabel} · Started {formatDateDDMMYYYY(sub.startDate)}
                           {sub.defaultWalletName ? ` · Wallet: ${sub.defaultWalletName}` : ''}
                         </p>
                         {sub.note && (
-                          <p className="text-xs text-slate-600 dark:text-slate-300 italic">
+                          <p className="text-xs opacity-80 italic">
                             “{sub.note}”
                           </p>
                         )}
@@ -781,7 +781,7 @@ export default function SubscriptionsPage() {
                           {currency}
                           {sub.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
-                        <div className="text-[11px] text-[#31493C]/75 dark:text-[#E8F1F2]/70">
+                        <div className="text-[11px] opacity-75">
                           Next due: <span className="font-semibold">{formatDateDDMMYYYY(sub.nextRenewalDate)}</span>
                         </div>
                       </div>
@@ -790,7 +790,7 @@ export default function SubscriptionsPage() {
                     {/* Automatic Upcoming Billing Schedule */}
                     {sub.status === 'ACTIVE' && sub.upcomingDates.length > 0 && (
                       <div className="mt-4 pt-3 border-t border-[#7A9E7E]/25 dark:border-[#7A9E7E]/30">
-                        <p className="text-[11px] font-semibold uppercase tracking-wider text-[#31493C]/75 dark:text-[#E8F1F2]/70 mb-2">
+                        <p className="text-[11px] font-semibold uppercase tracking-wider opacity-75 mb-2">
                           Upcoming Automatic Schedule
                         </p>
                         <div className="flex flex-wrap items-center gap-1.5">
@@ -802,7 +802,7 @@ export default function SubscriptionsPage() {
                                   ? sub.canSettle
                                     ? 'bg-amber-100 text-amber-900 dark:bg-amber-950/70 dark:text-amber-300 font-bold'
                                     : 'bg-[#31493C]/10 text-[#31493C] dark:bg-[#B3EFB2]/15 dark:text-[#B3EFB2] font-semibold'
-                                  : 'bg-[#E8F1F2] dark:bg-[#31493C]/25 backdrop-blur-xl text-slate-600 dark:text-[#31493C]/75 dark:text-[#E8F1F2]/75'
+                                  : 'bg-[#E8F1F2] dark:bg-[#31493C]/25 backdrop-blur-xl text-slate-600 dark:opacity-75'
                               }`}
                             >
                               {formatDateDDMMYYYY(isoDate)}
@@ -828,7 +828,7 @@ export default function SubscriptionsPage() {
                           className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition ${
                             sub.canSettle
                               ? 'bg-[#31493C] text-[#B3EFB2] hover:opacity-95 cursor-pointer shadow-xs'
-                              : 'bg-slate-200/80 dark:bg-white/5 text-[#31493C]/75 dark:text-[#E8F1F2]/75 dark:text-[#31493C]/75 dark:text-[#E8F1F2]/70 cursor-not-allowed'
+                              : 'bg-slate-200/80 dark:bg-white/5 opacity-75 dark:opacity-75 cursor-not-allowed'
                           }`}
                         >
                           {sub.canSettle ? (
@@ -854,14 +854,14 @@ export default function SubscriptionsPage() {
                           type="button"
                           onClick={() => startEdit(sub)}
                           title="Edit subscription"
-                          className="p-2 rounded-xl text-xs hover:bg-[#E8F1F2] dark:hover:bg-white/10 text-slate-600 dark:text-slate-300 cursor-pointer"
+                          className="p-2 rounded-xl text-xs hover:bg-[#E8F1F2] dark:hover:bg-white/10 opacity-80 cursor-pointer"
                         >
                           <Edit3 className="w-4 h-4" />
                         </button>
                         <button
                           type="button"
                           onClick={() => handleToggleStatus(sub)}
-                          className="px-2.5 py-1.5 rounded-xl text-xs font-semibold hover:bg-[#E8F1F2] dark:hover:bg-white/10 text-slate-600 dark:text-slate-300 cursor-pointer"
+                          className="px-2.5 py-1.5 rounded-xl text-xs font-semibold hover:bg-[#E8F1F2] dark:hover:bg-white/10 opacity-80 cursor-pointer"
                         >
                           {sub.status === 'ACTIVE' ? 'Cancel' : 'Reactivate'}
                         </button>
@@ -881,19 +881,19 @@ export default function SubscriptionsPage() {
             )}
 
             {/* Payment History Ledger */}
-            <div className="rounded-3xl p-5 bg-white dark:bg-[#31493C]/25 border border-[#7A9E7E]/30 dark:border-[#7A9E7E]/30 backdrop-blur-xl">
+            <div className={`rounded-3xl p-5 border ${darkMode ? 'bg-[#31493C]/25 border-[#31493C]' : 'bg-white border-[#7A9E7E]/25 shadow-xs'}`}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <History className="w-4 h-4 text-[#31493C] dark:text-[#B3EFB2]" />
                   <h3 className="text-sm font-bold">Confirmed Payment History</h3>
                 </div>
-                <span className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/70">
+                <span className="text-xs opacity-75">
                   {data.paymentHistory.length} settled cycle(s)
                 </span>
               </div>
 
               {data.paymentHistory.length === 0 ? (
-                <p className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/70 py-4 text-center">
+                <p className="text-xs opacity-75 py-4 text-center">
                   No subscription payments confirmed yet. When a bill reaches its due date and you confirm payment, it appears here.
                 </p>
               ) : (
@@ -904,7 +904,7 @@ export default function SubscriptionsPage() {
                         <p className="font-bold">
                           {item.subscription?.name || 'Subscription Payment'}
                         </p>
-                        <p className="text-[#31493C]/75 dark:text-[#E8F1F2]/70">
+                        <p className="opacity-75">
                           Cycle Due: {formatDateDDMMYYYY(item.dueDate)} · Paid:{' '}
                           {formatDateDDMMYYYY(item.paidDate)}
                           {item.walletName ? ` · via ${item.walletName}` : ''}
@@ -926,11 +926,11 @@ export default function SubscriptionsPage() {
       {/* Payment Confirmation Modal (Only reachable for Due Today / Overdue bills) */}
       {settleTarget && (
         <div className="fixed inset-0 z-50 bg-[#31493C]/25 backdrop-blur-xl backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="w-full max-w-md rounded-3xl p-6 bg-transparent border border-[#7A9E7E]/30 outline-none shadow-xl space-y-4">
+          <div className="w-full max-w-md rounded-3xl p-6 bg-[#31493C]/15 border border-[#7A9E7E]/35 outline-none shadow-xl space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-base font-bold">Confirm Subscription Payment</h3>
-                <p className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/70">
+                <p className="text-xs opacity-75">
                   {settleTarget.name} · Cycle due {formatDateDDMMYYYY(settleTarget.nextRenewalDate)}
                 </p>
               </div>
@@ -952,7 +952,7 @@ export default function SubscriptionsPage() {
                     required
                     value={settleWalletId}
                     onChange={(e) => setSettleWalletId(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-transparent border border-[#7A9E7E]/30 outline-none"
+                    className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#31493C]/15 border border-[#7A9E7E]/35 outline-none"
                   >
                     <option value="">Choose wallet...</option>
                     {data.wallets.map((w) => (
@@ -976,7 +976,7 @@ export default function SubscriptionsPage() {
                   required
                   value={settleAmount}
                   onChange={(e) => setSettleAmount(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm font-bold bg-transparent border border-[#7A9E7E]/30 outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm font-bold bg-[#31493C]/15 border border-[#7A9E7E]/35 outline-none"
                 />
               </div>
 
@@ -987,11 +987,11 @@ export default function SubscriptionsPage() {
                   value={settleNote}
                   onChange={(e) => setSettleNote(e.target.value)}
                   placeholder="Optional receipt or card note"
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-transparent border border-[#7A9E7E]/30 outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-[#31493C]/15 border border-[#7A9E7E]/35 outline-none"
                 />
               </div>
 
-              <div className="p-3 rounded-2xl bg-[#E8F1F2] dark:bg-[#31493C]/25 backdrop-blur-xl text-xs text-slate-600 dark:text-slate-300 flex items-center gap-2">
+              <div className="p-3 rounded-2xl bg-[#E8F1F2] dark:bg-[#31493C]/25 backdrop-blur-xl text-xs opacity-80 flex items-center gap-2">
                 <Wallet className="w-4 h-4 shrink-0 text-[#31493C] dark:text-[#B3EFB2]" />
                 <span>
                   Deducts from selected wallet, logs an Expense transaction, and advances the next due date automatically.
