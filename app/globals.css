@@ -1151,12 +1151,8 @@ html:not(.dark) body main .liquid-glass-slider-thumb {
 }
 
 /* Light Mode: ONLY the big Safe Spendable Cash hero amount is pure black */
-html:not(.dark) .hero-spendable-card .text-4xl,
-html:not(.dark) .hero-spendable-card .text-5xl,
-html:not(.dark) .hero-spendable-card .text-6xl,
-html:not(.dark) .hero-spendable-card [class*="text-4xl"],
-html:not(.dark) .hero-spendable-card [class*="text-5xl"],
-html:not(.dark) .hero-spendable-card [class*="text-6xl"] {
+html:not(.dark) main .hero-spendable-amount,
+html:not(.dark) body main .hero-spendable-amount {
   color: #000000 !important;
 }
 
