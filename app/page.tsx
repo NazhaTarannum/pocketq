@@ -269,9 +269,12 @@ export default function PocketQApp() {
   const fetchDashboard = async () => {
     try {
       const res = await fetch('/api/dashboard', { cache: 'no-store' });
-      const json = await res.json();
+      if (res.status === 401) {
+        window.location.href = '/login';
+        return;
+      }
+      const json = await res.json().catch(() => null);
       if (!res.ok || !json || !Array.isArray(json.transactions)) {
-        console.error('Dashboard API error:', json);
         return;
       }
       setData(json);
