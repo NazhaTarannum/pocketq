@@ -89,18 +89,18 @@ const EMPTY_WEALTH_DATA: WealthPayload = {
 };
 
 export default function WealthPage() {
-  const [data, setData] = useState<WealthPayload>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const cached = sessionStorage.getItem('pocketq_dashboard_cache');
-        if (cached) {
-          const parsed = JSON.parse(cached);
-          if (parsed && parsed.investmentSummary) return parsed;
-        }
-      } catch {}
+  const [data, setData] = useState<WealthData | null>(null);
+
+  useEffect(() => {
+    try {
+      const cached = localStorage.getItem('pocketq_dashboard_cache');
+      if (cached) {
+        setData(JSON.parse(cached));
+      }
+    } catch {
+      // ignore storage errors
     }
-    return EMPTY_WEALTH_DATA;
-  });
+  }, []);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [darkMode, setDarkMode] = useThemePreference();
@@ -204,6 +204,8 @@ export default function WealthPage() {
       setSubmitting(false);
     }
   };
+
+  if (!data) return null;
 
   return (
     <div
