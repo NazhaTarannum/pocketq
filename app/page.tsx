@@ -10,6 +10,7 @@ import DDMMYYYYInput from '@/components/DDMMYYYYInput';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import AppSidebar from '@/components/AppSidebar';
+import AppHeader from '@/components/AppHeader';
 import { useThemePreference } from '@/lib/useThemePreference';
 import {
   Wallet,
@@ -790,123 +791,11 @@ export default function PocketQApp() {
         darkMode ? 'bg-black text-[#E8F1F2]' : 'bg-[#E8F1F2] text-[#001A23]'
       }`}
     >
-      {/* Top Navbar */}
-      <header
-        className={`sticky top-0 z-30 border-b backdrop-blur-md ${
-          darkMode
-            ? 'bg-black/90 border-[#31493C]'
-            : 'bg-[#E8F1F2]/90 border-[#7A9E7E]/30'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-2.5 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between gap-1.5 sm:gap-3">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <AppSidebar darkMode={darkMode} />
-            <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#31493C] flex items-center justify-center text-[#B3EFB2] font-bold text-base sm:text-lg shadow-sm shrink-0">
-                Q
-              </div>
-              <div className="hidden min-[400px]:block truncate">
-                <h1 className="font-bold text-base sm:text-lg tracking-tight leading-none">PocketQ</h1>
-                <p className="text-xs opacity-70 mt-0.5 hidden sm:block">Smart Financial Companion</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 sm:gap-5 shrink-0">
-            <nav
-              ref={navContainerRef}
-              aria-label="Primary Navigation"
-              className="relative flex items-center gap-3.5 sm:gap-6 py-1"
-            >
-              <button
-                ref={(el) => { navItemRefs.current['overview'] = el; }}
-                onClick={() => setActiveNavTab('overview')}
-                className={`relative pb-1.5 text-xs sm:text-[13px] font-medium tracking-tight transition-colors duration-200 cursor-pointer bg-transparent border-0 ${
-                  activeNavTab === 'overview'
-                    ? 'opacity-100 font-semibold'
-                    : 'opacity-65 hover:opacity-100'
-                }`}
-              >
-                Overview
-              </button>
-
-              <Link
-                ref={(el) => { navItemRefs.current['planning'] = el; }}
-                href="/planning"
-                onClick={() => setActiveNavTab('planning')}
-                className={`relative pb-1.5 text-xs sm:text-[13px] font-medium tracking-tight transition-colors duration-200 ${
-                  activeNavTab === 'planning'
-                    ? 'opacity-100 font-semibold'
-                    : 'opacity-65 hover:opacity-100'
-                }`}
-              >
-                Planning
-              </Link>
-
-              <Link
-                ref={(el) => { navItemRefs.current['split'] = el; }}
-                href="/split"
-                onClick={() => setActiveNavTab('split')}
-                className={`relative pb-1.5 text-xs sm:text-[13px] font-medium tracking-tight transition-colors duration-200 ${
-                  activeNavTab === 'split'
-                    ? 'opacity-100 font-semibold'
-                    : 'opacity-65 hover:opacity-100'
-                }`}
-              >
-                Split Bill
-              </Link>
-
-              <button
-                ref={(el) => { navItemRefs.current['entry'] = el; }}
-                onClick={() => {
-                  setActiveNavTab('entry');
-                  setActiveModal('TRANSACTION');
-                }}
-                className={`relative pb-1.5 text-xs sm:text-[13px] font-medium tracking-tight transition-colors duration-200 cursor-pointer bg-transparent border-0 ${
-                  activeNavTab === 'entry'
-                    ? 'opacity-100 font-semibold'
-                    : 'opacity-65 hover:opacity-100'
-                }`}
-              >
-                + Entry
-              </button>
-
-              <Link
-                ref={(el) => { navItemRefs.current['settings'] = el; }}
-                href="/settings"
-                onClick={() => setActiveNavTab('settings')}
-                className={`hidden md:inline-block relative pb-1.5 text-xs sm:text-[13px] font-medium tracking-tight transition-colors duration-200 ${
-                  activeNavTab === 'settings'
-                    ? 'opacity-100 font-semibold'
-                    : 'opacity-65 hover:opacity-100'
-                }`}
-              >
-                Settings
-              </Link>
-
-              {/* Smooth Sliding Underline */}
-              <span
-                aria-hidden="true"
-                style={{
-                  transform: `translateX(${underlineStyle.left}px)`,
-                  width: `${underlineStyle.width}px`,
-                }}
-                className={`pointer-events-none absolute bottom-0 left-0 h-[2px] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                  darkMode ? 'bg-[#18D476]' : 'bg-[#0A8F4C]'
-                }`}
-              />
-            </nav>
-
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              aria-label="Toggle theme"
-              className="p-1.5 opacity-75 hover:opacity-100 transition-opacity cursor-pointer bg-transparent border-0 shrink-0"
-            >
-              {darkMode ? <Sun className="w-4 h-4 text-[#FFEF5C]" /> : <Moon className="w-4 h-4" />}
-            </button>
-          </div>
-        </div>
-      </header>
+      <AppHeader
+        darkMode={darkMode}
+        onToggleDarkMode={() => setDarkMode(!darkMode)}
+        onAddEntry={() => setActiveModal('TRANSACTION')}
+      />
 
       <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
         {/* Hero + Wallets Responsive Section (Mobile: Safe Spend -> Slider -> Wallets -> Obligations -> Savings | Desktop: 3-Col Hero + Wallets Row) */}

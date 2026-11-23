@@ -1,5 +1,7 @@
 'use client';
 
+import AppHeader from '@/components/AppHeader';
+
 /**
  * @file app/settings/page.tsx
  * @description User preferences workspace for currency, low-balance alert thresholds, and notification toggles.
@@ -339,42 +341,7 @@ export default function SettingsPage() {
       }`}
     >
       {/* Top Sticky Header */}
-      <header
-        className={`sticky top-0 z-30 border-b backdrop-blur-md ${
-          darkMode ? 'bg-black/90 border-[#31493C]' : 'bg-[#E8F1F2]/90 border-[#7A9E7E]/30'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 min-w-0">
-            <AppSidebar darkMode={darkMode} />
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-[#31493C] text-[#B3EFB2] hover:opacity-90 shrink-0"
-            >
-              <ArrowLeft className="w-3.5 h-3.5 shrink-0" />
-              <span>Dashboard</span>
-            </Link>
-            <h1 className="font-bold text-sm sm:text-lg leading-tight flex items-center gap-1.5 min-w-0">
-              <Settings className="w-4 h-4 text-[#7A9E7E] shrink-0" />
-              <span className="truncate">Settings &amp; Personalization</span>
-            </h1>
-          </div>
-
-          {/* Theme Toggle */}
-          <button
-            type="button"
-            onClick={() => setDarkMode(!darkMode)}
-            aria-label="Toggle theme"
-            className={`p-2 rounded-xl border transition cursor-pointer ${
-              darkMode
-                ? 'bg-[#31493C]/50 border-[#31493C] text-[#FFEF5C]'
-                : 'bg-white border-[#7A9E7E]/30 text-[#001A23]'
-            }`}
-          >
-            {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </button>
-        </div>
-      </header>
+      <AppHeader darkMode={darkMode} onToggleDarkMode={() => setDarkMode(!darkMode)} />
 
       <main className="max-w-5xl mx-auto px-4 py-6 space-y-6">
         {/* Confirmation Banner on Save */}

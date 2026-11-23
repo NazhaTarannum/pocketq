@@ -1,4 +1,6 @@
 'use client';
+
+import AppHeader from '@/components/AppHeader';
 import Link from 'next/link';
 
 import React, { useEffect, useMemo, useState } from 'react';
@@ -444,44 +446,7 @@ export default function SubscriptionsPage() {
   return (
     <div className="min-h-screen bg-[#E8F1F2] dark:bg-black text-[#001A23] dark:text-[#E8F1F2] transition-colors duration-200">
       {/* Top Header */}
-      <header className="sticky top-0 z-30 backdrop-blur-md bg-[#E8F1F2]/90 dark:bg-black/90 border-b border-[#7A9E7E]/30 dark:border-[#31493C]">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 min-w-0">
-            <AppSidebar darkMode={darkMode} />
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-[#31493C] text-[#B3EFB2] hover:opacity-90 shrink-0"
-            >
-              <ArrowLeft className="w-3.5 h-3.5 shrink-0" />
-              <span>Dashboard</span>
-            </Link>
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#31493C] text-[#B3EFB2] flex items-center justify-center shadow-xs shrink-0">
-                <Repeat className="w-4 h-4 sm:w-5 sm:h-5" />
-              </div>
-              <h1 className="text-sm sm:text-lg font-bold tracking-tight truncate">
-                Subscriptions &amp; Recurring Schedules
-              </h1>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={fetchSubscriptions}
-              title="Refresh schedules"
-              className="p-2 rounded-xl border border-[#31493C]/15 dark:border-white/15 hover:bg-[#31493C]/5 dark:hover:bg-white/5 cursor-pointer"
-            >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-            </button>
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-xl border border-[#31493C]/15 dark:border-white/15 hover:bg-[#31493C]/5 dark:hover:bg-white/5 cursor-pointer"
-            >
-              {darkMode ? <Sun className="w-4 h-4 text-[#FFEF5C]" /> : <Moon className="w-4 h-4" />}
-            </button>
-          </div>
-        </div>
-      </header>
+      <AppHeader darkMode={darkMode} onToggleDarkMode={() => setDarkMode(!darkMode)} />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
         {/* Alerts */}
