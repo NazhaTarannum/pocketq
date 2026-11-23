@@ -36,6 +36,11 @@ export default function LoginPage() {
       try {
         sessionStorage.removeItem('pocketq_dashboard_cache');
         sessionStorage.removeItem('pocketq_splits_cache');
+        const dashRes = await fetch('/api/dashboard', { cache: 'no-store' });
+        if (dashRes.ok) {
+          const dashJson = await dashRes.json();
+          sessionStorage.setItem('pocketq_dashboard_cache', JSON.stringify(dashJson));
+        }
       } catch {}
       router.push('/');
     } catch {

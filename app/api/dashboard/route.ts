@@ -1199,6 +1199,7 @@ export async function POST(request: Request) {
         ? new Date(`${String(nextDueDate).slice(0, 10)}T00:00:00.000Z`)
         : null;
 
+      const resolvedParty = (lender || title || '').trim() || (cleanDir === 'LENT' ? 'Borrower' : 'Lender');
       const loan = await prisma.loan.create({
         data: {
           userId,
@@ -1207,8 +1208,8 @@ export async function POST(request: Request) {
           sourceType: cleanSourceType,
           sourceWalletId: cleanSourceType === 'WALLET' ? sourceWalletId || null : null,
           sourceSavingsId: cleanSourceType === 'SAVINGS' ? sourceSavingsId || null : null,
-          title: title.trim(),
-          lender: lender?.trim() || null,
+          title: resolvedParty,
+          lender: resolvedParty,
           principal: numPrincipal,
           remaining: numPrincipal,
           monthlyEmi: numEmi,
@@ -1365,6 +1366,31 @@ export async function POST(request: Request) {
       }
 
       return NextResponse.json({ success: true });
+    }
+
+    if (action === 'EDIT_LOAN') {
+      const { loanId, lender, principal, nextDueDate } = body;
+      const existing = await prisma.loan.findUnique({ where: { id: loanId } });
+      if (!existing) return NextResponse.json({ error: 'Loan not found' }, { status: 404 });
+      const resolvedParty = String(lender || existing.lender || existing.title || '').trim();
+      const newPrincipal = Math.max(0.01, Math.round((Number(principal) || existing.principal) * 100) / 100);
+      const alreadyPaid = Math.max(0, existing.principal - existing.remaining);
+      const newRemaining = Math.max(0, Math.round((newPrincipal - alreadyPaid) * 100) / 100);
+      const parsedDue = nextDueDate
+        ? new Date(`${String(nextDueDate).slice(0, 10)}T00:00:00.000Z`)
+        : null;
+      const updated = await prisma.loan.update({
+        where: { id: loanId },
+        data: {
+          title: resolvedParty,
+          lender: resolvedParty,
+          principal: newPrincipal,
+          remaining: newRemaining,
+          isClosed: newRemaining <= 0.01,
+          nextDueDate: parsedDue,
+        },
+      });
+      return NextResponse.json({ success: true, loan: updated });
     }
 
     if (action === 'DELETE_LOAN') {

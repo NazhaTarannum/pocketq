@@ -22,6 +22,7 @@ import {
   ArrowUpRight,
   History,
   AlertTriangle,
+  Pencil,
 } from 'lucide-react';
 import AppSidebar from '@/components/AppSidebar';
 import { useThemePreference } from '@/lib/useThemePreference';
@@ -75,7 +76,7 @@ interface LoanItem {
   principal: number;
   remaining: number;
   monthlyEmi: number;
-  nextDueDate: string;
+  nextDueDate: string | null;
   notes?: string | null;
   isClosed: boolean;
   payments: LoanPaymentItem[];
@@ -154,8 +155,12 @@ export default function PlanningWorkspacePage() {
   const [repayWalletId, setRepayWalletId] = useState('');
   const [repaySavingsId, setRepaySavingsId] = useState('');
   const [repayDate, setRepayDate] = useState('');
-  const [repayNote, setRepayNote] = useState('');
+  const [repayMode, setRepayMode] = useState<'FULL' | 'PARTIAL'>('FULL');
   const [historyLoan, setHistoryLoan] = useState<LoanItem | null>(null);
+  const [editingLoan, setEditingLoan] = useState<LoanItem | null>(null);
+  const [editLoanParty, setEditLoanParty] = useState('');
+  const [editLoanPrincipal, setEditLoanPrincipal] = useState('');
+  const [editLoanDueDate, setEditLoanDueDate] = useState('');
 
   const currencySymbol = data?.settings?.currencySymbol || '৳';
   const formatBDT = (num: number) => formatCurrency(num, currencySymbol);
@@ -250,7 +255,7 @@ export default function PlanningWorkspacePage() {
 
   const handleCreateLoan = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!loanTitle.trim() || !loanPrincipal || submitting) return;
+    if (!loanParty.trim() || !loanPrincipal || submitting) return;
     setSubmitting(true);
     try {
       await fetch('/api/dashboard', {
@@ -270,8 +275,8 @@ export default function PlanningWorkspacePage() {
               ? loanSourceSavingsId || (data as unknown as { savingsGoals?: Array<{ id: string }> })?.savingsGoals?.[0]?.id
               : null,
           confirmedReceived: loanDirection === 'BORROWED' ? loanConfirmedReceived : true,
-          title: loanTitle,
-          lender: loanParty,
+          title: loanParty.trim(),
+          lender: loanParty.trim(),
           principal: Number(loanPrincipal),
           monthlyEmi: Number(loanEmi) || Number(loanPrincipal),
           nextDueDate: loanDueDate || null,
@@ -289,20 +294,67 @@ export default function PlanningWorkspacePage() {
     }
   };
 
+  const openEditLoanModal = (loan: LoanItem) => {
+    setEditingLoan(loan);
+    setEditLoanParty(loan.lender || loan.title || '');
+    setEditLoanPrincipal(String(loan.principal));
+    setEditLoanDueDate(loan.nextDueDate ? String(loan.nextDueDate).slice(0, 10) : '');
+  };
+
+  const handleSaveEditLoan = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingLoan || !editLoanParty.trim() || !editLoanPrincipal || submitting) return;
+    setSubmitting(true);
+    try {
+      await fetch('/api/dashboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'EDIT_LOAN',
+          loanId: editingLoan.id,
+          lender: editLoanParty.trim(),
+          principal: Number(editLoanPrincipal),
+          nextDueDate: editLoanDueDate || null,
+        }),
+      });
+      setEditingLoan(null);
+      await fetchData();
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDeleteLoan = async (loanId: string) => {
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      setData((prev) => (prev ? { ...prev, loans: prev.loans.filter((l) => l.id !== loanId) } : prev));
+      await fetch('/api/dashboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'DELETE_LOAN', loanId }),
+      });
+      await fetchData();
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const openRepayModal = (loan: LoanItem) => {
     setRepayLoanTarget(loan);
+    setRepayMode('FULL');
     setRepayAmount(String(loan.remaining));
     setRepaySourceType('WALLET');
     setRepayWalletId(data?.wallets[0]?.id || '');
     setRepaySavingsId('');
     setRepayDate(new Date().toISOString().slice(0, 10));
-    setRepayNote('');
   };
 
   const handleConfirmLoanRepayment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!repayLoanTarget || submitting) return;
-    const payAmt = Math.min(repayLoanTarget.remaining, Math.max(0, Number(repayAmount) || 0));
+    const rawAmt = repayMode === 'FULL' ? repayLoanTarget.remaining : Number(repayAmount) || 0;
+    const payAmt = Math.min(repayLoanTarget.remaining, Math.max(0, rawAmt));
     if (payAmt <= 0) return;
     setSubmitting(true);
     try {
@@ -317,7 +369,7 @@ export default function PlanningWorkspacePage() {
           walletId: repaySourceType === 'WALLET' ? repayWalletId || data?.wallets[0]?.id : null,
           savingsGoalId: repaySourceType === 'SAVINGS' ? repaySavingsId : null,
           paymentDate: repayDate,
-          note: repayNote,
+          note: repayMode === 'FULL' ? 'Full' : 'Partial',
         }),
       });
       setRepayLoanTarget(null);
@@ -695,18 +747,11 @@ export default function PlanningWorkspacePage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
               <input
                 type="text"
                 required
-                placeholder="Title (e.g., Friend Loan)"
-                value={loanTitle}
-                onChange={(e) => setLoanTitle(e.target.value)}
-                className="rounded-xl px-3 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
-              />
-              <input
-                type="text"
-                placeholder={loanDirection === 'BORROWED' ? 'Lender (optional)' : 'Borrower (optional)'}
+                placeholder={loanDirection === 'BORROWED' ? 'Lender Name' : 'Borrower Name'}
                 value={loanParty}
                 onChange={(e) => setLoanParty(e.target.value)}
                 className="rounded-xl px-3 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
@@ -722,7 +767,7 @@ export default function PlanningWorkspacePage() {
                 className="rounded-xl px-3 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
               />
               <DDMMYYYYInput
-                placeholder="Optional Due Date"
+                placeholder="Due Date (Optional)"
                 value={loanDueDate}
                 onChange={setLoanDueDate}
                 className="rounded-xl px-3 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
@@ -845,15 +890,16 @@ export default function PlanningWorkspacePage() {
                             </>
                           )}
                         </span>
-                        <span className="font-bold text-sm">{loan.title}</span>
+                        <span className="font-bold text-sm">{loan.lender || loan.title}</span>
                       </div>
                       <p className="text-xs opacity-75 mt-1">
                         Remaining: <strong>{formatBDT(loan.remaining)}</strong> of{' '}
-                        {formatBDT(loan.principal)} • Due {formatDateDDMMYYYY(loan.nextDueDate)}
+                        {formatBDT(loan.principal)}
+                        {loan.nextDueDate ? ` • Due ${formatDateDDMMYYYY(loan.nextDueDate)}` : ''}
                       </p>
                     </div>
 
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1">
                       <button
                         type="button"
                         onClick={() => setHistoryLoan(loan)}
@@ -862,11 +908,27 @@ export default function PlanningWorkspacePage() {
                       >
                         <History className="w-4 h-4" />
                       </button>
+                      <button
+                        type="button"
+                        onClick={() => openEditLoanModal(loan)}
+                        className="p-1.5 rounded-lg opacity-70 hover:opacity-100 cursor-pointer"
+                        title="Edit entry"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteLoan(loan.id)}
+                        className="p-1.5 rounded-lg text-[#D52073] opacity-75 hover:opacity-100 cursor-pointer"
+                        title="Delete entry"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                       {!loan.isClosed && (
                         <button
                           type="button"
                           onClick={() => openRepayModal(loan)}
-                          className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#31493C] text-[#B3EFB2] cursor-pointer"
+                          className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#31493C] text-[#B3EFB2] cursor-pointer ml-1"
                         >
                           {isLent ? 'Record Received' : 'Record Repay'}
                         </button>
@@ -879,6 +941,80 @@ export default function PlanningWorkspacePage() {
           </div>
         </section>
       </main>
+
+
+      {/* Edit Loan Entry Modal */}
+      {editingLoan && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <form
+            onSubmit={handleSaveEditLoan}
+            className={`w-full max-w-md rounded-3xl p-6 border space-y-4 ${
+              darkMode
+                ? 'bg-[#001A23] border-[#31493C] text-[#E8F1F2]'
+                : 'bg-white border-[#7A9E7E]/30 text-[#001A23]'
+            }`}
+          >
+            <h3 className="text-lg font-extrabold">
+              Edit {editingLoan.direction === 'LENT' ? 'Borrower' : 'Lender'} Entry
+            </h3>
+
+            <div>
+              <label className="text-xs font-semibold block mb-1">
+                {editingLoan.direction === 'LENT' ? 'Borrower Name' : 'Lender Name'}
+              </label>
+              <input
+                type="text"
+                required
+                value={editLoanParty}
+                onChange={(e) => setEditLoanParty(e.target.value)}
+                className="w-full rounded-xl px-3 py-2 text-sm border border-[#7A9E7E]/30 bg-transparent outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold block mb-1">
+                Total Amount ({currencySymbol})
+              </label>
+              <input
+                type="number"
+                required
+                min="0.01"
+                step="0.01"
+                value={editLoanPrincipal}
+                onChange={(e) => setEditLoanPrincipal(e.target.value)}
+                className="w-full rounded-xl px-3 py-2 text-sm border border-[#7A9E7E]/30 bg-transparent outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold block mb-1">Due Date (Optional)</label>
+              <DDMMYYYYInput
+                placeholder="Optional Due Date"
+                value={editLoanDueDate}
+                onChange={setEditLoanDueDate}
+                className="w-full rounded-xl px-3 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
+              />
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setEditingLoan(null)}
+                className="px-4 py-2 rounded-xl text-xs font-bold border border-[#7A9E7E]/30 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-[#31493C] text-[#B3EFB2] cursor-pointer disabled:opacity-50"
+              >
+                {submitting ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* Flexible Loan Repayment Modal */}
       {repayLoanTarget && (
@@ -902,21 +1038,58 @@ export default function PlanningWorkspacePage() {
               </p>
             </div>
 
-            <div>
-              <label className="text-xs font-semibold block mb-1">
-                Repayment Amount ({currencySymbol})
-              </label>
-              <input
-                type="number"
-                required
-                min="0.01"
-                step="0.01"
-                max={repayLoanTarget.remaining}
-                value={repayAmount}
-                onChange={(e) => setRepayAmount(e.target.value)}
-                className="w-full rounded-xl px-3 py-2 text-sm border border-[#7A9E7E]/30 bg-transparent outline-none"
-              />
+            <div className="space-y-2">
+              <label className="text-xs font-semibold block">Payment Type</label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRepayMode('PARTIAL');
+                    setRepayAmount('');
+                  }}
+                  className={`py-2 rounded-xl text-xs font-bold border transition cursor-pointer ${
+                    repayMode === 'PARTIAL'
+                      ? 'bg-[#31493C] text-[#B3EFB2] border-[#31493C]'
+                      : 'border-[#7A9E7E]/30 opacity-75'
+                  }`}
+                >
+                  Partial
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRepayMode('FULL');
+                    setRepayAmount(String(repayLoanTarget.remaining));
+                  }}
+                  className={`py-2 rounded-xl text-xs font-bold border transition cursor-pointer ${
+                    repayMode === 'FULL'
+                      ? 'bg-[#31493C] text-[#B3EFB2] border-[#31493C]'
+                      : 'border-[#7A9E7E]/30 opacity-75'
+                  }`}
+                >
+                  Full ({formatBDT(repayLoanTarget.remaining)})
+                </button>
+              </div>
             </div>
+
+            {repayMode === 'PARTIAL' && (
+              <div>
+                <label className="text-xs font-semibold block mb-1">
+                  Partial Amount ({currencySymbol})
+                </label>
+                <input
+                  type="number"
+                  required
+                  min="0.01"
+                  step="0.01"
+                  max={repayLoanTarget.remaining}
+                  value={repayAmount}
+                  onChange={(e) => setRepayAmount(e.target.value)}
+                  placeholder={`Enter amount up to ${repayLoanTarget.remaining}`}
+                  className="w-full rounded-xl px-3 py-2 text-sm border border-[#7A9E7E]/30 bg-transparent outline-none"
+                />
+              </div>
+            )}
 
             <div>
               <label className="text-xs font-semibold block mb-1">
@@ -970,25 +1143,13 @@ export default function PlanningWorkspacePage() {
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="text-xs font-semibold block mb-1">Date</label>
-                <DDMMYYYYInput
-                  value={repayDate}
-                  onChange={setRepayDate}
-                  className="w-full rounded-xl px-3 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
-                />
-              </div>
-              <div>
-                <label className="text-xs font-semibold block mb-1">Note (optional)</label>
-                <input
-                  type="text"
-                  value={repayNote}
-                  onChange={(e) => setRepayNote(e.target.value)}
-                  placeholder="Partial / full..."
-                  className="w-full rounded-xl px-3 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
-                />
-              </div>
+            <div>
+              <label className="text-xs font-semibold block mb-1">Date</label>
+              <DDMMYYYYInput
+                value={repayDate}
+                onChange={setRepayDate}
+                className="w-full rounded-xl px-3 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
+              />
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
