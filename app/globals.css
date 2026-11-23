@@ -1,167 +1,129 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
-@font-face {
-  font-family: "Aeonik Pro";
-  src: url("/fonts/AeonikPro-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Aeonik Pro";
-  src: url("/fonts/AeonikPro-Medium.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Aeonik Pro";
-  src: url("/fonts/AeonikPro-Bold.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
 @theme inline {
   --font-sans: "Aeonik Pro", var(--font-inter), var(--font-geist-sans), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 }
 
 :root {
-  --bg-main: #D6E4E8;
-  --bg-card: rgba(232, 241, 242, 0.34);
+  --bg-main: #CFE2E8;
+  --bg-card: rgba(255, 255, 255, 0.26);
   --text-primary: #001A23;
   --text-muted: #3A545E;
-  --border-subtle: rgba(255, 255, 255, 0.62);
-
-  --pq-inkblack: #001A23;
-  --pq-celadon: #B3EFB2;
-  --pq-aliceblue: #E8F1F2;
-  --pq-mutedteal: #7A9E7E;
-  --pq-pineteal: #31493C;
-  --pq-hotberry: #D52073;
-  --pq-bananacream: #FFEF5C;
+  --border-subtle: rgba(255, 255, 255, 0.72);
 }
 
 .dark {
   --bg-main: #041014;
-  --bg-card: rgba(7, 30, 34, 0.44);
+  --bg-card: rgba(7, 30, 34, 0.36);
   --text-primary: #E8F1F2;
   --text-muted: #98B5BE;
-  --border-subtle: rgba(255, 255, 255, 0.16);
+  --border-subtle: rgba(255, 255, 255, 0.18);
 }
 
-/* 1. Zero Rounded Corners Everywhere — Sharp 0px Edges */
-*,
-*::before,
-*::after {
+/* Sharp 0px Corners Everywhere */
+*, *::before, *::after {
   border-radius: 0px !important;
 }
 
-/* 2. Rich Ambient Light Mesh on Body + Transparent Page Wrapper so Glass Cards Refract Color */
-body {
-  background-color: var(--bg-main);
+/* Vibrant Ambient Mesh Backdrop so Frosted Glass Visibly Refracts Color */
+html, body {
+  min-height: 100%;
+  background-color: #CFE2E8 !important;
   background-image:
-    radial-gradient(at 10% 8%, rgba(122, 158, 126, 0.55) 0px, transparent 42%),
-    radial-gradient(at 88% 12%, rgba(179, 239, 178, 0.52) 0px, transparent 44%),
-    radial-gradient(at 78% 78%, rgba(130, 188, 212, 0.55) 0px, transparent 48%),
-    radial-gradient(at 14% 86%, rgba(255, 239, 92, 0.24) 0px, transparent 46%);
-  background-attachment: fixed;
+    radial-gradient(circle at 12% 14%, rgba(122, 158, 126, 0.65) 0%, transparent 40%),
+    radial-gradient(circle at 86% 16%, rgba(179, 239, 178, 0.68) 0%, transparent 42%),
+    radial-gradient(circle at 50% 48%, rgba(126, 196, 224, 0.55) 0%, transparent 48%),
+    radial-gradient(circle at 82% 84%, rgba(255, 239, 92, 0.38) 0%, transparent 44%),
+    radial-gradient(circle at 16% 85%, rgba(145, 190, 218, 0.62) 0%, transparent 45%) !important;
+  background-attachment: fixed !important;
   color: var(--text-primary);
   font-family: var(--font-sans);
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
-.dark body {
+html.dark, .dark body {
+  background-color: #030D10 !important;
   background-image:
-    radial-gradient(at 12% 10%, rgba(49, 73, 60, 0.72) 0px, transparent 45%),
-    radial-gradient(at 88% 14%, rgba(18, 78, 94, 0.65) 0px, transparent 46%),
-    radial-gradient(at 75% 84%, rgba(122, 158, 126, 0.28) 0px, transparent 48%),
-    radial-gradient(at 16% 86%, rgba(213, 32, 115, 0.18) 0px, transparent 46%);
+    radial-gradient(circle at 14% 14%, rgba(49, 115, 88, 0.75) 0%, transparent 42%),
+    radial-gradient(circle at 86% 18%, rgba(24, 108, 132, 0.72) 0%, transparent 44%),
+    radial-gradient(circle at 52% 52%, rgba(28, 68, 62, 0.55) 0%, transparent 50%),
+    radial-gradient(circle at 80% 85%, rgba(122, 158, 126, 0.35) 0%, transparent 45%),
+    radial-gradient(circle at 18% 85%, rgba(213, 32, 115, 0.24) 0%, transparent 44%) !important;
+  background-attachment: fixed !important;
 }
 
-/* Make the full-page wrapper transparent so body's ambient colors show through every glass panel */
-.min-h-screen {
-  background-color: transparent !important;
+/* Strip opaque page backgrounds so body mesh shines through */
+div.min-h-screen {
+  background: transparent !important;
 }
 
-h1, h2, h3 {
-  font-family: "Aeonik Pro", var(--font-geist-sans), var(--font-inter), sans-serif;
-  letter-spacing: -0.025em;
-}
-
-/* 3. True Translucent Frosted Glass on Primary Cards, Modals & Sticky Headers */
+/* True Apple Liquid Glass Panels (Overrides bg-white, bg-[#001A23], etc.) */
 header,
 aside,
-.rounded-3xl {
-  background: rgba(232, 241, 242, 0.34) !important;
-  backdrop-filter: blur(24px) saturate(185%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(185%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.65) !important;
+.rounded-3xl,
+[class*="bg-white"] {
+  background: rgba(255, 255, 255, 0.28) !important;
+  backdrop-filter: blur(26px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(190%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.72) !important;
   box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.85),
-    0 12px 32px -10px rgba(0, 26, 35, 0.12) !important;
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
+    0 12px 32px -8px rgba(0, 26, 35, 0.14) !important;
 }
 
 .dark header,
 .dark aside,
-.dark .rounded-3xl {
-  background: rgba(7, 30, 34, 0.44) !important;
-  backdrop-filter: blur(26px) saturate(190%) !important;
-  -webkit-backdrop-filter: blur(26px) saturate(190%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+.dark .rounded-3xl,
+.dark [class*="bg-white"],
+.dark [class*="bg-[#001A23]"] {
+  background: rgba(7, 30, 34, 0.36) !important;
+  backdrop-filter: blur(28px) saturate(195%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(195%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
   box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.20),
-    0 16px 38px -12px rgba(0, 0, 0, 0.65) !important;
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
+    0 16px 38px -10px rgba(0, 0, 0, 0.7) !important;
 }
 
-/* Keep the Safe Available-to-Spend Hero Card readable with a translucent Pine-Glass tint */
-.rounded-3xl.bg-\[\#31493C\] {
+/* Translucent Pine-Glass Hero Card */
+.rounded-3xl[class*="bg-[#31493C]"] {
   background: linear-gradient(
     135deg,
-    rgba(49, 73, 60, 0.76) 0%,
-    rgba(22, 48, 42, 0.68) 100%
+    rgba(49, 73, 60, 0.58) 0%,
+    rgba(18, 44, 38, 0.52) 100%
   ) !important;
-  border: 1px solid rgba(179, 239, 178, 0.42) !important;
+  backdrop-filter: blur(28px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+  border: 1px solid rgba(179, 239, 178, 0.48) !important;
   color: #E8F1F2 !important;
 }
 
-/* 4. Nested Sub-Cards (.rounded-2xl) — Ultra-Light Clear Glass Layer */
+/* Inner Sub-Cards (.rounded-2xl) */
 .rounded-2xl {
-  background: rgba(255, 255, 255, 0.22) !important;
+  background: rgba(255, 255, 255, 0.18) !important;
   backdrop-filter: blur(14px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.52) !important;
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.65) !important;
+  border: 1px solid rgba(255, 255, 255, 0.55) !important;
 }
 
 .dark .rounded-2xl {
   background: rgba(255, 255, 255, 0.04) !important;
-  backdrop-filter: blur(14px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.12) !important;
 }
 
-/* 5. Translucent Glass Inputs & Dropdowns (matching your dropdown menu) */
-input,
-select,
-textarea {
-  background-color: rgba(232, 241, 242, 0.28) !important;
-  border: 1px solid rgba(255, 255, 255, 0.58) !important;
+/* Frosted Inputs & Dropdowns */
+input, select, textarea {
+  background-color: rgba(255, 255, 255, 0.24) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   color: inherit;
   color-scheme: light;
 }
 
-.dark input,
-.dark select,
-.dark textarea {
-  background-color: rgba(7, 30, 34, 0.36) !important;
+.dark input, .dark select, .dark textarea {
+  background-color: rgba(7, 30, 34, 0.34) !important;
   border: 1px solid rgba(255, 255, 255, 0.16) !important;
   color-scheme: dark;
 }
@@ -174,4 +136,30 @@ select option {
 .dark select option {
   background-color: rgba(7, 30, 34, 0.92);
   color: #E8F1F2;
+}
+
+/* Rich, Deep & Vibrant Emerald for Progress Bars, Badges & Active Indicators */
+[class*="bg-[#B3EFB2]"] {
+  background: linear-gradient(135deg, #0D9652 0%, #087840 100%) !important;
+  color: #FFFFFF !important;
+  border-color: rgba(13, 150, 82, 0.65) !important;
+  box-shadow: 0 4px 14px -4px rgba(13, 150, 82, 0.5) !important;
+}
+
+.dark [class*="bg-[#B3EFB2]"] {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
+  color: #03150E !important;
+  border-color: rgba(52, 211, 153, 0.55) !important;
+  box-shadow: 0 4px 16px -4px rgba(16, 185, 129, 0.5) !important;
+}
+
+/* Deep Vibrant Emerald for Progress Numbers & Highlights */
+[class*="text-[#B3EFB2]"] {
+  color: #0B8749 !important;
+}
+
+/* Keep Hero Card Main Spend Figure Bright & Luminous on Dark Pine Glass */
+.rounded-3xl[class*="bg-[#31493C]"] [class*="text-[#B3EFB2]"],
+.dark [class*="text-[#B3EFB2]"] {
+  color: #24E082 !important;
 }
