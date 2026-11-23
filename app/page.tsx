@@ -761,6 +761,29 @@ export default function PocketQApp() {
 
   const maxCashflowVal = Math.max(totalIncome, totalSpent, 1);
 
+  const navContainerRef = React.useRef<HTMLDivElement | null>(null);
+  const navItemRefs = React.useRef<Record<string, HTMLButtonElement | HTMLAnchorElement | null>>({});
+  const [activeNavTab, setActiveNavTab] = useState<string>('overview');
+  const [underlineStyle, setUnderlineStyle] = useState<{ left: number; width: number }>({ left: 0, width: 0 });
+
+  useEffect(() => {
+    const updateUnderline = () => {
+      const container = navContainerRef.current;
+      const activeEl = navItemRefs.current[activeNavTab];
+      if (container && activeEl) {
+        const containerRect = container.getBoundingClientRect();
+        const activeRect = activeEl.getBoundingClientRect();
+        setUnderlineStyle({
+          left: activeRect.left - containerRect.left,
+          width: activeRect.width,
+        });
+      }
+    };
+    updateUnderline();
+    window.addEventListener('resize', updateUnderline);
+    return () => window.removeEventListener('resize', updateUnderline);
+  }, [activeNavTab]);
+
   return (
     <div
       className={`min-h-screen overflow-x-hidden transition-colors duration-200 ${
@@ -789,47 +812,97 @@ export default function PocketQApp() {
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            <button
-              onClick={() => { window.location.href = '/split'; }}
-              className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-semibold bg-[#FFEF5C] text-[#001A23] hover:brightness-95 transition shadow-sm cursor-pointer shrink-0"
+          <div className="flex items-center gap-3 sm:gap-5 shrink-0">
+            <nav
+              ref={navContainerRef}
+              aria-label="Primary Navigation"
+              className="relative flex items-center gap-3.5 sm:gap-6 py-1"
             >
-              <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-              <span>Split<span className="hidden sm:inline"> Bill</span></span>
-            </button>
+              <button
+                ref={(el) => { navItemRefs.current['overview'] = el; }}
+                onClick={() => setActiveNavTab('overview')}
+                className={`relative pb-1.5 text-xs sm:text-[13px] font-medium tracking-tight transition-colors duration-200 cursor-pointer bg-transparent border-0 ${
+                  activeNavTab === 'overview'
+                    ? 'opacity-100 font-semibold'
+                    : 'opacity-65 hover:opacity-100'
+                }`}
+              >
+                Overview
+              </button>
 
-            <button
-              onClick={() => setActiveModal('TRANSACTION')}
-              className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-semibold bg-[#31493C] text-[#B3EFB2] hover:opacity-95 transition shadow-sm cursor-pointer shrink-0"
-            >
-              <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-              <span><span className="hidden sm:inline">Add </span>Entry</span>
-            </button>
+              <Link
+                ref={(el) => { navItemRefs.current['planning'] = el; }}
+                href="/planning"
+                onClick={() => setActiveNavTab('planning')}
+                className={`relative pb-1.5 text-xs sm:text-[13px] font-medium tracking-tight transition-colors duration-200 ${
+                  activeNavTab === 'planning'
+                    ? 'opacity-100 font-semibold'
+                    : 'opacity-65 hover:opacity-100'
+                }`}
+              >
+                Planning
+              </Link>
 
-            <Link
-              href="/settings"
-              aria-label="Settings & Personalization"
-              title="Settings & Personalization"
-              className={`inline-flex items-center gap-1.5 p-1.5 sm:px-3 sm:py-2 rounded-xl border text-xs font-bold transition shrink-0 ${
-                darkMode
-                  ? 'bg-[#31493C]/50 border-[#31493C] text-[#E8F1F2] hover:bg-[#31493C]'
-                  : 'bg-white border-[#7A9E7E]/30 text-[#001A23] hover:bg-[#7A9E7E]/10'
-              }`}
-            >
-              <Settings className="w-4 h-4 text-[#7A9E7E]" />
-              <span className="hidden md:inline">Settings</span>
-            </Link>
+              <Link
+                ref={(el) => { navItemRefs.current['split'] = el; }}
+                href="/split"
+                onClick={() => setActiveNavTab('split')}
+                className={`relative pb-1.5 text-xs sm:text-[13px] font-medium tracking-tight transition-colors duration-200 ${
+                  activeNavTab === 'split'
+                    ? 'opacity-100 font-semibold'
+                    : 'opacity-65 hover:opacity-100'
+                }`}
+              >
+                Split Bill
+              </Link>
+
+              <button
+                ref={(el) => { navItemRefs.current['entry'] = el; }}
+                onClick={() => {
+                  setActiveNavTab('entry');
+                  setActiveModal('TRANSACTION');
+                }}
+                className={`relative pb-1.5 text-xs sm:text-[13px] font-medium tracking-tight transition-colors duration-200 cursor-pointer bg-transparent border-0 ${
+                  activeNavTab === 'entry'
+                    ? 'opacity-100 font-semibold'
+                    : 'opacity-65 hover:opacity-100'
+                }`}
+              >
+                + Entry
+              </button>
+
+              <Link
+                ref={(el) => { navItemRefs.current['settings'] = el; }}
+                href="/settings"
+                onClick={() => setActiveNavTab('settings')}
+                className={`hidden md:inline-block relative pb-1.5 text-xs sm:text-[13px] font-medium tracking-tight transition-colors duration-200 ${
+                  activeNavTab === 'settings'
+                    ? 'opacity-100 font-semibold'
+                    : 'opacity-65 hover:opacity-100'
+                }`}
+              >
+                Settings
+              </Link>
+
+              {/* Smooth Sliding Underline */}
+              <span
+                aria-hidden="true"
+                style={{
+                  transform: `translateX(${underlineStyle.left}px)`,
+                  width: `${underlineStyle.width}px`,
+                }}
+                className={`pointer-events-none absolute bottom-0 left-0 h-[2px] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  darkMode ? 'bg-[#18D476]' : 'bg-[#0A8F4C]'
+                }`}
+              />
+            </nav>
 
             <button
               onClick={() => setDarkMode(!darkMode)}
               aria-label="Toggle theme"
-              className={`p-1.5 sm:p-2 rounded-xl border transition cursor-pointer shrink-0 ${
-                darkMode
-                  ? 'bg-[#31493C]/50 border-[#31493C] text-[#FFEF5C]'
-                  : 'bg-white border-[#7A9E7E]/30 text-[#001A23]'
-              }`}
+              className="p-1.5 opacity-75 hover:opacity-100 transition-opacity cursor-pointer bg-transparent border-0 shrink-0"
             >
-              {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {darkMode ? <Sun className="w-4 h-4 text-[#FFEF5C]" /> : <Moon className="w-4 h-4" />}
             </button>
           </div>
         </div>
