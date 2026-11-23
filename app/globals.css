@@ -360,3 +360,74 @@ html:not(.dark) main a[class*="border"] {
   -webkit-backdrop-filter: blur(16px) !important;
   border-radius: 0px !important;
 }
+
+
+/* Smooth Luminous Liquid Glass Chart Bars (Monthly & Yearly Financial Reports) */
+.bg-emerald-500,
+.bg-green-500,
+.bg-\[\#10B981\],
+.bg-\[\#22C55E\],
+.bg-\[\#B3EFB2\][style*="height"] {
+  background: linear-gradient(
+    180deg,
+    rgba(179, 239, 178, 0.72) 0%,
+    rgba(52, 211, 153, 0.34) 55%,
+    rgba(16, 185, 129, 0.18) 100%
+  ) !important;
+  backdrop-filter: blur(18px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(180%) !important;
+  border: 1px solid rgba(179, 239, 178, 0.55) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow:
+    0 6px 20px rgba(16, 185, 129, 0.18),
+    inset 0 1px 1px rgba(255, 255, 255, 0.65) !important;
+  transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.bg-\[\#D52073\][style*="height"],
+.bg-rose-500[style*="height"],
+.bg-pink-600[style*="height"] {
+  background: linear-gradient(
+    180deg,
+    rgba(244, 114, 182, 0.72) 0%,
+    rgba(213, 32, 115, 0.36) 55%,
+    rgba(213, 32, 115, 0.18) 100%
+  ) !important;
+  backdrop-filter: blur(18px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(180%) !important;
+  border: 1px solid rgba(244, 114, 182, 0.55) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.8) !important;
+  box-shadow:
+    0 6px 20px rgba(213, 32, 115, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6) !important;
+  transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+/* Light mode subtle tint adjustment so glass bars stay rich against light frosted cards */
+html:not(.dark) .bg-emerald-500,
+html:not(.dark) .bg-green-500,
+html:not(.dark) .bg-\[\#10B981\],
+html:not(.dark) .bg-\[\#22C55E\],
+html:not(.dark) .bg-\[\#B3EFB2\][style*="height"] {
+  background: linear-gradient(
+    180deg,
+    rgba(49, 73, 60, 0.78) 0%,
+    rgba(122, 158, 126, 0.46) 60%,
+    rgba(179, 239, 178, 0.32) 100%
+  ) !important;
+  border: 1px solid rgba(49, 73, 60, 0.35) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.9) !important;
+}
+
+html:not(.dark) .bg-\[\#D52073\][style*="height"],
+html:not(.dark) .bg-rose-500[style*="height"],
+html:not(.dark) .bg-pink-600[style*="height"] {
+  background: linear-gradient(
+    180deg,
+    rgba(213, 32, 115, 0.76) 0%,
+    rgba(213, 32, 115, 0.42) 60%,
+    rgba(244, 114, 182, 0.28) 100%
+  ) !important;
+  border: 1px solid rgba(213, 32, 115, 0.35) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.9) !important;
+}
