@@ -1250,6 +1250,13 @@ export default function PocketQApp() {
                     <div>
                       <span className="opacity-70 block">Left After Spend</span>
                       <span
+                        style={{
+                          color: isDanger
+                            ? "#D52073"
+                            : isTight
+                            ? (darkMode ? "#FFEF5C" : "#B45309")
+                            : (darkMode ? "#7A9E7E" : "#097A42"),
+                        }}
                         className={`font-extrabold text-sm ${
                           isDanger
                             ? "text-[#D52073]"
@@ -1264,7 +1271,12 @@ export default function PocketQApp() {
                     <div className="h-6 w-px bg-[#7A9E7E]/25" />
                     <div>
                       <span className="opacity-70 block">{runwayDays}-Day Daily Limit</span>
-                      <span className="font-bold text-sm">{formatBDT(dailySafe)}/day</span>
+                      <span
+                        style={{ color: "#D52073" }}
+                        className="font-bold text-sm text-[#D52073]"
+                      >
+                        {formatBDT(dailySafe)}/day
+                      </span>
                     </div>
                   </div>
 
