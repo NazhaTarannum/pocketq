@@ -477,61 +477,61 @@ export default function SubscriptionsPage() {
 
         {/* Summary KPI Strip */}
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="rounded-3xl p-5 bg-white dark:bg-[#31493C]/20 border border-[#7A9E7E]/25 dark:border-[#31493C]">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#31493C]/70 dark:text-slate-400">
+          <div className="rounded-3xl p-5 bg-white dark:bg-[#31493C]/25 border border-[#7A9E7E]/30 dark:border-[#7A9E7E]/30 backdrop-blur-xl">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#31493C]/80 dark:text-[#E8F1F2]/75">
               Active Subscriptions
             </p>
             <p className="text-2xl font-extrabold mt-1">{data.summary.activeCount}</p>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/70 mt-1">
               {data.summary.cancelledCount} cancelled
             </p>
           </div>
 
-          <div className="rounded-3xl p-5 bg-white dark:bg-[#31493C]/20 border border-[#7A9E7E]/25 dark:border-[#31493C]">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#31493C]/70 dark:text-slate-400">
+          <div className="rounded-3xl p-5 bg-white dark:bg-[#31493C]/25 border border-[#7A9E7E]/30 dark:border-[#7A9E7E]/30 backdrop-blur-xl">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#31493C]/80 dark:text-[#E8F1F2]/75">
               Payable Today / Overdue
             </p>
             <p className="text-2xl font-extrabold mt-1">
               {data.summary.dueNowCount}
             </p>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/70 mt-1">
               Future cycles stay locked until due
             </p>
           </div>
 
-          <div className="rounded-3xl p-5 bg-white dark:bg-[#31493C]/20 border border-[#7A9E7E]/25 dark:border-[#31493C]">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#31493C]/70 dark:text-slate-400">
+          <div className="rounded-3xl p-5 bg-white dark:bg-[#31493C]/25 border border-[#7A9E7E]/30 dark:border-[#7A9E7E]/30 backdrop-blur-xl">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#31493C]/80 dark:text-[#E8F1F2]/75">
               Monthly Run-Rate
             </p>
             <p className="text-2xl font-extrabold mt-1">
               {currency}
               {data.summary.totalMonthlyCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
-            <p className="text-xs text-slate-500 mt-1">Normalized across cycles</p>
+            <p className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/70 mt-1">Normalized across cycles</p>
           </div>
 
-          <div className="rounded-3xl p-5 bg-white dark:bg-[#31493C]/20 border border-[#7A9E7E]/25 dark:border-[#31493C]">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#31493C]/70 dark:text-slate-400">
+          <div className="rounded-3xl p-5 bg-white dark:bg-[#31493C]/25 border border-[#7A9E7E]/30 dark:border-[#7A9E7E]/30 backdrop-blur-xl">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#31493C]/80 dark:text-[#E8F1F2]/75">
               Annualized Commitment
             </p>
             <p className="text-2xl font-extrabold mt-1">
               {currency}
               {data.summary.totalYearlyCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
-            <p className="text-xs text-slate-500 mt-1">12-month projected spend</p>
+            <p className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/70 mt-1">12-month projected spend</p>
           </div>
         </section>
 
         {/* Main 2-Column Layout: Setup Form + Schedule Workspace */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* LEFT: Add / Edit Subscription Setup Card */}
-          <div className="lg:col-span-5 rounded-3xl p-6 bg-white dark:bg-[#31493C]/20 border border-[#7A9E7E]/25 dark:border-[#31493C] shadow-xs">
+          <div className="lg:col-span-5 rounded-3xl p-6 bg-white dark:bg-[#31493C]/25 border border-[#7A9E7E]/30 dark:border-[#7A9E7E]/30 backdrop-blur-xl shadow-xs">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-base font-bold">
                   {editingSub ? `Edit "${editingSub.name}"` : 'Add a Subscription'}
                 </h2>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/75">
                   Enter start date & frequency — PocketQ calculates all future due dates automatically.
                 </p>
               </div>
@@ -609,7 +609,7 @@ export default function SubscriptionsPage() {
                         <div>{opt.label}</div>
                         <div
                           className={`text-[11px] ${
-                            active ? 'text-[#B3EFB2]' : 'text-slate-500 dark:text-slate-400'
+                            active ? 'text-[#B3EFB2]' : 'text-[#31493C]/75 dark:text-[#E8F1F2]/75'
                           }`}
                         >
                           {opt.hint}
@@ -697,7 +697,7 @@ export default function SubscriptionsPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-3 rounded-xl text-sm font-bold bg-[#FFEF5C] text-[#001A23] hover:brightness-95 transition flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
+                className="w-full py-3 rounded-xl text-sm font-bold bg-[#FFEF5C] text-[#001A23] hover:brightness-95 transition flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:opacity-80"
               >
                 <Plus className="w-4 h-4" />
                 <span>
@@ -734,17 +734,17 @@ export default function SubscriptionsPage() {
                   </button>
                 ))}
               </div>
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/70">
                 Settlement unlocks automatically on each due date
               </span>
             </div>
 
             {/* Subscription Cards */}
             {filteredSubscriptions.length === 0 ? (
-              <div className="rounded-3xl p-10 bg-white dark:bg-[#31493C]/20 border border-[#7A9E7E]/25 dark:border-[#31493C] text-center space-y-2">
-                <Repeat className="w-8 h-8 mx-auto text-[#31493C]/50 dark:text-slate-500" />
+              <div className="rounded-3xl p-10 bg-white dark:bg-[#31493C]/25 border border-[#7A9E7E]/30 dark:border-[#7A9E7E]/30 backdrop-blur-xl text-center space-y-2">
+                <Repeat className="w-8 h-8 mx-auto text-[#31493C]/50 dark:text-[#31493C]/75 dark:text-[#E8F1F2]/70" />
                 <p className="font-bold text-sm">No subscriptions in this view</p>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/70">
                   Add a subscription on the left to automatically generate its recurring due dates.
                 </p>
               </div>
@@ -753,10 +753,10 @@ export default function SubscriptionsPage() {
                 {filteredSubscriptions.map((sub) => (
                   <div
                     key={sub.id}
-                    className={`rounded-3xl p-5 bg-white dark:bg-[#31493C]/20 border transition ${
+                    className={`rounded-3xl p-5 bg-white dark:bg-[#31493C]/25 border transition ${
                       sub.canSettle
                         ? 'border-amber-400/70 dark:border-amber-500/40 shadow-sm'
-                        : 'border-[#7A9E7E]/25 dark:border-[#31493C]'
+                        : 'border-[#7A9E7E]/25 dark:border-[#7A9E7E]/30'
                     }`}
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
@@ -765,7 +765,7 @@ export default function SubscriptionsPage() {
                           <h3 className="text-base font-bold">{sub.name}</h3>
                           {renderStatusBadge(sub)}
                         </div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                        <p className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/75">
                           {sub.frequencyLabel} · Started {formatDateDDMMYYYY(sub.startDate)}
                           {sub.defaultWalletName ? ` · Wallet: ${sub.defaultWalletName}` : ''}
                         </p>
@@ -781,7 +781,7 @@ export default function SubscriptionsPage() {
                           {currency}
                           {sub.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
-                        <div className="text-[11px] text-slate-500">
+                        <div className="text-[11px] text-[#31493C]/75 dark:text-[#E8F1F2]/70">
                           Next due: <span className="font-semibold">{formatDateDDMMYYYY(sub.nextRenewalDate)}</span>
                         </div>
                       </div>
@@ -789,8 +789,8 @@ export default function SubscriptionsPage() {
 
                     {/* Automatic Upcoming Billing Schedule */}
                     {sub.status === 'ACTIVE' && sub.upcomingDates.length > 0 && (
-                      <div className="mt-4 pt-3 border-t border-[#7A9E7E]/25 dark:border-[#31493C]">
-                        <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">
+                      <div className="mt-4 pt-3 border-t border-[#7A9E7E]/25 dark:border-[#7A9E7E]/30">
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-[#31493C]/75 dark:text-[#E8F1F2]/70 mb-2">
                           Upcoming Automatic Schedule
                         </p>
                         <div className="flex flex-wrap items-center gap-1.5">
@@ -802,7 +802,7 @@ export default function SubscriptionsPage() {
                                   ? sub.canSettle
                                     ? 'bg-amber-100 text-amber-900 dark:bg-amber-950/70 dark:text-amber-300 font-bold'
                                     : 'bg-[#31493C]/10 text-[#31493C] dark:bg-[#B3EFB2]/15 dark:text-[#B3EFB2] font-semibold'
-                                  : 'bg-[#E8F1F2] dark:bg-[#31493C]/25 backdrop-blur-xl text-slate-600 dark:text-slate-400'
+                                  : 'bg-[#E8F1F2] dark:bg-[#31493C]/25 backdrop-blur-xl text-slate-600 dark:text-[#31493C]/75 dark:text-[#E8F1F2]/75'
                               }`}
                             >
                               {formatDateDDMMYYYY(isoDate)}
@@ -814,7 +814,7 @@ export default function SubscriptionsPage() {
                     )}
 
                     {/* Action Bar with Strict Settlement Gate */}
-                    <div className="mt-4 pt-3 border-t border-[#7A9E7E]/25 dark:border-[#31493C] flex flex-wrap items-center justify-between gap-2">
+                    <div className="mt-4 pt-3 border-t border-[#7A9E7E]/25 dark:border-[#7A9E7E]/30 flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
@@ -828,7 +828,7 @@ export default function SubscriptionsPage() {
                           className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition ${
                             sub.canSettle
                               ? 'bg-[#31493C] text-[#B3EFB2] hover:opacity-95 cursor-pointer shadow-xs'
-                              : 'bg-slate-200/80 dark:bg-white/5 text-slate-400 dark:text-slate-500 cursor-not-allowed'
+                              : 'bg-slate-200/80 dark:bg-white/5 text-[#31493C]/75 dark:text-[#E8F1F2]/75 dark:text-[#31493C]/75 dark:text-[#E8F1F2]/70 cursor-not-allowed'
                           }`}
                         >
                           {sub.canSettle ? (
@@ -881,19 +881,19 @@ export default function SubscriptionsPage() {
             )}
 
             {/* Payment History Ledger */}
-            <div className="rounded-3xl p-5 bg-white dark:bg-[#31493C]/20 border border-[#7A9E7E]/25 dark:border-[#31493C]">
+            <div className="rounded-3xl p-5 bg-white dark:bg-[#31493C]/25 border border-[#7A9E7E]/30 dark:border-[#7A9E7E]/30 backdrop-blur-xl">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <History className="w-4 h-4 text-[#31493C] dark:text-[#B3EFB2]" />
                   <h3 className="text-sm font-bold">Confirmed Payment History</h3>
                 </div>
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/70">
                   {data.paymentHistory.length} settled cycle(s)
                 </span>
               </div>
 
               {data.paymentHistory.length === 0 ? (
-                <p className="text-xs text-slate-500 py-4 text-center">
+                <p className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/70 py-4 text-center">
                   No subscription payments confirmed yet. When a bill reaches its due date and you confirm payment, it appears here.
                 </p>
               ) : (
@@ -904,7 +904,7 @@ export default function SubscriptionsPage() {
                         <p className="font-bold">
                           {item.subscription?.name || 'Subscription Payment'}
                         </p>
-                        <p className="text-slate-500">
+                        <p className="text-[#31493C]/75 dark:text-[#E8F1F2]/70">
                           Cycle Due: {formatDateDDMMYYYY(item.dueDate)} · Paid:{' '}
                           {formatDateDDMMYYYY(item.paidDate)}
                           {item.walletName ? ` · via ${item.walletName}` : ''}
@@ -930,7 +930,7 @@ export default function SubscriptionsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-base font-bold">Confirm Subscription Payment</h3>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-[#31493C]/75 dark:text-[#E8F1F2]/70">
                   {settleTarget.name} · Cycle due {formatDateDDMMYYYY(settleTarget.nextRenewalDate)}
                 </p>
               </div>
@@ -1009,7 +1009,7 @@ export default function SubscriptionsPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#FFEF5C] text-[#001A23] hover:brightness-95 flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                  className="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#FFEF5C] text-[#001A23] hover:brightness-95 flex items-center gap-1.5 cursor-pointer disabled:opacity-80"
                 >
                   <span>{submitting ? 'Confirming...' : 'Confirm & Deduct Wallet'}</span>
                   <ChevronRight className="w-3.5 h-3.5" />
