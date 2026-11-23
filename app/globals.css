@@ -991,28 +991,6 @@ html:not(.dark) main .rounded-2xl {
     inset 0 1px 1px rgba(255, 255, 255, 0.92) !important;
 }
 
-
-/* LIGHT MODE ONLY: Crisp Black Typography for All Money / Currency Values (Dark Mode Untouched) */
-html:not(.dark) main [class*="text-[#7A9E7E]"],
-html:not(.dark) main [class*="text-[#B3EFB2]"],
-html:not(.dark) main [class*="text-[#3EE895]"],
-html:not(.dark) main [class*="text-[#31493C]"],
-html:not(.dark) main [class*="text-emerald-"],
-html:not(.dark) main [class*="text-green-"],
-html:not(.dark) .hero-spendable-card [class*="text-[#3EE895]"],
-html:not(.dark) .hero-spendable-card [class*="text-[#B3EFB2]"],
-html:not(.dark) .hero-spendable-card [class*="text-[#7A9E7E]"] {
-  color: #000000 !important;
-}
-
-/* Keep icons subtly accented while all numeric currency text remains pure black in Light Mode */
-html:not(.dark) main svg[class*="text-[#7A9E7E]"],
-html:not(.dark) main svg[class*="text-emerald-"],
-html:not(.dark) main svg[class*="text-green-"] {
-  color: #0A6E3A !important;
-}
-
-
 /* ============================================================================
    LIQUID GLASS RANGE SLIDERS & PERFECT CENTERING FOR ALL BUTTONS / LINKS
    (Applied cleanly across both Dark & Light modes)
