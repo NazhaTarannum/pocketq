@@ -427,7 +427,7 @@ export default function SettingsPage() {
         >
           <div>
             <h2 className="font-bold text-base mb-1">Currency & Alert Preferences</h2>
-            <p className="text-xs opacity-75">
+            <p suppressHydrationWarning className="text-xs opacity-75">
               Search and select from all {allCurrencies.length} world currencies and customize your alert thresholds
             </p>
           </div>
