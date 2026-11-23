@@ -27,7 +27,7 @@
 }
 
 @theme inline {
-  --font-sans: "Aeonik Pro", var(--font-inter), var(--font-geist-sans), system-ui, sans-serif;
+  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 }
 
@@ -93,7 +93,7 @@ html.dark, .dark body {
 }
 
 h1, h2, h3 {
-  font-family: "Aeonik Pro", var(--font-geist-sans), var(--font-inter), sans-serif;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, sans-serif;
   letter-spacing: -0.02em;
 }
 
