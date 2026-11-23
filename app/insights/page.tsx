@@ -85,18 +85,7 @@ const EMPTY_INSIGHTS_DATA: InsightsData = {
 };
 
 export default function InsightsAndCalendarPage() {
-  const [data, setData] = useState<InsightsData>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const cached = sessionStorage.getItem('pocketq_dashboard_cache');
-        if (cached) {
-          const parsed = JSON.parse(cached);
-          if (parsed && parsed.reports) return parsed;
-        }
-      } catch {}
-    }
-    return EMPTY_INSIGHTS_DATA;
-  });
+  const [data, setData] = useState<InsightsData>(EMPTY_INSIGHTS_DATA);
   const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useThemePreference();
   const [scenario, setScenario] = useState<'OPTIMISTIC' | 'EXPECTED' | 'CONSERVATIVE'>('EXPECTED');
@@ -113,6 +102,14 @@ export default function InsightsAndCalendarPage() {
   };
 
   useEffect(() => {
+    try {
+      const cached = sessionStorage.getItem('pocketq_dashboard_cache');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && parsed.reports) setData(parsed);
+      }
+    } catch {}
+
     fetch('/api/dashboard')
       .then((res) => res.json())
       .then((json) => {
