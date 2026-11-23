@@ -40,11 +40,13 @@ html, body {
 }
 
 html.dark, .dark body {
-  background-color: #000000 !important;
+  background-color: #020405 !important;
   background-image:
-    radial-gradient(ellipse 65% 45% at 15% 0%, rgba(255, 255, 255, 0.045) 0%, transparent 65%),
-    radial-gradient(ellipse 55% 40% at 85% 10%, rgba(179, 239, 178, 0.04) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 50% 100%, rgba(255, 255, 255, 0.03) 0%, transparent 70%) !important;
+    radial-gradient(circle at 12% 14%, rgba(26, 92, 68, 0.32) 0%, transparent 42%),
+    radial-gradient(circle at 86% 18%, rgba(18, 72, 92, 0.28) 0%, transparent 45%),
+    radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.045) 0%, transparent 55%),
+    radial-gradient(circle at 78% 85%, rgba(130, 32, 82, 0.18) 0%, transparent 45%),
+    linear-gradient(180deg, #030608 0%, #000000 55%, #020506 100%) !important;
   background-attachment: fixed !important;
 }
 
@@ -505,128 +507,104 @@ div[style*="background-color"][style*="width"] {
 }
 
 /* Global Apple Liquid Glass for All Buttons & Status Badges Across Every Page */
-main button,
-main a[class*="px-"],
-main span[class*="rounded-full"][class*="px-"] {
-  backdrop-filter: blur(20px) saturate(185%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(185%) !important;
+html.dark main button,
+html.dark main a[class*="px-"],
+html.dark main span[class*="rounded-full"][class*="px-"],
+.dark main button,
+.dark main a[class*="px-"],
+.dark main span[class*="rounded-full"][class*="px-"] {
+  backdrop-filter: blur(22px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(190%) !important;
   transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
 
-/* Mint / Emerald Glass Buttons & Badges (+ Add Wallet, + New, You Can, Net Positive) */
-.dark main .bg-\[\#B3EFB2\],
-.dark main .bg-emerald-500,
-.dark main .bg-emerald-600 {
+/* Mint / Emerald Glass (+ Add Wallet, + New, You Can, Net Positive) */
+html.dark main [class*="bg-[#B3EFB2]"],
+html.dark main [class*="bg-emerald-"],
+.dark main [class*="bg-[#B3EFB2]"],
+.dark main [class*="bg-emerald-"] {
   background: linear-gradient(
     180deg,
-    rgba(179, 239, 178, 0.34) 0%,
-    rgba(52, 211, 153, 0.16) 100%
+    rgba(179, 239, 178, 0.28) 0%,
+    rgba(52, 211, 153, 0.10) 100%
   ) !important;
-  color: #D9FBE0 !important;
-  border: 1px solid rgba(179, 239, 178, 0.38) !important;
+  background-color: transparent !important;
+  color: #DDFCE4 !important;
+  border: 1px solid rgba(179, 239, 178, 0.34) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.62) !important;
+  box-shadow:
+    0 6px 20px rgba(16, 185, 129, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.42) !important;
+}
+
+/* Solar Yellow / Amber Glass (+ Add, Partially Reserved, Primary CTAs) */
+html.dark main [class*="bg-[#FFEF5C]"],
+html.dark main [class*="bg-amber-"],
+html.dark main [class*="bg-yellow-"],
+.dark main [class*="bg-[#FFEF5C]"],
+.dark main [class*="bg-amber-"],
+.dark main [class*="bg-yellow-"] {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 239, 92, 0.28) 0%,
+    rgba(245, 158, 11, 0.10) 100%
+  ) !important;
+  background-color: transparent !important;
+  color: #FFF7B2 !important;
+  border: 1px solid rgba(255, 239, 92, 0.36) !important;
   border-top: 1.5px solid rgba(255, 255, 255, 0.65) !important;
   box-shadow:
-    0 6px 20px rgba(16, 185, 129, 0.18),
+    0 6px 20px rgba(245, 158, 11, 0.16),
     inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
 }
 
-html:not(.dark) main .bg-\[\#B3EFB2\],
-html:not(.dark) main .bg-emerald-500,
-html:not(.dark) main .bg-emerald-600 {
+/* Rose / Pink Glass (Overdue, Negative Net, Delete/Alert) */
+html.dark main [class*="bg-[#D52073]"],
+html.dark main [class*="bg-rose-"],
+html.dark main [class*="bg-pink-"],
+.dark main [class*="bg-[#D52073]"],
+.dark main [class*="bg-rose-"],
+.dark main [class*="bg-pink-"] {
   background: linear-gradient(
     180deg,
-    rgba(179, 239, 178, 0.72) 0%,
-    rgba(122, 158, 126, 0.38) 100%
+    rgba(244, 114, 182, 0.30) 0%,
+    rgba(213, 32, 115, 0.12) 100%
   ) !important;
-  color: #001A23 !important;
-  border: 1px solid rgba(49, 73, 60, 0.28) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.9) !important;
-  box-shadow:
-    0 6px 18px rgba(0, 26, 35, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.85) !important;
-}
-
-/* Solar Yellow / Amber Glass Buttons & Badges (+ Add, Partially Reserved, Primary CTAs) */
-.dark main .bg-\[\#FFEF5C\],
-.dark main .bg-amber-100,
-.dark main .bg-amber-200,
-.dark main .bg-amber-400,
-.dark main .bg-amber-500,
-.dark main .bg-yellow-100,
-.dark main .bg-yellow-200,
-.dark main .bg-yellow-400 {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 239, 92, 0.32) 0%,
-    rgba(245, 158, 11, 0.16) 100%
-  ) !important;
-  color: #FFF8B8 !important;
-  border: 1px solid rgba(255, 239, 92, 0.42) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.68) !important;
-  box-shadow:
-    0 6px 20px rgba(245, 158, 11, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
-}
-
-html:not(.dark) main .bg-\[\#FFEF5C\],
-html:not(.dark) main .bg-amber-100,
-html:not(.dark) main .bg-amber-200,
-html:not(.dark) main .bg-amber-400,
-html:not(.dark) main .bg-amber-500 {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 239, 92, 0.78) 0%,
-    rgba(255, 224, 66, 0.48) 100%
-  ) !important;
-  color: #001A23 !important;
-  border: 1px solid rgba(180, 140, 0, 0.25) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.92) !important;
-  box-shadow:
-    0 6px 18px rgba(0, 26, 35, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.85) !important;
-}
-
-/* Rose / Pink Glass Badges & Buttons (Overdue, Negative Net, Delete/Alert) */
-.dark main .bg-\[\#D52073\],
-.dark main .bg-rose-100,
-.dark main .bg-rose-500,
-.dark main .bg-rose-600,
-.dark main .bg-pink-600 {
-  background: linear-gradient(
-    180deg,
-    rgba(244, 114, 182, 0.36) 0%,
-    rgba(213, 32, 115, 0.18) 100%
-  ) !important;
+  background-color: transparent !important;
   color: #FFD6E8 !important;
-  border: 1px solid rgba(244, 114, 182, 0.42) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.65) !important;
+  border: 1px solid rgba(244, 114, 182, 0.38) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.62) !important;
   box-shadow:
-    0 6px 20px rgba(213, 32, 115, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
+    0 6px 20px rgba(213, 32, 115, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.42) !important;
 }
 
-/* Deep Forest / Smoked Glass Action Buttons (Pay, + Reserve, Active Tabs, Set Limits) */
-.dark main button.bg-\[\#31493C\],
-.dark main a.bg-\[\#31493C\],
+/* Forest / Smoked Glass Action Buttons (Pay, + Reserve, Set Limits, Active Pills) */
+html.dark main button[class*="bg-[#31493C]"],
+html.dark main a[class*="bg-[#31493C]"],
+html.dark main button[class*="border"],
+html.dark main a[class*="border"],
+.dark main button[class*="bg-[#31493C]"],
+.dark main a[class*="bg-[#31493C]"],
 .dark main button[class*="border"],
 .dark main a[class*="border"] {
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.11) 0%,
+    rgba(255, 255, 255, 0.12) 0%,
     rgba(255, 255, 255, 0.03) 100%
   ) !important;
+  background-color: transparent !important;
+  color: #F2F7F8 !important;
   border: 1px solid rgba(255, 255, 255, 0.14) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.28) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.34) !important;
   box-shadow:
     0 4px 16px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
 }
 
-.dark main button.bg-\[\#31493C\]:hover,
-.dark main button[class*="border"]:hover,
-.dark main .bg-\[\#B3EFB2\]:hover,
-.dark main .bg-\[\#FFEF5C\]:hover {
-  filter: brightness(1.15) !important;
+html.dark main button:hover,
+.dark main button:hover {
+  filter: brightness(1.18) !important;
   transform: translateY(-0.5px);
 }
 
