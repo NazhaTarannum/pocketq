@@ -935,7 +935,7 @@ export default function PocketQApp() {
             {/* Footer link to full Reserved Funds & Deadline Funding Planner */}
             <Link
               href="/reserved"
-              className="mt-3 pt-2.5 border-t border-[#7A9E7E]/20 flex items-center justify-center gap-1 text-xs font-bold text-[#7A9E7E] hover:underline"
+              className="mt-3 py-2.5 px-4 w-full rounded-xl border border-[#7A9E7E]/25 flex items-center justify-center gap-1.5 text-xs font-bold text-center leading-none hover:brightness-110 transition"
             >
               See More + {data.obligations.length > 3 ? `(${data.obligations.length} total)` : ""}
             </Link>
@@ -1119,15 +1119,70 @@ export default function PocketQApp() {
             )}
 
             <div className="flex items-center gap-3 mb-3">
-              <input
-                type="range"
-                min={0}
-                max={Math.max(15000, Math.round(data.summary.availableToSpend))}
-                step={50}
-                value={Math.min(simAmount, Math.max(15000, Math.round(data.summary.availableToSpend)))}
-                onChange={(e) => setSimAmount(Number(e.target.value))}
-                className="w-full accent-[#D52073] cursor-pointer"
-              />
+              {(() => {
+                const sliderMax = Math.max(15000, Math.round(data.summary.availableToSpend));
+                const sliderVal = Math.min(simAmount, sliderMax);
+                const pct = sliderMax > 0 ? (sliderVal / sliderMax) * 100 : 0;
+                return (
+                  <div className="relative w-full h-7 flex items-center select-none">
+                    {/* Translucent Liquid Glass Track */}
+                    <div
+                      className="w-full h-2.5 rounded-full overflow-hidden backdrop-blur-md"
+                      style={{
+                        background: darkMode
+                          ? "linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%)"
+                          : "linear-gradient(180deg, rgba(255,255,255,0.68) 0%, rgba(209,250,229,0.34) 100%)",
+                        border: darkMode
+                          ? "1px solid rgba(255,255,255,0.15)"
+                          : "1px solid rgba(255,255,255,0.88)",
+                        boxShadow: darkMode
+                          ? "inset 0 1px 2px rgba(0,0,0,0.6)"
+                          : "inset 0 1px 2px rgba(0,26,35,0.08)",
+                      }}
+                    >
+                      {/* Luminous Liquid Fill */}
+                      <div
+                        className="h-full rounded-full transition-all duration-75"
+                        style={{
+                          width: `${pct}%`,
+                          background: darkMode
+                            ? "linear-gradient(90deg, rgba(179,239,178,0.28) 0%, rgba(62,232,149,0.52) 100%)"
+                            : "linear-gradient(90deg, rgba(16,185,129,0.24) 0%, rgba(16,185,129,0.48) 100%)",
+                        }}
+                      />
+                    </div>
+
+                    {/* Frosted Liquid Glass Thumb */}
+                    <div
+                      className="pointer-events-none absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 rounded-full backdrop-blur-xl transition-transform duration-150"
+                      style={{
+                        left: `${pct}%`,
+                        background: darkMode
+                          ? "linear-gradient(180deg, rgba(255,255,255,0.42) 0%, rgba(179,239,178,0.22) 100%)"
+                          : "linear-gradient(180deg, rgba(255,255,255,0.88) 0%, rgba(167,243,208,0.52) 100%)",
+                        border: darkMode
+                          ? "1px solid rgba(255,255,255,0.55)"
+                          : "1px solid rgba(16,185,129,0.35)",
+                        borderTop: "1.5px solid rgba(255,255,255,0.95)",
+                        boxShadow: darkMode
+                          ? "0 4px 12px rgba(0,0,0,0.45), inset 0 1px 1px rgba(255,255,255,0.65)"
+                          : "0 4px 12px rgba(16,185,129,0.22), inset 0 1px 1px rgba(255,255,255,0.95)",
+                      }}
+                    />
+
+                    {/* Invisible Native Input for Exact Pointer/Keyboard Accessibility */}
+                    <input
+                      type="range"
+                      min={0}
+                      max={sliderMax}
+                      step={50}
+                      value={sliderVal}
+                      onChange={(e) => setSimAmount(Number(e.target.value))}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    />
+                  </div>
+                );
+              })()}
               <span className="font-extrabold text-base min-w-[82px] text-right text-[#D52073]">
                 -{formatBDT(simAmount)}
               </span>
@@ -1281,7 +1336,7 @@ export default function PocketQApp() {
 
             <Link
               href="/reserved"
-              className="mt-3 pt-2.5 border-t border-[#7A9E7E]/20 flex items-center justify-center gap-1 text-xs font-bold text-[#7A9E7E] hover:underline"
+              className="mt-3 py-2.5 px-4 w-full rounded-xl border border-[#7A9E7E]/25 flex items-center justify-center gap-1.5 text-xs font-bold text-center leading-none hover:brightness-110 transition"
             >
               See More + {data.savingsGoals && data.savingsGoals.length > 4 ? `(${data.savingsGoals.length} total)` : ""}
             </Link>
