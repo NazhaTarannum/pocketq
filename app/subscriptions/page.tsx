@@ -1,5 +1,5 @@
-import DDMMYYYYInput from '@/components/DDMMYYYYInput';
 'use client';
+import DDMMYYYYInput from '@/components/DDMMYYYYInput';
 
 import AppHeader from '@/components/AppHeader';
 import Link from 'next/link';
