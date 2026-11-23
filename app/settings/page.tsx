@@ -99,7 +99,7 @@ function buildAllWorldCurrencies(): CurrencyOption[] {
 
   // Retrieve every standard ISO 4217 currency code supported by the JS engine
   const rawCodes: string[] =
-    typeof Intl !== 'undefined' && 'supportedValuesOf' in Intl
+    isMounted && typeof Intl !== 'undefined' && 'supportedValuesOf' in Intl
       ? (Intl as unknown as { supportedValuesOf: (key: string) => string[] }).supportedValuesOf(
           'currency'
         )
@@ -125,6 +125,8 @@ function buildAllWorldCurrencies(): CurrencyOption[] {
 }
 
 export default function SettingsPage() {
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => { setIsMounted(true); }, []);
   // Memoize the full ISO 4217 world currency list so it is computed once per mount
   const allCurrencies = useMemo(() => buildAllWorldCurrencies(), []);
 
@@ -177,7 +179,7 @@ export default function SettingsPage() {
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [isMounted]);
   const [lowBalanceThreshold, setLowBalanceThreshold] = useState('2000');
   const [enableReminders, setEnableReminders] = useState(true);
   const [enableBudgetAlerts, setEnableBudgetAlerts] = useState(true);
@@ -435,7 +437,7 @@ export default function SettingsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Searchable Global ISO 4217 Currency Combobox + Selected Display */}
             <div className="space-y-2" ref={currencyPickerRef}>
-              <label className="text-xs font-semibold block">
+              <label suppressHydrationWarning className="text-xs font-semibold block">
                 Preferred Currency ({allCurrencies.length} Available)
               </label>
               <div className="relative">
