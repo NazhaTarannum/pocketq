@@ -1209,9 +1209,32 @@ export default function PocketQApp() {
                   </div>
                 );
               })()}
-              <span className="font-extrabold text-base min-w-[82px] text-right text-[#D52073]">
-                -{formatBDT(simAmount)}
-              </span>
+              <div className="relative flex items-center shrink-0">
+                <span className="pointer-events-none absolute left-3 text-xs font-extrabold text-[#D52073]">
+                  -৳
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step="any"
+                  inputMode="decimal"
+                  aria-label="Purchase amount to simulate"
+                  value={simAmount === 0 ? "" : simAmount}
+                  placeholder="0"
+                  onChange={(e) => {
+                    const raw = e.target.value;
+                    if (raw === "") {
+                      setSimAmount(0);
+                      return;
+                    }
+                    const parsed = Number(raw);
+                    if (!Number.isNaN(parsed) && parsed >= 0) {
+                      setSimAmount(parsed);
+                    }
+                  }}
+                  className="w-28 sm:w-32 pl-8 pr-2.5 py-1.5 rounded-xl text-right font-extrabold text-sm text-[#D52073] outline-none transition focus:ring-2 focus:ring-[#D52073]/40"
+                />
+              </div>
             </div>
 
             {(() => {
