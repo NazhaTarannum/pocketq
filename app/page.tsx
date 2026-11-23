@@ -1392,13 +1392,20 @@ export default function PocketQApp() {
               <div className="flex flex-col sm:flex-row items-center gap-6">
                 {/* Interactive SVG Donut */}
                 <div className="relative w-36 h-36 shrink-0 flex items-center justify-center">
-                  <svg className="w-36 h-36 -rotate-90" viewBox="0 0 140 140">
+                  <svg className="w-36 h-36 -rotate-90 liquid-glass-pie" viewBox="0 0 140 140">
+                    <defs>
+                      <linearGradient id="liquidGlassSheen" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0.65)" />
+                        <stop offset="45%" stopColor="rgba(255,255,255,0.08)" />
+                        <stop offset="100%" stopColor="rgba(255,255,255,0.28)" />
+                      </linearGradient>
+                    </defs>
                     <circle
                       cx="70"
                       cy="70"
                       r={radius}
                       fill="transparent"
-                      stroke={darkMode ? "#31493C" : "#E8F1F2"}
+                      stroke={darkMode ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.55)"}
                       strokeWidth="16"
                     />
                     {donutSegments.map((seg) => {
@@ -1417,11 +1424,39 @@ export default function PocketQApp() {
                           strokeLinecap="butt"
                           onMouseEnter={() => setHoveredCategory(seg.name)}
                           onMouseLeave={() => setHoveredCategory(null)}
-                          className="transition-all duration-200 cursor-pointer"
-                          style={{ opacity: isDimmed ? 0.35 : 1 }}
+                          className="pie-segment transition-all duration-200 cursor-pointer"
+                          style={{ opacity: isDimmed ? 0.32 : 0.85 }}
                         />
                       );
                     })}
+                    {/* Specular Liquid Glass Rim & Highlight Overlay */}
+                    <circle
+                      cx="70"
+                      cy="70"
+                      r={radius}
+                      fill="transparent"
+                      stroke="url(#liquidGlassSheen)"
+                      strokeWidth="16"
+                      className="pointer-events-none"
+                    />
+                    <circle
+                      cx="70"
+                      cy="70"
+                      r={radius + 7.5}
+                      fill="transparent"
+                      stroke="rgba(255,255,255,0.38)"
+                      strokeWidth="1"
+                      className="pointer-events-none"
+                    />
+                    <circle
+                      cx="70"
+                      cy="70"
+                      r={radius - 7.5}
+                      fill="transparent"
+                      stroke="rgba(255,255,255,0.25)"
+                      strokeWidth="1"
+                      className="pointer-events-none"
+                    />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-3 pointer-events-none">
                     <span className="text-[10px] font-bold uppercase tracking-wider opacity-70 truncate max-w-[85px]">

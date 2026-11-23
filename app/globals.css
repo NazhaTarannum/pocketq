@@ -379,10 +379,11 @@ html:not(.dark) main a[class*="border"] {
 
 
 /* Smooth Luminous Liquid Glass Chart Bars (Monthly & Yearly Financial Reports) */
-.bg-emerald-500,
-.bg-green-500,
-.bg-\[\#10B981\],
-.bg-\[\#22C55E\],
+.bg-\[\#7A9E7E\][style*="height"],
+.bg-emerald-500[style*="height"],
+.bg-green-500[style*="height"],
+.bg-\[\#10B981\][style*="height"],
+.bg-\[\#22C55E\][style*="height"],
 .bg-\[\#B3EFB2\][style*="height"] {
   background: linear-gradient(
     180deg,
@@ -420,10 +421,11 @@ html:not(.dark) main a[class*="border"] {
 }
 
 /* Light mode subtle tint adjustment so glass bars stay rich against light frosted cards */
-html:not(.dark) .bg-emerald-500,
-html:not(.dark) .bg-green-500,
-html:not(.dark) .bg-\[\#10B981\],
-html:not(.dark) .bg-\[\#22C55E\],
+html:not(.dark) .bg-\[\#7A9E7E\][style*="height"],
+html:not(.dark) .bg-emerald-500[style*="height"],
+html:not(.dark) .bg-green-500[style*="height"],
+html:not(.dark) .bg-\[\#10B981\][style*="height"],
+html:not(.dark) .bg-\[\#22C55E\][style*="height"],
 html:not(.dark) .bg-\[\#B3EFB2\][style*="height"] {
   background: linear-gradient(
     180deg,
@@ -446,4 +448,54 @@ html:not(.dark) .bg-pink-600[style*="height"] {
   ) !important;
   border: 1px solid rgba(213, 32, 115, 0.35) !important;
   border-top: 1.5px solid rgba(255, 255, 255, 0.9) !important;
+}
+
+
+/* Liquid Glass Styling for All Horizontal Progress Bars */
+div[style*="width:"][class*="h-full"],
+div[style*="width:"][class*="h-1.5"],
+div[style*="width:"][class*="h-2"],
+div[style*="width:"][class*="h-2.5"],
+div[style*="width:"][class*="h-3"] {
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.58) 0%,
+    rgba(255, 255, 255, 0.14) 55%,
+    rgba(0, 0, 0, 0.12) 100%
+  ) !important;
+  backdrop-filter: blur(12px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.78) !important;
+  box-shadow:
+    0 2px 10px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55) !important;
+  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.bg-\[\#B3EFB2\][style*="width"],
+.bg-\[\#7A9E7E\][style*="width"],
+.bg-emerald-500[style*="width"],
+.bg-green-500[style*="width"] {
+  background-color: rgba(52, 211, 153, 0.55) !important;
+  border: 1px solid rgba(179, 239, 178, 0.50) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.85) !important;
+}
+
+.bg-\[\#D52073\][style*="width"],
+.bg-rose-500[style*="width"],
+.bg-pink-600[style*="width"] {
+  background-color: rgba(213, 32, 115, 0.58) !important;
+  border: 1px solid rgba(244, 114, 182, 0.50) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Liquid Glass Donut / Pie Chart Refraction */
+svg.liquid-glass-pie {
+  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.45));
+}
+
+svg.liquid-glass-pie circle.pie-segment {
+  fill-opacity: 0.78;
+  stroke-opacity: 0.82;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
