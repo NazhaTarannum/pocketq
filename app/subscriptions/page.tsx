@@ -1,3 +1,4 @@
+import DDMMYYYYInput from '@/components/DDMMYYYYInput';
 'use client';
 
 import AppHeader from '@/components/AppHeader';
@@ -444,7 +445,7 @@ export default function SubscriptionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#E8F1F2] dark:bg-black text-[#001A23] dark:text-[#E8F1F2] transition-colors duration-200">
+    <div className="min-h-screen bg-[#E8F1F2] dark:bg-[#31493C]/25 backdrop-blur-xl text-[#001A23] dark:text-[#E8F1F2] transition-colors duration-200">
       {/* Top Header */}
       <AppHeader darkMode={darkMode} onToggleDarkMode={() => setDarkMode(!darkMode)} />
 
@@ -602,7 +603,7 @@ export default function SubscriptionsPage() {
                         className={`text-left px-3 py-2 rounded-xl border text-xs transition cursor-pointer ${
                           active
                             ? 'bg-[#31493C] text-white border-[#31493C] font-semibold'
-                            : 'bg-[#E8F1F2] dark:bg-black border-[#31493C]/15 dark:border-white/15 hover:border-[#31493C]/40'
+                            : 'bg-[#E8F1F2] dark:bg-[#31493C]/25 backdrop-blur-xl border-[#31493C]/15 dark:border-white/15 hover:border-[#31493C]/40'
                         }`}
                       >
                         <div>{opt.label}</div>
@@ -801,7 +802,7 @@ export default function SubscriptionsPage() {
                                   ? sub.canSettle
                                     ? 'bg-amber-100 text-amber-900 dark:bg-amber-950/70 dark:text-amber-300 font-bold'
                                     : 'bg-[#31493C]/10 text-[#31493C] dark:bg-[#B3EFB2]/15 dark:text-[#B3EFB2] font-semibold'
-                                  : 'bg-[#E8F1F2] dark:bg-black text-slate-600 dark:text-slate-400'
+                                  : 'bg-[#E8F1F2] dark:bg-[#31493C]/25 backdrop-blur-xl text-slate-600 dark:text-slate-400'
                               }`}
                             >
                               {formatDateDDMMYYYY(isoDate)}
@@ -924,7 +925,7 @@ export default function SubscriptionsPage() {
 
       {/* Payment Confirmation Modal (Only reachable for Due Today / Overdue bills) */}
       {settleTarget && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[#31493C]/25 backdrop-blur-xl backdrop-blur-xs flex items-center justify-center p-4">
           <div className="w-full max-w-md rounded-3xl p-6 bg-transparent border border-[#7A9E7E]/30 outline-none shadow-xl space-y-4">
             <div className="flex items-center justify-between">
               <div>
@@ -990,7 +991,7 @@ export default function SubscriptionsPage() {
                 />
               </div>
 
-              <div className="p-3 rounded-2xl bg-[#E8F1F2] dark:bg-black text-xs text-slate-600 dark:text-slate-300 flex items-center gap-2">
+              <div className="p-3 rounded-2xl bg-[#E8F1F2] dark:bg-[#31493C]/25 backdrop-blur-xl text-xs text-slate-600 dark:text-slate-300 flex items-center gap-2">
                 <Wallet className="w-4 h-4 shrink-0 text-[#31493C] dark:text-[#B3EFB2]" />
                 <span>
                   Deducts from selected wallet, logs an Expense transaction, and advances the next due date automatically.
