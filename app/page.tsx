@@ -1197,7 +1197,13 @@ export default function PocketQApp() {
                         background: darkMode
                           ? 'linear-gradient(180deg, rgba(255,255,255,0.48) 0%, rgba(179,239,178,0.26) 100%)'
                           : 'linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(16,120,80,0.36) 100%)',
-                        border: darkMode
+                        borderLeft: darkMode
+                          ? '1px solid rgba(255,255,255,0.62)'
+                          : '1px solid rgba(11,94,62,0.45)',
+                        borderRight: darkMode
+                          ? '1px solid rgba(255,255,255,0.62)'
+                          : '1px solid rgba(11,94,62,0.45)',
+                        borderBottom: darkMode
                           ? '1px solid rgba(255,255,255,0.62)'
                           : '1px solid rgba(11,94,62,0.45)',
                         borderTop: '1.5px solid rgba(255,255,255,0.96)',
