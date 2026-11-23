@@ -384,6 +384,8 @@ export default function PlanningWorkspacePage() {
     }
   };
 
+  if (!data) return null;
+
   return (
     <div
       className={`min-h-screen transition-colors duration-200 ${
