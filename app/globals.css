@@ -452,41 +452,182 @@ html:not(.dark) .bg-pink-600[style*="height"] {
 
 
 /* Liquid Glass Styling for All Horizontal Progress Bars */
-div[style*="width:"][class*="h-full"],
-div[style*="width:"][class*="h-1.5"],
-div[style*="width:"][class*="h-2"],
-div[style*="width:"][class*="h-2.5"],
-div[style*="width:"][class*="h-3"] {
+[style*="width:"][class*="h-full"],
+[style*="width:"][class*="h-1.5"],
+[style*="width:"][class*="h-2"],
+[style*="width:"][class*="h-2.5"],
+[style*="width:"][class*="h-3"] {
   background-image: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.58) 0%,
-    rgba(255, 255, 255, 0.14) 55%,
-    rgba(0, 0, 0, 0.12) 100%
+    rgba(255, 255, 255, 0.65) 0%,
+    rgba(255, 255, 255, 0.16) 48%,
+    rgba(0, 0, 0, 0.18) 100%
   ) !important;
-  backdrop-filter: blur(12px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.78) !important;
+  backdrop-filter: blur(16px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(190%) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18) !important;
   box-shadow:
-    0 2px 10px rgba(0, 0, 0, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.55) !important;
+    0 4px 14px rgba(0, 0, 0, 0.32),
+    inset 0 1px 1px rgba(255, 255, 255, 0.65) !important;
   transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
 
+/* Specific translucent glass tints for horizontal bars */
 .bg-\[\#B3EFB2\][style*="width"],
 .bg-\[\#7A9E7E\][style*="width"],
 .bg-emerald-500[style*="width"],
 .bg-green-500[style*="width"] {
-  background-color: rgba(52, 211, 153, 0.55) !important;
-  border: 1px solid rgba(179, 239, 178, 0.50) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.85) !important;
+  background-color: rgba(52, 211, 153, 0.36) !important;
+  border-left: 1px solid rgba(179, 239, 178, 0.45) !important;
+  border-right: 1px solid rgba(179, 239, 178, 0.45) !important;
 }
 
 .bg-\[\#D52073\][style*="width"],
 .bg-rose-500[style*="width"],
 .bg-pink-600[style*="width"] {
-  background-color: rgba(213, 32, 115, 0.58) !important;
-  border: 1px solid rgba(244, 114, 182, 0.50) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.85) !important;
+  background-color: rgba(213, 32, 115, 0.40) !important;
+  border-left: 1px solid rgba(244, 114, 182, 0.45) !important;
+  border-right: 1px solid rgba(244, 114, 182, 0.45) !important;
+}
+
+.bg-\[\#FFEF5C\][style*="width"],
+.bg-amber-400[style*="width"],
+.bg-yellow-400[style*="width"] {
+  background-color: rgba(255, 239, 92, 0.38) !important;
+  border-left: 1px solid rgba(255, 245, 157, 0.50) !important;
+  border-right: 1px solid rgba(255, 245, 157, 0.50) !important;
+}
+
+/* Make inline-colored category & wallet distribution bars translucent glass */
+div[style*="background-color"][style*="width"] {
+  opacity: 0.78 !important;
+}
+
+/* Global Apple Liquid Glass for All Buttons & Status Badges Across Every Page */
+main button,
+main a[class*="px-"],
+main span[class*="rounded-full"][class*="px-"] {
+  backdrop-filter: blur(20px) saturate(185%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(185%) !important;
+  transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+/* Mint / Emerald Glass Buttons & Badges (+ Add Wallet, + New, You Can, Net Positive) */
+.dark main .bg-\[\#B3EFB2\],
+.dark main .bg-emerald-500,
+.dark main .bg-emerald-600 {
+  background: linear-gradient(
+    180deg,
+    rgba(179, 239, 178, 0.34) 0%,
+    rgba(52, 211, 153, 0.16) 100%
+  ) !important;
+  color: #D9FBE0 !important;
+  border: 1px solid rgba(179, 239, 178, 0.38) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.65) !important;
+  box-shadow:
+    0 6px 20px rgba(16, 185, 129, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
+}
+
+html:not(.dark) main .bg-\[\#B3EFB2\],
+html:not(.dark) main .bg-emerald-500,
+html:not(.dark) main .bg-emerald-600 {
+  background: linear-gradient(
+    180deg,
+    rgba(179, 239, 178, 0.72) 0%,
+    rgba(122, 158, 126, 0.38) 100%
+  ) !important;
+  color: #001A23 !important;
+  border: 1px solid rgba(49, 73, 60, 0.28) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.9) !important;
+  box-shadow:
+    0 6px 18px rgba(0, 26, 35, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Solar Yellow / Amber Glass Buttons & Badges (+ Add, Partially Reserved, Primary CTAs) */
+.dark main .bg-\[\#FFEF5C\],
+.dark main .bg-amber-100,
+.dark main .bg-amber-200,
+.dark main .bg-amber-400,
+.dark main .bg-amber-500,
+.dark main .bg-yellow-100,
+.dark main .bg-yellow-200,
+.dark main .bg-yellow-400 {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 239, 92, 0.32) 0%,
+    rgba(245, 158, 11, 0.16) 100%
+  ) !important;
+  color: #FFF8B8 !important;
+  border: 1px solid rgba(255, 239, 92, 0.42) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.68) !important;
+  box-shadow:
+    0 6px 20px rgba(245, 158, 11, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
+}
+
+html:not(.dark) main .bg-\[\#FFEF5C\],
+html:not(.dark) main .bg-amber-100,
+html:not(.dark) main .bg-amber-200,
+html:not(.dark) main .bg-amber-400,
+html:not(.dark) main .bg-amber-500 {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 239, 92, 0.78) 0%,
+    rgba(255, 224, 66, 0.48) 100%
+  ) !important;
+  color: #001A23 !important;
+  border: 1px solid rgba(180, 140, 0, 0.25) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.92) !important;
+  box-shadow:
+    0 6px 18px rgba(0, 26, 35, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Rose / Pink Glass Badges & Buttons (Overdue, Negative Net, Delete/Alert) */
+.dark main .bg-\[\#D52073\],
+.dark main .bg-rose-100,
+.dark main .bg-rose-500,
+.dark main .bg-rose-600,
+.dark main .bg-pink-600 {
+  background: linear-gradient(
+    180deg,
+    rgba(244, 114, 182, 0.36) 0%,
+    rgba(213, 32, 115, 0.18) 100%
+  ) !important;
+  color: #FFD6E8 !important;
+  border: 1px solid rgba(244, 114, 182, 0.42) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.65) !important;
+  box-shadow:
+    0 6px 20px rgba(213, 32, 115, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
+}
+
+/* Deep Forest / Smoked Glass Action Buttons (Pay, + Reserve, Active Tabs, Set Limits) */
+.dark main button.bg-\[\#31493C\],
+.dark main a.bg-\[\#31493C\],
+.dark main button[class*="border"],
+.dark main a[class*="border"] {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.11) 0%,
+    rgba(255, 255, 255, 0.03) 100%
+  ) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.28) !important;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+}
+
+.dark main button.bg-\[\#31493C\]:hover,
+.dark main button[class*="border"]:hover,
+.dark main .bg-\[\#B3EFB2\]:hover,
+.dark main .bg-\[\#FFEF5C\]:hover {
+  filter: brightness(1.15) !important;
+  transform: translateY(-0.5px);
 }
 
 /* Liquid Glass Donut / Pie Chart Refraction */
