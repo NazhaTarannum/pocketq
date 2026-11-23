@@ -491,7 +491,7 @@ export default function SubscriptionsPage() {
             <p className="text-xs font-semibold uppercase tracking-wider text-[#31493C]/70 dark:text-slate-400">
               Payable Today / Overdue
             </p>
-            <p className="text-2xl font-extrabold mt-1 text-amber-600 dark:text-[#FFEF5C]">
+            <p className="text-2xl font-extrabold mt-1">
               {data.summary.dueNowCount}
             </p>
             <p className="text-xs text-slate-500 mt-1">
@@ -510,15 +510,15 @@ export default function SubscriptionsPage() {
             <p className="text-xs text-slate-500 mt-1">Normalized across cycles</p>
           </div>
 
-          <div className="rounded-3xl p-5 bg-[#31493C] text-white">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#B3EFB2]">
+          <div className="rounded-3xl p-5 bg-white dark:bg-[#31493C]/20 border border-[#7A9E7E]/25 dark:border-[#31493C]">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#31493C]/70 dark:text-slate-400">
               Annualized Commitment
             </p>
             <p className="text-2xl font-extrabold mt-1">
               {currency}
               {data.summary.totalYearlyCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
-            <p className="text-xs text-white/75 mt-1">12-month projected spend</p>
+            <p className="text-xs text-slate-500 mt-1">12-month projected spend</p>
           </div>
         </section>
 
