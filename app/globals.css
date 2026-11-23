@@ -609,30 +609,97 @@ html.dark main button:hover,
 }
 
 
-/* Light Mode Liquid Glass for Pink / Rose Badges, Pills & Buttons (Overdue, Money Lent, Borrowed) */
+/* Glacial Light Mode: Truly Translucent Apple Liquid Glass Buttons, Pills & Badges */
+html:not(.dark) main button,
+html:not(.dark) main a[class*="px-"],
+html:not(.dark) main span[class*="rounded-full"][class*="px-"] {
+  backdrop-filter: blur(22px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(190%) !important;
+  transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+/* Mint / Emerald Translucent Glass (+ Add Wallet, + New, You Can, Net Positive) */
+html:not(.dark) main [class*="bg-[#B3EFB2]"]:not([style*="height"]):not([style*="width"]),
+html:not(.dark) main [class*="bg-emerald-"]:not([style*="height"]):not([style*="width"]),
+html:not(.dark) main [class*="bg-green-"]:not([style*="height"]):not([style*="width"]) {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.56) 0%,
+    rgba(167, 243, 208, 0.28) 52%,
+    rgba(52, 211, 153, 0.16) 100%
+  ) !important;
+  background-color: transparent !important;
+  color: #064E3B !important;
+  border: 1px solid rgba(16, 185, 129, 0.28) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.94) !important;
+  box-shadow:
+    0 6px 20px rgba(16, 185, 129, 0.12),
+    inset 0 1px 1px rgba(255, 255, 255, 0.92) !important;
+}
+
+/* Solar Yellow / Amber Translucent Glass (+ Add, Partially Reserved, Primary CTAs) */
+html:not(.dark) main [class*="bg-[#FFEF5C]"]:not([style*="height"]):not([style*="width"]),
+html:not(.dark) main [class*="bg-amber-"]:not([style*="height"]):not([style*="width"]),
+html:not(.dark) main [class*="bg-yellow-"]:not([style*="height"]):not([style*="width"]) {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.58) 0%,
+    rgba(254, 240, 138, 0.32) 52%,
+    rgba(250, 204, 21, 0.18) 100%
+  ) !important;
+  background-color: transparent !important;
+  color: #422006 !important;
+  border: 1px solid rgba(217, 119, 6, 0.26) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.95) !important;
+  box-shadow:
+    0 6px 20px rgba(217, 119, 6, 0.11),
+    inset 0 1px 1px rgba(255, 255, 255, 0.92) !important;
+}
+
+/* Rose / Pink Translucent Glass (Overdue, Money Lent, Borrowed, Negative Net) */
 html:not(.dark) main [class*="bg-[#D52073]"]:not([style*="height"]):not([style*="width"]),
 html:not(.dark) main [class*="bg-rose-"]:not([style*="height"]):not([style*="width"]),
 html:not(.dark) main [class*="bg-pink-"]:not([style*="height"]):not([style*="width"]) {
   background: linear-gradient(
     180deg,
-    rgba(244, 114, 182, 0.34) 0%,
+    rgba(255, 255, 255, 0.54) 0%,
+    rgba(251, 207, 232, 0.30) 52%,
     rgba(213, 32, 115, 0.16) 100%
   ) !important;
   background-color: transparent !important;
-  backdrop-filter: blur(20px) saturate(185%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(185%) !important;
   color: #880E4F !important;
-  border: 1px solid rgba(213, 32, 115, 0.30) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.88) !important;
+  border: 1px solid rgba(213, 32, 115, 0.28) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.94) !important;
   box-shadow:
-    0 6px 18px rgba(213, 32, 115, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.85) !important;
+    0 6px 20px rgba(213, 32, 115, 0.12),
+    inset 0 1px 1px rgba(255, 255, 255, 0.92) !important;
 }
 
-html:not(.dark) main [class*="bg-[#D52073]"]:hover,
-html:not(.dark) main [class*="bg-rose-"]:hover,
-html:not(.dark) main [class*="bg-pink-"]:hover {
-  filter: brightness(1.06) !important;
+/* Neutral / Forest / Secondary Translucent Glass Buttons (+ Reserve, Pay, Set Limits, Tabs) */
+html:not(.dark) main button[class*="bg-[#31493C]"],
+html:not(.dark) main a[class*="bg-[#31493C]"],
+html:not(.dark) main button[class*="border"],
+html:not(.dark) main a[class*="border"],
+html:not(.dark) main button[class*="bg-white"],
+html:not(.dark) main button[class*="bg-[#E8F1F2]"] {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.62) 0%,
+    rgba(232, 241, 242, 0.24) 100%
+  ) !important;
+  background-color: transparent !important;
+  color: #001A23 !important;
+  border: 1px solid rgba(255, 255, 255, 0.72) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.96) !important;
+  box-shadow:
+    0 4px 16px rgba(0, 26, 35, 0.07),
+    inset 0 1px 1px rgba(255, 255, 255, 0.92) !important;
+}
+
+html:not(.dark) main button:hover,
+html:not(.dark) main a[class*="px-"]:hover {
+  filter: brightness(1.05) !important;
+  transform: translateY(-0.5px);
 }
 
 /* Liquid Glass Donut / Pie Chart Refraction */
