@@ -169,3 +169,36 @@ html:not(.dark) .text-\[\#7A9E7E\] {
 .hero-spendable-card .text-\[\#B3EFB2\] {
   color: #3EE895 !important;
 }
+
+
+/* Fix Light Mode contrast on active items (Sidebar Portal, Tabs, Pills, Cards) */
+html:not(.dark) .bg-\[\#31493C\],
+html:not(.dark) [class*="bg-[#31493C]"] {
+  background-color: rgba(10, 143, 76, 0.14) !important;
+  color: #001A23 !important;
+}
+
+html:not(.dark) .bg-\[\#31493C\] *,
+html:not(.dark) [class*="bg-[#31493C]"] * {
+  color: #001A23 !important;
+}
+
+html:not(.dark) .bg-\[\#31493C\] svg,
+html:not(.dark) [class*="bg-[#31493C]"] svg {
+  color: #0A8F4C !important;
+}
+
+html:not(.dark) .text-white:not(.hero-spendable-card *):not(.hero-spendable-card) {
+  color: #001A23 !important;
+}
+
+/* Preserve luminous text inside the dark frosted hero card */
+.hero-spendable-card,
+.hero-spendable-card * {
+  color: #F2F8FA !important;
+}
+
+.hero-spendable-card .text-\[\#3EE895\],
+.hero-spendable-card .text-\[\#B3EFB2\] {
+  color: #3EE895 !important;
+}
