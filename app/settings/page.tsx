@@ -99,7 +99,7 @@ function buildAllWorldCurrencies(): CurrencyOption[] {
 
   // Retrieve every standard ISO 4217 currency code supported by the JS engine
   const rawCodes: string[] =
-    isMounted && typeof Intl !== 'undefined' && 'supportedValuesOf' in Intl
+    typeof Intl !== 'undefined' && 'supportedValuesOf' in Intl
       ? (Intl as unknown as { supportedValuesOf: (key: string) => string[] }).supportedValuesOf(
           'currency'
         )
@@ -125,9 +125,7 @@ function buildAllWorldCurrencies(): CurrencyOption[] {
 }
 
 export default function SettingsPage() {
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => { setIsMounted(true); }, []);
-  // Memoize the full ISO 4217 world currency list so it is computed once per mount
+    // Memoize the full ISO 4217 world currency list so it is computed once per mount
   const allCurrencies = useMemo(() => buildAllWorldCurrencies(), []);
 
   // UI & network state
@@ -179,7 +177,7 @@ export default function SettingsPage() {
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isMounted]);
+  }, []);
   const [lowBalanceThreshold, setLowBalanceThreshold] = useState('2000');
   const [enableReminders, setEnableReminders] = useState(true);
   const [enableBudgetAlerts, setEnableBudgetAlerts] = useState(true);
@@ -430,7 +428,7 @@ export default function SettingsPage() {
           <div>
             <h2 className="font-bold text-base mb-1">Currency & Alert Preferences</h2>
             <p suppressHydrationWarning className="text-xs opacity-75">
-              Search and select from all {allCurrencies.length} world currencies and customize your alert thresholds
+              Search and select from all <span suppressHydrationWarning>{allCurrencies.length}</span> world currencies and customize your alert thresholds
             </p>
           </div>
 
@@ -438,7 +436,7 @@ export default function SettingsPage() {
             {/* Searchable Global ISO 4217 Currency Combobox + Selected Display */}
             <div className="space-y-2" ref={currencyPickerRef}>
               <label suppressHydrationWarning className="text-xs font-semibold block">
-                Preferred Currency ({allCurrencies.length} Available)
+                Preferred Currency (<span suppressHydrationWarning>{allCurrencies.length}</span> Available)
               </label>
               <div className="relative">
                 <input
