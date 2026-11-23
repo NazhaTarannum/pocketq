@@ -288,3 +288,19 @@ html.dark .fixed.inset-0 > div {
   -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
   border: 1px solid rgba(232, 241, 242, 0.14) !important;
 }
+
+
+/* Remove browser blue text/accent in inputs and modals */
+html:not(.dark) input,
+html:not(.dark) select,
+html:not(.dark) textarea {
+  color: #001A23 !important;
+  accent-color: #001A23 !important;
+}
+
+html:not(.dark) input:focus,
+html:not(.dark) select:focus,
+html:not(.dark) textarea:focus {
+  border-color: #001A23 !important;
+  outline: none !important;
+}

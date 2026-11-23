@@ -1755,12 +1755,12 @@ export default function PocketQApp() {
 
       {/* MODAL 1: Add Income / Expense / Transfer */}
       {activeModal === 'TRANSACTION' && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[#001A23]/25 backdrop-blur-md flex items-center justify-center p-4">
           <div
             className={`w-full max-w-md rounded-3xl p-6 shadow-xl border ${
               darkMode
-                ? 'bg-black border-[#31493C] text-[#E8F1F2]'
-                : 'bg-white border-[#7A9E7E]/30 text-[#001A23]'
+                ? 'bg-[#0E181C]/75 backdrop-blur-2xl border-[#E8F1F2]/15 text-[#E8F1F2]'
+                : 'bg-white/60 backdrop-blur-2xl border-white/80 text-[#001A23]'
             }`}
           >
             <h3 className="font-bold text-lg mb-4">Record Entry</h3>
@@ -1874,12 +1874,12 @@ export default function PocketQApp() {
 
       {/* MODAL 2A: Create Reserved Obligation (with optional installments) */}
       {activeModal === 'OBLIGATION' && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-[#001A23]/25 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
           <div
             className={`w-full max-w-lg rounded-3xl p-6 shadow-xl border my-8 ${
               darkMode
-                ? 'bg-black border-[#31493C] text-[#E8F1F2]'
-                : 'bg-white border-[#7A9E7E]/30 text-[#001A23]'
+                ? 'bg-[#0E181C]/75 backdrop-blur-2xl border-[#E8F1F2]/15 text-[#E8F1F2]'
+                : 'bg-white/60 backdrop-blur-2xl border-white/80 text-[#001A23]'
             }`}
           >
             <h3 className="font-bold text-lg mb-1">New Reserved Obligation</h3>
@@ -2027,12 +2027,12 @@ export default function PocketQApp() {
 
       {/* MODAL 2B: Update Reserved Money for Obligation */}
       {activeModal === 'RESERVE_OB' && selectedOb && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[#001A23]/25 backdrop-blur-md flex items-center justify-center p-4">
           <div
             className={`w-full max-w-md rounded-3xl p-6 shadow-xl border ${
               darkMode
-                ? 'bg-black border-[#31493C] text-[#E8F1F2]'
-                : 'bg-white border-[#7A9E7E]/30 text-[#001A23]'
+                ? 'bg-[#0E181C]/75 backdrop-blur-2xl border-[#E8F1F2]/15 text-[#E8F1F2]'
+                : 'bg-white/60 backdrop-blur-2xl border-white/80 text-[#001A23]'
             }`}
           >
             <h3 className="font-bold text-lg mb-1">Update Reserved Funds</h3>
@@ -2097,12 +2097,12 @@ export default function PocketQApp() {
 
       {/* MODAL 2C: Explicit Payment Confirmation for Obligation */}
       {activeModal === 'PAY_OB' && selectedOb && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[#001A23]/25 backdrop-blur-md flex items-center justify-center p-4">
           <div
             className={`w-full max-w-md rounded-3xl p-6 shadow-xl border ${
               darkMode
-                ? 'bg-black border-[#31493C] text-[#E8F1F2]'
-                : 'bg-white border-[#7A9E7E]/30 text-[#001A23]'
+                ? 'bg-[#0E181C]/75 backdrop-blur-2xl border-[#E8F1F2]/15 text-[#E8F1F2]'
+                : 'bg-white/60 backdrop-blur-2xl border-white/80 text-[#001A23]'
             }`}
           >
             <h3 className="font-bold text-lg mb-1">Record Obligation Payment</h3>
@@ -2205,12 +2205,12 @@ export default function PocketQApp() {
 
       {/* MODAL 2D: Create Custom Savings Entry */}
       {activeModal === 'CREATE_SAVINGS' && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[#001A23]/25 backdrop-blur-md flex items-center justify-center p-4">
           <div
             className={`w-full max-w-md rounded-3xl p-6 shadow-xl border ${
               darkMode
-                ? 'bg-black border-[#31493C] text-[#E8F1F2]'
-                : 'bg-white border-[#7A9E7E]/30 text-[#001A23]'
+                ? 'bg-[#0E181C]/75 backdrop-blur-2xl border-[#E8F1F2]/15 text-[#E8F1F2]'
+                : 'bg-white/60 backdrop-blur-2xl border-white/80 text-[#001A23]'
             }`}
           >
             <h3 className="font-bold text-lg mb-1">New Savings Entry</h3>
@@ -2294,12 +2294,12 @@ export default function PocketQApp() {
 
       {/* MODAL 2E: Savings Deposit / Withdraw to Wallet / Spend / Edit Balance */}
       {activeModal === 'SAVINGS_ACTION' && selectedSavings && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[#001A23]/25 backdrop-blur-md flex items-center justify-center p-4">
           <div
             className={`w-full max-w-md rounded-3xl p-6 shadow-xl border ${
               darkMode
-                ? 'bg-black border-[#31493C] text-[#E8F1F2]'
-                : 'bg-white border-[#7A9E7E]/30 text-[#001A23]'
+                ? 'bg-[#0E181C]/75 backdrop-blur-2xl border-[#E8F1F2]/15 text-[#E8F1F2]'
+                : 'bg-white/60 backdrop-blur-2xl border-white/80 text-[#001A23]'
             }`}
           >
             <h3 className="font-bold text-lg mb-1">{selectedSavings.name}</h3>
@@ -2426,12 +2426,12 @@ export default function PocketQApp() {
 
       {/* MODAL 2F: Savings Entry Transaction History */}
       {activeModal === 'SAVINGS_HISTORY' && selectedSavings && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[#001A23]/25 backdrop-blur-md flex items-center justify-center p-4">
           <div
             className={`w-full max-w-md rounded-3xl p-6 shadow-xl border ${
               darkMode
-                ? 'bg-black border-[#31493C] text-[#E8F1F2]'
-                : 'bg-white border-[#7A9E7E]/30 text-[#001A23]'
+                ? 'bg-[#0E181C]/75 backdrop-blur-2xl border-[#E8F1F2]/15 text-[#E8F1F2]'
+                : 'bg-white/60 backdrop-blur-2xl border-white/80 text-[#001A23]'
             }`}
           >
             <div className="flex items-center justify-between mb-3">
@@ -2487,12 +2487,12 @@ export default function PocketQApp() {
 
       {/* MODAL 3: Smart Restaurant & Group Bill Splitter */}
       {activeModal === 'SPLIT' && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-[#001A23]/25 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
           <div
             className={`w-full max-w-lg rounded-3xl p-6 shadow-xl border my-8 ${
               darkMode
-                ? 'bg-black border-[#31493C] text-[#E8F1F2]'
-                : 'bg-white border-[#7A9E7E]/30 text-[#001A23]'
+                ? 'bg-[#0E181C]/75 backdrop-blur-2xl border-[#E8F1F2]/15 text-[#E8F1F2]'
+                : 'bg-white/60 backdrop-blur-2xl border-white/80 text-[#001A23]'
             }`}
           >
             <h3 className="font-bold text-lg mb-1">Smart Bill Splitter</h3>
