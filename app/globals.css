@@ -1,31 +1,6 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Initial Aeonik Pro Font Faces */
-@font-face {
-  font-family: "Aeonik Pro";
-  src: url("/fonts/AeonikPro-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Aeonik Pro";
-  src: url("/fonts/AeonikPro-Medium.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Aeonik Pro";
-  src: url("/fonts/AeonikPro-Bold.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
 @theme inline {
   --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
@@ -33,19 +8,10 @@
 
 :root {
   --bg-main: #CFE2E8;
-  --bg-card: rgba(255, 255, 255, 0.26);
+  --bg-card: rgba(255, 255, 255, 0.28);
   --text-primary: #001A23;
   --text-muted: #3A545E;
   --border-subtle: rgba(0, 26, 35, 0.06);
-
-  /* PocketQ Custom Palette (Updated with Deeper Vibrant Emerald) */
-  --pq-inkblack: #001A23;
-  --pq-celadon: #0A8F4C;
-  --pq-aliceblue: #E8F1F2;
-  --pq-mutedteal: #0B7A43;
-  --pq-pineteal: #075E33;
-  --pq-hotberry: #D52073;
-  --pq-bananacream: #FFEF5C;
 }
 
 .dark {
@@ -54,18 +20,12 @@
   --text-primary: #E8F1F2;
   --text-muted: #98B5BE;
   --border-subtle: rgba(255, 255, 255, 0.06);
-
-  --pq-celadon: #18D476;
-  --pq-mutedteal: #10B965;
-  --pq-pineteal: #0A7A44;
 }
 
-/* Sharp 0px Corners Everywhere */
 *, *::before, *::after {
   border-radius: 0px !important;
 }
 
-/* Ambient Light Mesh Backdrop + Initial Typography */
 html, body {
   min-height: 100%;
   background-color: #CFE2E8 !important;
@@ -78,7 +38,6 @@ html, body {
   background-attachment: fixed !important;
   color: var(--text-primary);
   font-family: var(--font-sans);
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 html.dark, .dark body {
@@ -101,12 +60,11 @@ div.min-h-screen {
   background: transparent !important;
 }
 
-/* Borderless Apple Liquid Glass Panels */
+/* Borderless Translucent Frosted Glass Cards */
 header,
 aside,
-.rounded-3xl,
-[class*="bg-white"] {
-  background: rgba(255, 255, 255, 0.28) !important;
+.rounded-3xl {
+  background: rgba(255, 255, 255, 0.32) !important;
   backdrop-filter: blur(26px) saturate(190%) !important;
   -webkit-backdrop-filter: blur(26px) saturate(190%) !important;
   border: 1px solid rgba(0, 26, 35, 0.06) !important;
@@ -115,37 +73,29 @@ aside,
 
 .dark header,
 .dark aside,
-.dark .rounded-3xl,
-.dark [class*="bg-white"],
-.dark [class*="bg-[#001A23]"] {
-  background: rgba(7, 30, 34, 0.36) !important;
+.dark .rounded-3xl {
+  background: rgba(7, 30, 34, 0.38) !important;
   backdrop-filter: blur(28px) saturate(195%) !important;
   -webkit-backdrop-filter: blur(28px) saturate(195%) !important;
   border: 1px solid rgba(255, 255, 255, 0.06) !important;
   box-shadow: 0 16px 38px -10px rgba(0, 0, 0, 0.7) !important;
 }
 
-/* Modern Frosted Ocean-Slate Glass Hero Card */
-.rounded-3xl[class*="31493C"] {
+/* Sleek Frosted Slate-Teal Hero Card */
+.hero-spendable-card {
   background: linear-gradient(
     135deg,
-    rgba(11, 37, 54, 0.72) 0%,
-    rgba(16, 66, 78, 0.64) 100%
+    rgba(13, 42, 58, 0.76) 0%,
+    rgba(20, 68, 82, 0.68) 100%
   ) !important;
-  backdrop-filter: blur(30px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(30px) saturate(200%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.14) !important;
-  box-shadow: 0 18px 40px -12px rgba(11, 37, 54, 0.35) !important;
-  color: #F4F9FB !important;
+  backdrop-filter: blur(28px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #F2F8FA !important;
 }
 
-.rounded-3xl[class*="31493C"] [class*="text-"][class*="B3EFB2"] {
-  color: #5CE6A6 !important;
-}
-
-/* Inner Sub-Cards (.rounded-2xl) */
 .rounded-2xl {
-  background: rgba(255, 255, 255, 0.18) !important;
+  background: rgba(255, 255, 255, 0.22) !important;
   backdrop-filter: blur(14px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
   border: 1px solid rgba(0, 26, 35, 0.05) !important;
@@ -156,36 +106,6 @@ aside,
   border: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
 
-/* Deep & Vibrant Emerald for Progress Bars, Badges & Sliders */
-[class*="bg-"][class*="B3EFB2"],
-[class*="bg-"][class*="7A9E7E"],
-[class*="bg-emerald"] {
-  background: linear-gradient(135deg, #0A8F4C 0%, #066E39 100%) !important;
-  color: #FFFFFF !important;
-  border-color: transparent !important;
-}
-
-.dark [class*="bg-"][class*="B3EFB2"],
-.dark [class*="bg-"][class*="7A9E7E"],
-.dark [class*="bg-emerald"] {
-  background: linear-gradient(135deg, #18D476 0%, #0EA65A 100%) !important;
-  color: #03150E !important;
-  border-color: transparent !important;
-}
-
-[class*="text-"][class*="B3EFB2"],
-[class*="text-"][class*="7A9E7E"],
-[class*="text-emerald"] {
-  color: #098245 !important;
-}
-
-.rounded-3xl[class*="31493C"] [class*="text-"][class*="B3EFB2"],
-.dark [class*="text-"][class*="B3EFB2"],
-.dark [class*="text-"][class*="7A9E7E"],
-.dark [class*="text-emerald"] {
-  color: #1EE07E !important;
-}
-
 input[type="range"] {
   accent-color: #0A8F4C !important;
 }
@@ -194,7 +114,6 @@ input[type="range"] {
   accent-color: #18D476 !important;
 }
 
-/* Borderless Frosted Inputs & Dropdowns */
 input:not([type="range"]), select, textarea {
   background-color: rgba(255, 255, 255, 0.24) !important;
   border: 1px solid rgba(0, 26, 35, 0.08) !important;

@@ -981,7 +981,7 @@ export default function PocketQApp() {
 
           {/* CENTER COLUMN on Desktop (6 cols), 1st & 2nd on Mobile: Safe Spendable Cash + Can I Afford It? */}
           <div className="order-1 lg:order-2 lg:col-span-6 flex flex-col gap-4">
-          <div className="rounded-3xl p-5 bg-[#31493C] text-[#E8F1F2] shadow-md relative overflow-hidden">
+          <div className="rounded-3xl hero-spendable-card p-5 text-[#F2F8FA] shadow-md relative overflow-hidden">
             <div className="flex flex-col items-start gap-1.5">
               <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-[#B3EFB2]/20 text-[#B3EFB2]">
                 <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
@@ -993,7 +993,7 @@ export default function PocketQApp() {
             </div>
 
             <div className="mt-4">
-              <div className="text-4xl sm:text-5xl font-extrabold text-[#B3EFB2] tracking-tight">
+              <div className="text-4xl sm:text-5xl font-extrabold text-[#3EE895] tracking-tight">
                 {formatBDT(data.summary.availableToSpend)}
               </div>
               <p className="text-sm mt-2 text-[#E8F1F2]/85">
