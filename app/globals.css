@@ -148,3 +148,24 @@ select option {
   background-color: rgba(7, 30, 34, 0.94);
   color: #E8F1F2;
 }
+
+
+/* High-Contrast Light Mode Text Fix for Active Pills & Cards */
+html:not(.dark) .text-\[\#E8F1F2\],
+html:not(.dark) .text-\[\#B3EFB2\] {
+  color: #001A23 !important;
+}
+
+html:not(.dark) .text-\[\#7A9E7E\] {
+  color: #097A42 !important;
+}
+
+/* Keep bright text inside the dark frosted hero card */
+.hero-spendable-card .text-\[\#E8F1F2\],
+.hero-spendable-card {
+  color: #F2F8FA !important;
+}
+
+.hero-spendable-card .text-\[\#B3EFB2\] {
+  color: #3EE895 !important;
+}
