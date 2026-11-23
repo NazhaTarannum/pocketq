@@ -1250,19 +1250,12 @@ export default function PocketQApp() {
                     <div>
                       <span className="opacity-70 block">Left After Spend</span>
                       <span
-                        style={{
-                          color: isDanger
-                            ? "#D52073"
-                            : isTight
-                            ? (darkMode ? "#FFEF5C" : "#B45309")
-                            : (darkMode ? "#7A9E7E" : "#097A42"),
-                        }}
                         className={`font-extrabold text-sm ${
                           isDanger
                             ? "text-[#D52073]"
                             : isTight
                             ? "text-[#FFEF5C]"
-                            : "text-[#7A9E7E]"
+                            : "sim-left-after-spend-safe"
                         }`}
                       >
                         {formatBDT(postSpend)}

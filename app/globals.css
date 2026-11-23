@@ -1149,3 +1149,12 @@ html:not(.dark) body main .liquid-glass-slider-thumb {
   -webkit-clip-path: circle(50% at 50% 50%) !important;
   will-change: left, transform;
 }
+
+
+/* Explicit Emerald Green for Left After Spend in Can I Afford It */
+html:not(.dark) .sim-left-after-spend-safe {
+  color: #097A42 !important;
+}
+html.dark .sim-left-after-spend-safe {
+  color: #7A9E7E !important;
+}
