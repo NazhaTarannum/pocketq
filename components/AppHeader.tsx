@@ -12,7 +12,7 @@ interface AppHeaderProps {
   onAddEntry?: () => void;
 }
 
-const TABS = [
+const BASE_TABS = [
   { key: 'dashboard', label: 'Dashboard', href: '/' },
   { key: 'planning', label: 'Planning', href: '/planning' },
   { key: 'split', label: 'Split Bill', href: '/split' },
@@ -22,6 +22,7 @@ const TABS = [
 
 export default function AppHeader({ darkMode, onToggleDarkMode, onAddEntry }: AppHeaderProps) {
   const pathname = usePathname() || '/';
+  const visibleTabs = pathname === '/' ? BASE_TABS : BASE_TABS.filter((t) => t.key !== 'entry');
   const router = useRouter();
   const navContainerRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<Record<string, HTMLButtonElement | HTMLAnchorElement | null>>({});
@@ -110,7 +111,7 @@ export default function AppHeader({ darkMode, onToggleDarkMode, onAddEntry }: Ap
             aria-label="Primary Navigation"
             className="relative flex items-center gap-3.5 sm:gap-6 py-1"
           >
-            {TABS.map((tab) => {
+            {visibleTabs.map((tab) => {
               const isActive = activeKey === tab.key;
               if (tab.key === 'entry') {
                 return (
