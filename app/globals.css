@@ -1189,3 +1189,10 @@ html:not(.dark) .pocketq-sidebar-drawer {
     radial-gradient(at 14% 86%, rgba(192, 218, 238, 0.58) 0px, transparent 50%) !important;
   background-attachment: fixed !important;
 }
+
+
+/* Light Mode Safe Spendable Cash big figure black ONLY */
+html:not(.dark) main .hero-spendable-card .hero-spendable-amount,
+html:not(.dark) body main .hero-spendable-card .hero-spendable-amount {
+  color: #000000 !important;
+}
