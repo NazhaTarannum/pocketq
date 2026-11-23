@@ -125,17 +125,22 @@ aside,
   box-shadow: 0 16px 38px -10px rgba(0, 0, 0, 0.7) !important;
 }
 
-/* Translucent Pine-Glass Hero Card */
+/* Modern Frosted Ocean-Slate Glass Hero Card */
 .rounded-3xl[class*="31493C"] {
   background: linear-gradient(
     135deg,
-    rgba(24, 68, 52, 0.64) 0%,
-    rgba(12, 42, 34, 0.58) 100%
+    rgba(11, 37, 54, 0.72) 0%,
+    rgba(16, 66, 78, 0.64) 100%
   ) !important;
-  backdrop-filter: blur(28px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
-  border: 1px solid rgba(10, 143, 76, 0.22) !important;
-  color: #E8F1F2 !important;
+  backdrop-filter: blur(30px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(200%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 18px 40px -12px rgba(11, 37, 54, 0.35) !important;
+  color: #F4F9FB !important;
+}
+
+.rounded-3xl[class*="31493C"] [class*="text-"][class*="B3EFB2"] {
+  color: #5CE6A6 !important;
 }
 
 /* Inner Sub-Cards (.rounded-2xl) */
