@@ -135,10 +135,10 @@ export default function AppSidebar({ darkMode = false }: AppSidebarProps) {
             />
 
             <aside
-              className={`relative z-10 w-76 max-w-[84vw] h-dvh flex flex-col justify-between p-5 border-r shadow-2xl overflow-y-auto ${
+              className={`pocketq-sidebar-drawer relative z-10 w-76 max-w-[84vw] h-dvh flex flex-col justify-between p-5 border-r shadow-2xl overflow-y-auto ${
                 darkMode
-                  ? 'bg-black text-[#E8F1F2] border-[#31493C]'
-                  : 'bg-[#E8F1F2] text-[#001A23] border-[#7A9E7E]/30'
+                  ? 'text-[#E8F1F2] border-[#31493C]'
+                  : 'text-[#001A23] border-[#7A9E7E]/30'
               }`}
             >
               <div className="space-y-6">
