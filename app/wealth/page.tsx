@@ -219,13 +219,7 @@ export default function WealthPage() {
         <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <AppSidebar darkMode={darkMode} />
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-[#31493C] text-[#B3EFB2] hover:opacity-90 shrink-0"
-            >
-              <ArrowLeft className="w-3.5 h-3.5 shrink-0" />
-              <span>Dashboard</span>
-            </Link>
+            
             <h1 className="font-bold text-sm sm:text-lg leading-tight truncate">
               Wealth &amp; Investments
             </h1>

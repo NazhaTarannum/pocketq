@@ -7,8 +7,8 @@ import { Sun, Moon } from 'lucide-react';
 import AppSidebar from './AppSidebar';
 
 interface AppHeaderProps {
-  darkMode: boolean;
-  onToggleDarkMode: () => void;
+  darkMode?: boolean;
+  onToggleDarkMode?: () => void;
   onAddEntry?: () => void;
 }
 
@@ -26,6 +26,30 @@ export default function AppHeader({ darkMode, onToggleDarkMode, onAddEntry }: Ap
   const navContainerRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<Record<string, HTMLButtonElement | HTMLAnchorElement | null>>({});
   const [underline, setUnderline] = useState<{ left: number; width: number }>({ left: 0, width: 0 });
+  const [internalDark, setInternalDark] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (typeof darkMode === 'boolean') {
+      setInternalDark(darkMode);
+    } else if (typeof document !== 'undefined') {
+      setInternalDark(document.documentElement.classList.contains('dark'));
+    }
+  }, [darkMode]);
+
+  const isDark = typeof darkMode === 'boolean' ? darkMode : internalDark;
+
+  const handleToggleDark = () => {
+    if (onToggleDarkMode) {
+      onToggleDarkMode();
+    } else {
+      const next = !isDark;
+      setInternalDark(next);
+      document.documentElement.classList.toggle('dark', next);
+      try {
+        localStorage.setItem('pocketq_dark_mode', String(next));
+      } catch {}
+    }
+  };
 
   const activeKey =
     pathname === '/'
@@ -63,13 +87,12 @@ export default function AppHeader({ darkMode, onToggleDarkMode, onAddEntry }: Ap
   return (
     <header
       className={`sticky top-0 z-30 backdrop-blur-md transition-colors duration-200 ${
-        darkMode ? 'text-[#E8F1F2]' : 'text-[#001A23]'
+        isDark ? 'text-[#E8F1F2]' : 'text-[#001A23]'
       }`}
     >
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between gap-2 sm:gap-4">
-        {/* Left Brand + Sidebar Menu */}
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-          <AppSidebar darkMode={darkMode} />
+          <AppSidebar darkMode={isDark} />
           <Link href="/" className="flex items-center gap-2 sm:gap-2.5 min-w-0">
             <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[#0F2C38] flex items-center justify-center text-[#3EE895] font-bold text-base sm:text-lg shadow-sm shrink-0">
               Q
@@ -81,7 +104,6 @@ export default function AppHeader({ darkMode, onToggleDarkMode, onAddEntry }: Ap
           </Link>
         </div>
 
-        {/* Right Smooth Sliding-Underline Tabs */}
         <div className="flex items-center gap-3 sm:gap-5 shrink-0">
           <nav
             ref={navContainerRef}
@@ -127,7 +149,6 @@ export default function AppHeader({ darkMode, onToggleDarkMode, onAddEntry }: Ap
               );
             })}
 
-            {/* Sliding Emerald Indicator */}
             <span
               aria-hidden="true"
               style={{
@@ -135,17 +156,17 @@ export default function AppHeader({ darkMode, onToggleDarkMode, onAddEntry }: Ap
                 width: `${underline.width}px`,
               }}
               className={`pointer-events-none absolute bottom-0 left-0 h-[2px] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                darkMode ? 'bg-[#18D476]' : 'bg-[#0A8F4C]'
+                isDark ? 'bg-[#18D476]' : 'bg-[#0A8F4C]'
               }`}
             />
           </nav>
 
           <button
-            onClick={onToggleDarkMode}
+            onClick={handleToggleDark}
             aria-label="Toggle theme"
             className="p-1.5 opacity-75 hover:opacity-100 transition-opacity cursor-pointer bg-transparent border-0 shrink-0"
           >
-            {darkMode ? <Sun className="w-4 h-4 text-[#FFEF5C]" /> : <Moon className="w-4 h-4" />}
+            {isDark ? <Sun className="w-4 h-4 text-[#FFEF5C]" /> : <Moon className="w-4 h-4" />}
           </button>
         </div>
       </div>
