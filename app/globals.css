@@ -1150,11 +1150,22 @@ html:not(.dark) body main .liquid-glass-slider-thumb {
   will-change: left, transform;
 }
 
+/* Light Mode: ONLY the big Safe Spendable Cash hero amount is pure black */
+html:not(.dark) .hero-spendable-card .text-4xl,
+html:not(.dark) .hero-spendable-card .text-5xl,
+html:not(.dark) .hero-spendable-card .text-6xl,
+html:not(.dark) .hero-spendable-card [class*="text-4xl"],
+html:not(.dark) .hero-spendable-card [class*="text-5xl"],
+html:not(.dark) .hero-spendable-card [class*="text-6xl"] {
+  color: #000000 !important;
+}
 
 /* Explicit Emerald Green for Left After Spend in Can I Afford It */
-html:not(.dark) .sim-left-after-spend-safe {
+html:not(.dark) main .sim-left-after-spend-safe,
+html:not(.dark) body main .sim-left-after-spend-safe {
   color: #097A42 !important;
 }
-html.dark .sim-left-after-spend-safe {
+html.dark main .sim-left-after-spend-safe,
+html.dark body main .sim-left-after-spend-safe {
   color: #7A9E7E !important;
 }
