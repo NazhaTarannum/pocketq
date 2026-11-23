@@ -584,7 +584,7 @@ export default function SubscriptionsPage() {
                     
                     required
                     value={startDate}
-                    onChange={(e) =/> setStartDate(e.target.value)}
+                    onChange={setStartDate}
                     className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-transparent border border-[#7A9E7E]/30 outline-none focus:outline-none focus:ring-2 focus:ring-[#31493C]"
                   />
                 </div>

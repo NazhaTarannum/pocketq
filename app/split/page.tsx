@@ -632,7 +632,7 @@ export default function BillSplittingPage() {
                     <DDMMYYYYInput
                       
                       value={billDate}
-                      onChange={(e) =/> setBillDate(e.target.value)}
+                      onChange={setBillDate}
                       className={`w-full px-3 py-2 rounded-xl border text-xs outline-none ${inputClass}`}
                     />
                   </div>
@@ -1969,7 +1969,7 @@ export default function BillSplittingPage() {
                   
                   required
                   value={settleDate}
-                  onChange={(e) =/> setSettleDate(e.target.value)}
+                  onChange={setSettleDate}
                   className={`w-full px-3 py-2 rounded-xl border text-xs ${inputClass}`}
                 />
               </div>

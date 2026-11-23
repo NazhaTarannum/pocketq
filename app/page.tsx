@@ -1936,7 +1936,7 @@ export default function PocketQApp() {
                   <input
                     type="text"
                     value={obNotes}
-                    onChange={(e) => setObNotes(e.target.value)}
+                    onChange={setObNotes}
                     placeholder="e.g. Pay via bKash / Bank"
                     className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                   />
@@ -2069,7 +2069,7 @@ export default function PocketQApp() {
                   type="number"
                   required
                   value={reserveAmtInput}
-                  onChange={(e) => setReserveAmtInput(e.target.value)}
+                  onChange={setReserveAmtInput}
                   placeholder="e.g. 5000"
                   className="w-full px-3.5 py-2.5 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                 />
@@ -2160,7 +2160,7 @@ export default function PocketQApp() {
                 <label className="text-xs font-semibold block mb-1">Paid From Wallet</label>
                 <select
                   value={payWalletId}
-                  onChange={(e) => setPayWalletId(e.target.value)}
+                  onChange={setPayWalletId}
                   className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                 >
                   {data.wallets.map((w) => (
@@ -2265,7 +2265,7 @@ export default function PocketQApp() {
                   <input
                     type="text"
                     value={savNotes}
-                    onChange={(e) => setSavNotes(e.target.value)}
+                    onChange={setSavNotes}
                     placeholder="Optional note"
                     className="w-full px-3.5 py-2 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                   />

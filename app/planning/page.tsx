@@ -711,7 +711,7 @@ export default function PlanningWorkspacePage() {
                 required
                 placeholder={loanDirection === 'BORROWED' ? 'Lender Name' : 'Borrower Name'}
                 value={loanParty}
-                onChange={(e) => setLoanParty(e.target.value)}
+                onChange={setLoanParty}
                 className="rounded-xl px-3 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
               />
               <input
@@ -772,7 +772,7 @@ export default function PlanningWorkspacePage() {
                   </label>
                   <select
                     value={loanSourceWalletId || data?.wallets[0]?.id || ''}
-                    onChange={(e) => setLoanSourceWalletId(e.target.value)}
+                    onChange={setLoanSourceWalletId}
                     className="w-full px-2.5 py-2 border border-[#7A9E7E]/30 bg-transparent outline-none"
                   >
                     {data?.wallets.map((w) => (
@@ -1035,7 +1035,7 @@ export default function PlanningWorkspacePage() {
                   step="0.01"
                   max={repayLoanTarget.remaining}
                   value={repayAmount}
-                  onChange={(e) => setRepayAmount(e.target.value)}
+                  onChange={setRepayAmount}
                   placeholder={`Enter amount up to ${repayLoanTarget.remaining}`}
                   className="w-full rounded-xl px-3 py-2 text-sm border border-[#7A9E7E]/30 bg-transparent outline-none"
                 />

@@ -389,7 +389,7 @@ export default function WealthPage() {
               <DDMMYYYYInput
                 
                 value={invStartDate}
-                onChange={(e) =/> setInvStartDate(e.target.value)}
+                onChange={setInvStartDate}
                 className="rounded-xl px-2.5 py-1.5 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
               />
             </div>
