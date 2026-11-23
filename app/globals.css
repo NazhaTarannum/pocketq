@@ -304,3 +304,59 @@ html:not(.dark) textarea:focus {
   border-color: #001A23 !important;
   outline: none !important;
 }
+
+
+/* Apple Liquid Glass for All Nested Inner Cards (Obligations, Savings, Wallets, Lists) */
+html:not(.dark) .bg-\[\#E8F1F2\]\/40,
+html:not(.dark) .bg-\[\#E8F1F2\]\/50,
+html:not(.dark) .bg-\[\#E8F1F2\]\/60,
+html:not(.dark) .bg-\[\#E8F1F2\]\/70,
+html:not(.dark) .bg-\[\#E8F1F2\]\/80,
+html:not(.dark) .bg-white\/40,
+html:not(.dark) .bg-white\/50,
+html:not(.dark) .bg-white\/60,
+html:not(.dark) .bg-white\/70,
+html:not(.dark) [class*="bg-[#E8F1F2]/"] {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.56) 0%,
+    rgba(255, 255, 255, 0.28) 100%
+  ) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.72) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.92) !important;
+  box-shadow:
+    0 8px 24px rgba(0, 26, 35, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85) !important;
+  border-radius: 0px !important;
+}
+
+/* Dark Mode Liquid Glass for Nested Inner Cards */
+html.dark .bg-\[\#31493C\]\/10,
+html.dark .bg-\[\#31493C\]\/15,
+html.dark .bg-\[\#31493C\]\/20,
+html.dark .bg-\[\#31493C\]\/30,
+html.dark [class*="bg-[#31493C]/"] {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.03) 100%
+  ) !important;
+  backdrop-filter: blur(24px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+  border: 1px solid rgba(232, 241, 242, 0.14) !important;
+  border-top: 1px solid rgba(232, 241, 242, 0.26) !important;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+  border-radius: 0px !important;
+}
+
+/* Glass styling for secondary buttons inside cards (+ Reserve, Pay, etc.) */
+html:not(.dark) main button[class*="border"],
+html:not(.dark) main a[class*="border"] {
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-radius: 0px !important;
+}
