@@ -1834,7 +1834,7 @@ export default function PocketQApp() {
                     required
                     value={txCategory}
                     onChange={(e) => setTxCategory(e.target.value)}
-                    placeholder="e.g. Food, Private Tuition, Transport"
+                    placeholder={txType === "INCOME" ? "e.g. Salary, Freelance, Allowance" : "e.g. Food, Transport, Groceries"}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-[#7A9E7E]/30 bg-transparent text-sm outline-none"
                   />
                 </div>
