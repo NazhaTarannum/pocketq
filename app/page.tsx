@@ -1,4 +1,5 @@
 'use client';
+import DDMMYYYYInput from '@/components/DDMMYYYYInput';
 import { FX_RATES_FROM_BDT, convertCurrencyAmount, formatCurrency } from '@/lib/format';
 
 /**
@@ -6,7 +7,6 @@ import { FX_RATES_FROM_BDT, convertCurrencyAmount, formatCurrency } from '@/lib/
  * @description Primary financial command dashboard displaying Safe Spendable Cash, wallets, obligations, savings, impulse simulator, and daily ledger activity.
  */
 
-import DDMMYYYYInput from '@/components/DDMMYYYYInput';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import AppSidebar from '@/components/AppSidebar';

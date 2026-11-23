@@ -1,4 +1,5 @@
 'use client';
+import DDMMYYYYInput from '@/components/DDMMYYYYInput';
 
 import { formatCurrency } from '@/lib/format';
 import Link from 'next/link';
@@ -25,7 +26,6 @@ import {
 import AppSidebar from '@/components/AppSidebar';
 import { useThemePreference } from '@/lib/useThemePreference';
 import { formatDateDDMMYYYY } from '@/lib/format';
-import DDMMYYYYInput from '@/components/DDMMYYYYInput';
 
 interface WalletItem {
   id: string;

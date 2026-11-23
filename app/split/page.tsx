@@ -1,4 +1,5 @@
 'use client';
+import DDMMYYYYInput from '@/components/DDMMYYYYInput';
 
 import AppHeader from '@/components/AppHeader';
 import Link from 'next/link';
@@ -31,7 +32,6 @@ import AppSidebar from '@/components/AppSidebar';
 import { useThemePreference } from '@/lib/useThemePreference';
 import { formatDateDDMMYYYY } from '@/lib/format';
 import {
-import DDMMYYYYInput from '@/components/DDMMYYYYInput';
   calculateBillSplit,
   ParticipantDraft,
   BillItemDraft,
