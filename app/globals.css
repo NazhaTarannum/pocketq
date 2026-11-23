@@ -31,55 +31,61 @@
 }
 
 :root {
-  --bg-main: #DCE6EA;
-  --bg-card: rgba(255, 255, 255, 0.42);
-  --text-primary: #0F1C22;
-  --text-muted: #4A5D66;
-  --border-subtle: rgba(255, 255, 255, 0.65);
+  --bg-main: #D6E4E8;
+  --bg-card: rgba(232, 241, 242, 0.34);
+  --text-primary: #001A23;
+  --text-muted: #3A545E;
+  --border-subtle: rgba(255, 255, 255, 0.62);
 
-  --pq-inkblack: #0F1C22;
+  --pq-inkblack: #001A23;
   --pq-celadon: #B3EFB2;
   --pq-aliceblue: #E8F1F2;
   --pq-mutedteal: #7A9E7E;
-  --pq-pineteal: #1F3A32;
+  --pq-pineteal: #31493C;
   --pq-hotberry: #D52073;
   --pq-bananacream: #FFEF5C;
 }
 
 .dark {
-  --bg-main: #060B10;
-  --bg-card: rgba(24, 34, 44, 0.42);
-  --text-primary: #F2F6F8;
-  --text-muted: #9BB0BA;
+  --bg-main: #041014;
+  --bg-card: rgba(7, 30, 34, 0.44);
+  --text-primary: #E8F1F2;
+  --text-muted: #98B5BE;
   --border-subtle: rgba(255, 255, 255, 0.16);
 }
 
+/* 1. Zero Rounded Corners Everywhere — Sharp 0px Edges */
 *,
 *::before,
 *::after {
   border-radius: 0px !important;
 }
 
+/* 2. Rich Ambient Light Mesh on Body + Transparent Page Wrapper so Glass Cards Refract Color */
 body {
   background-color: var(--bg-main);
   background-image:
-    radial-gradient(at 8% 10%, rgba(122, 184, 168, 0.45) 0px, transparent 45%),
-    radial-gradient(at 88% 12%, rgba(164, 206, 232, 0.55) 0px, transparent 48%),
-    radial-gradient(at 78% 85%, rgba(179, 239, 178, 0.42) 0px, transparent 50%),
-    radial-gradient(at 18% 88%, rgba(210, 224, 238, 0.6) 0px, transparent 52%);
+    radial-gradient(at 10% 8%, rgba(122, 158, 126, 0.55) 0px, transparent 42%),
+    radial-gradient(at 88% 12%, rgba(179, 239, 178, 0.52) 0px, transparent 44%),
+    radial-gradient(at 78% 78%, rgba(130, 188, 212, 0.55) 0px, transparent 48%),
+    radial-gradient(at 14% 86%, rgba(255, 239, 92, 0.24) 0px, transparent 46%);
   background-attachment: fixed;
   color: var(--text-primary);
   font-family: var(--font-sans);
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 .dark body {
   background-image:
-    radial-gradient(at 10% 12%, rgba(49, 108, 92, 0.42) 0px, transparent 46%),
-    radial-gradient(at 88% 14%, rgba(36, 78, 122, 0.44) 0px, transparent 48%),
-    radial-gradient(at 76% 86%, rgba(45, 95, 76, 0.32) 0px, transparent 50%),
-    radial-gradient(at 16% 86%, rgba(28, 46, 74, 0.48) 0px, transparent 52%);
+    radial-gradient(at 12% 10%, rgba(49, 73, 60, 0.72) 0px, transparent 45%),
+    radial-gradient(at 88% 14%, rgba(18, 78, 94, 0.65) 0px, transparent 46%),
+    radial-gradient(at 75% 84%, rgba(122, 158, 126, 0.28) 0px, transparent 48%),
+    radial-gradient(at 16% 86%, rgba(213, 32, 115, 0.18) 0px, transparent 46%);
+}
+
+/* Make the full-page wrapper transparent so body's ambient colors show through every glass panel */
+.min-h-screen {
+  background-color: transparent !important;
 }
 
 h1, h2, h3 {
@@ -87,104 +93,85 @@ h1, h2, h3 {
   letter-spacing: -0.025em;
 }
 
+/* 3. True Translucent Frosted Glass on Primary Cards, Modals & Sticky Headers */
 header,
 aside,
-section,
-[class*="bg-white"],
-[class*="bg-[#001A23]"],
-[class*="bg-[#E8F1F2]"],
-[class*="bg-[#363537]"] {
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.54) 0%,
-    rgba(255, 255, 255, 0.28) 100%
-  ) !important;
-  backdrop-filter: blur(28px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.68) !important;
+.rounded-3xl {
+  background: rgba(232, 241, 242, 0.34) !important;
+  backdrop-filter: blur(24px) saturate(185%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(185%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.65) !important;
   box-shadow:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.85),
-    inset 0 -1px 0 0 rgba(255, 255, 255, 0.22),
-    0 12px 32px -10px rgba(15, 28, 34, 0.12) !important;
+    0 12px 32px -10px rgba(0, 26, 35, 0.12) !important;
 }
 
 .dark header,
 .dark aside,
-.dark section,
-.dark [class*="bg-white"],
-.dark [class*="bg-[#001A23]"],
-.dark [class*="bg-[#E8F1F2]"],
-.dark [class*="bg-[#363537]"] {
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.10) 0%,
-    rgba(255, 255, 255, 0.04) 100%
-  ) !important;
-  backdrop-filter: blur(30px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(30px) saturate(200%) !important;
+.dark .rounded-3xl {
+  background: rgba(7, 30, 34, 0.44) !important;
+  backdrop-filter: blur(26px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(190%) !important;
   border: 1px solid rgba(255, 255, 255, 0.16) !important;
   box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
-    inset 0 -1px 0 0 rgba(255, 255, 255, 0.04),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.20),
     0 16px 38px -12px rgba(0, 0, 0, 0.65) !important;
 }
 
+/* Keep the Safe Available-to-Spend Hero Card readable with a translucent Pine-Glass tint */
+.rounded-3xl.bg-\[\#31493C\] {
+  background: linear-gradient(
+    135deg,
+    rgba(49, 73, 60, 0.76) 0%,
+    rgba(22, 48, 42, 0.68) 100%
+  ) !important;
+  border: 1px solid rgba(179, 239, 178, 0.42) !important;
+  color: #E8F1F2 !important;
+}
+
+/* 4. Nested Sub-Cards (.rounded-2xl) — Ultra-Light Clear Glass Layer */
+.rounded-2xl {
+  background: rgba(255, 255, 255, 0.22) !important;
+  backdrop-filter: blur(14px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.52) !important;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.65) !important;
+}
+
+.dark .rounded-2xl {
+  background: rgba(255, 255, 255, 0.04) !important;
+  backdrop-filter: blur(14px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.12) !important;
+}
+
+/* 5. Translucent Glass Inputs & Dropdowns (matching your dropdown menu) */
 input,
 select,
 textarea {
-  background-color: rgba(255, 255, 255, 0.34) !important;
-  border: 1px solid rgba(255, 255, 255, 0.62) !important;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background-color: rgba(232, 241, 242, 0.28) !important;
+  border: 1px solid rgba(255, 255, 255, 0.58) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   color: inherit;
-  transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+  color-scheme: light;
 }
 
 .dark input,
 .dark select,
 .dark textarea {
-  background-color: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  border-color: rgba(31, 58, 50, 0.55) !important;
-  background-color: rgba(255, 255, 255, 0.52) !important;
-  box-shadow: 0 0 0 1px rgba(31, 58, 50, 0.25);
-}
-
-.dark input:focus,
-.dark select:focus,
-.dark textarea:focus {
-  border-color: rgba(179, 239, 178, 0.5) !important;
-  background-color: rgba(255, 255, 255, 0.09) !important;
-  box-shadow: 0 0 0 1px rgba(179, 239, 178, 0.22);
-}
-
-button {
-  transition: transform 0.14s ease, opacity 0.16s ease, box-shadow 0.18s ease;
-}
-
-button:active:not(:disabled) {
-  transform: translateY(1px);
-}
-
-select {
-  color-scheme: light;
-}
-
-.dark select {
+  background-color: rgba(7, 30, 34, 0.36) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
   color-scheme: dark;
 }
 
 select option {
-  background-color: #E4EDF0;
-  color: #0F1C22;
+  background-color: rgba(232, 241, 242, 0.92);
+  color: #001A23;
 }
 
 .dark select option {
-  background-color: #101A22;
-  color: #F2F6F8;
+  background-color: rgba(7, 30, 34, 0.92);
+  color: #E8F1F2;
 }
