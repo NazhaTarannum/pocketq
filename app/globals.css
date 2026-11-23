@@ -608,6 +608,33 @@ html.dark main button:hover,
   transform: translateY(-0.5px);
 }
 
+
+/* Light Mode Liquid Glass for Pink / Rose Badges, Pills & Buttons (Overdue, Money Lent, Borrowed) */
+html:not(.dark) main [class*="bg-[#D52073]"]:not([style*="height"]):not([style*="width"]),
+html:not(.dark) main [class*="bg-rose-"]:not([style*="height"]):not([style*="width"]),
+html:not(.dark) main [class*="bg-pink-"]:not([style*="height"]):not([style*="width"]) {
+  background: linear-gradient(
+    180deg,
+    rgba(244, 114, 182, 0.34) 0%,
+    rgba(213, 32, 115, 0.16) 100%
+  ) !important;
+  background-color: transparent !important;
+  backdrop-filter: blur(20px) saturate(185%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(185%) !important;
+  color: #880E4F !important;
+  border: 1px solid rgba(213, 32, 115, 0.30) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.88) !important;
+  box-shadow:
+    0 6px 18px rgba(213, 32, 115, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85) !important;
+}
+
+html:not(.dark) main [class*="bg-[#D52073]"]:hover,
+html:not(.dark) main [class*="bg-rose-"]:hover,
+html:not(.dark) main [class*="bg-pink-"]:hover {
+  filter: brightness(1.06) !important;
+}
+
 /* Liquid Glass Donut / Pie Chart Refraction */
 svg.liquid-glass-pie {
   filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.45));
