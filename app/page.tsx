@@ -1129,6 +1129,7 @@ export default function PocketQApp() {
                     <div
                       className="w-full h-2.5 rounded-full overflow-hidden backdrop-blur-md"
                       style={{
+                        borderRadius: "9999px",
                         background: darkMode
                           ? "linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%)"
                           : "linear-gradient(180deg, rgba(255,255,255,0.68) 0%, rgba(209,250,229,0.34) 100%)",
@@ -1144,6 +1145,7 @@ export default function PocketQApp() {
                       <div
                         className="h-full rounded-full transition-all duration-75"
                         style={{
+                          borderRadius: "9999px",
                           width: `${pct}%`,
                           background: darkMode
                             ? "linear-gradient(90deg, rgba(179,239,178,0.28) 0%, rgba(62,232,149,0.52) 100%)"
@@ -1156,6 +1158,7 @@ export default function PocketQApp() {
                     <div
                       className="pointer-events-none absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 rounded-full backdrop-blur-xl transition-transform duration-150"
                       style={{
+                        borderRadius: "9999px",
                         left: `${pct}%`,
                         background: darkMode
                           ? "linear-gradient(180deg, rgba(255,255,255,0.42) 0%, rgba(179,239,178,0.22) 100%)"
