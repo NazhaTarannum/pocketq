@@ -1146,3 +1146,15 @@ main a.pt-2\.5 {
   border-radius: 0.875rem !important;
   line-height: 1.2 !important;
 }
+
+
+/* Dedicated Pill-Round Liquid Glass Slider Track & Circular Thumb */
+.liquid-glass-slider-track,
+.liquid-glass-slider-fill,
+.liquid-glass-slider-thumb {
+  border-radius: 9999px !important;
+}
+.liquid-glass-slider-thumb {
+  aspect-ratio: 1 / 1 !important;
+  will-change: left, transform;
+}

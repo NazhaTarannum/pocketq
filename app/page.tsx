@@ -1124,67 +1124,87 @@ export default function PocketQApp() {
             <div className="flex items-center gap-3 mb-3">
               {(() => {
                 const sliderMax = Math.max(15000, Math.round(data.summary.availableToSpend));
-                const sliderVal = Math.min(simAmount, sliderMax);
+                const sliderVal = Math.min(Math.max(0, simAmount), sliderMax);
                 const pct = sliderMax > 0 ? (sliderVal / sliderMax) * 100 : 0;
+
+                const updateFromClientX = (el: HTMLDivElement, clientX: number) => {
+                  const rect = el.getBoundingClientRect();
+                  if (rect.width <= 0) return;
+                  const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+                  setSimAmount(Math.round(ratio * sliderMax));
+                };
+
                 return (
-                  <div className="relative w-full h-7 flex items-center select-none">
-                    {/* Translucent Liquid Glass Track */}
+                  <div
+                    role="slider"
+                    tabIndex={0}
+                    aria-valuemin={0}
+                    aria-valuemax={sliderMax}
+                    aria-valuenow={sliderVal}
+                    onPointerDown={(e) => {
+                      e.currentTarget.setPointerCapture(e.pointerId);
+                      updateFromClientX(e.currentTarget, e.clientX);
+                    }}
+                    onPointerMove={(e) => {
+                      if (e.buttons === 1 || e.pressure > 0) {
+                        updateFromClientX(e.currentTarget, e.clientX);
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      const delta = Math.max(1, Math.round(sliderMax / 100));
+                      if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        setSimAmount(Math.min(sliderMax, sliderVal + delta));
+                      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        setSimAmount(Math.max(0, sliderVal - delta));
+                      }
+                    }}
+                    className="relative w-full h-9 flex items-center select-none touch-none cursor-pointer group outline-none"
+                  >
+                    {/* Pill-Round Translucent Liquid Glass Track */}
                     <div
-                      className="w-full h-2.5 rounded-full overflow-hidden backdrop-blur-md"
+                      className="liquid-glass-slider-track w-full h-3 overflow-hidden backdrop-blur-md"
                       style={{
-                        borderRadius: "9999px",
                         background: darkMode
-                          ? "linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%)"
-                          : "linear-gradient(180deg, rgba(255,255,255,0.68) 0%, rgba(209,250,229,0.34) 100%)",
+                          ? 'linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.05) 100%)'
+                          : 'linear-gradient(180deg, rgba(0,26,35,0.15) 0%, rgba(0,26,35,0.07) 100%)',
                         border: darkMode
-                          ? "1px solid rgba(255,255,255,0.15)"
-                          : "1px solid rgba(255,255,255,0.88)",
+                          ? '1px solid rgba(255,255,255,0.18)'
+                          : '1px solid rgba(0,26,35,0.15)',
                         boxShadow: darkMode
-                          ? "inset 0 1px 2px rgba(0,0,0,0.6)"
-                          : "inset 0 1px 2px rgba(0,26,35,0.08)",
+                          ? 'inset 0 1px 2px rgba(0,0,0,0.6)'
+                          : 'inset 0 1px 2px rgba(0,26,35,0.12)',
                       }}
                     >
-                      {/* Luminous Liquid Fill */}
+                      {/* Pill-Round Luminous Liquid Fill */}
                       <div
-                        className="h-full rounded-full transition-all duration-75"
+                        className="liquid-glass-slider-fill h-full"
                         style={{
-                          borderRadius: "9999px",
                           width: `${pct}%`,
                           background: darkMode
-                            ? "linear-gradient(90deg, rgba(179,239,178,0.28) 0%, rgba(62,232,149,0.52) 100%)"
-                            : "linear-gradient(90deg, rgba(16,185,129,0.24) 0%, rgba(16,185,129,0.48) 100%)",
+                            ? 'linear-gradient(90deg, rgba(179,239,178,0.34) 0%, rgba(62,232,149,0.62) 100%)'
+                            : 'linear-gradient(90deg, rgba(13,110,72,0.38) 0%, rgba(16,145,92,0.62) 100%)',
                         }}
                       />
                     </div>
 
-                    {/* Frosted Liquid Glass Thumb */}
+                    {/* Circular Frosted Liquid Glass Thumb */}
                     <div
-                      className="pointer-events-none absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 rounded-full backdrop-blur-xl transition-transform duration-150"
+                      className="liquid-glass-slider-thumb pointer-events-none absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-6 h-6 backdrop-blur-xl transition-transform duration-150 group-hover:scale-110 group-active:scale-125"
                       style={{
-                        borderRadius: "9999px",
                         left: `${pct}%`,
                         background: darkMode
-                          ? "linear-gradient(180deg, rgba(255,255,255,0.42) 0%, rgba(179,239,178,0.22) 100%)"
-                          : "linear-gradient(180deg, rgba(255,255,255,0.88) 0%, rgba(167,243,208,0.52) 100%)",
+                          ? 'linear-gradient(180deg, rgba(255,255,255,0.48) 0%, rgba(179,239,178,0.26) 100%)'
+                          : 'linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(16,120,80,0.36) 100%)',
                         border: darkMode
-                          ? "1px solid rgba(255,255,255,0.55)"
-                          : "1px solid rgba(16,185,129,0.35)",
-                        borderTop: "1.5px solid rgba(255,255,255,0.95)",
+                          ? '1px solid rgba(255,255,255,0.62)'
+                          : '1px solid rgba(11,94,62,0.45)',
+                        borderTop: '1.5px solid rgba(255,255,255,0.96)',
                         boxShadow: darkMode
-                          ? "0 4px 12px rgba(0,0,0,0.45), inset 0 1px 1px rgba(255,255,255,0.65)"
-                          : "0 4px 12px rgba(16,185,129,0.22), inset 0 1px 1px rgba(255,255,255,0.95)",
+                          ? '0 4px 14px rgba(0,0,0,0.48), inset 0 1px 1px rgba(255,255,255,0.75)'
+                          : '0 4px 14px rgba(0,26,35,0.22), inset 0 1px 1px rgba(255,255,255,0.92)',
                       }}
-                    />
-
-                    {/* Invisible Native Input for Exact Pointer/Keyboard Accessibility */}
-                    <input
-                      type="range"
-                      min={0}
-                      max={sliderMax}
-                      step={50}
-                      value={sliderVal}
-                      onChange={(e) => setSimAmount(Number(e.target.value))}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     />
                   </div>
                 );
