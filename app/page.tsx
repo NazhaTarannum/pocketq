@@ -955,7 +955,7 @@ export default function PocketQApp() {
             </div>
 
             <div className="mt-4">
-              <div className="text-4xl sm:text-5xl font-extrabold text-[#3EE895] tracking-tight">
+              <div className="text-4xl sm:text-5xl font-extrabold text-[#3EE895] tracking-tight" style={darkMode ? undefined : { color: "#000000" }}>
                 {formatBDT(data.summary.availableToSpend)}
               </div>
               <p className="text-sm mt-2 text-[#E8F1F2]/85">
