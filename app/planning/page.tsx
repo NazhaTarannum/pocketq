@@ -113,15 +113,18 @@ const EMPTY_PLANNING_DATA: PlanningData = {
 };
 
 export default function PlanningWorkspacePage() {
-  const [data, setData] = useState<PlanningData>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const cached = sessionStorage.getItem('pocketq_dashboard_cache');
-        if (cached) return JSON.parse(cached);
-      } catch {}
+  const [data, setData] = useState<DashboardData | null>(null);
+
+  useEffect(() => {
+    try {
+      const cached = localStorage.getItem('pocketq_dashboard_cache');
+      if (cached) {
+        setData(JSON.parse(cached));
+      }
+    } catch {
+      // ignore storage errors
     }
-    return EMPTY_PLANNING_DATA;
-  });
+  }, []);
   const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useThemePreference();
   const [submitting, setSubmitting] = useState(false);
