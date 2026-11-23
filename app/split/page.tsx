@@ -31,6 +31,7 @@ import AppSidebar from '@/components/AppSidebar';
 import { useThemePreference } from '@/lib/useThemePreference';
 import { formatDateDDMMYYYY } from '@/lib/format';
 import {
+import DDMMYYYYInput from '@/components/DDMMYYYYInput';
   calculateBillSplit,
   ParticipantDraft,
   BillItemDraft,
@@ -628,10 +629,10 @@ export default function BillSplittingPage() {
                   </div>
                   <div>
                     <label className="text-[11px] font-bold block mb-1 opacity-75">Bill Date</label>
-                    <input
-                      type="date"
+                    <DDMMYYYYInput
+                      
                       value={billDate}
-                      onChange={(e) => setBillDate(e.target.value)}
+                      onChange={(e) =/> setBillDate(e.target.value)}
                       className={`w-full px-3 py-2 rounded-xl border text-xs outline-none ${inputClass}`}
                     />
                   </div>
@@ -1964,11 +1965,11 @@ export default function BillSplittingPage() {
 
               <div>
                 <label className="text-[11px] font-bold block mb-1 opacity-75">Payment Date</label>
-                <input
-                  type="date"
+                <DDMMYYYYInput
+                  
                   required
                   value={settleDate}
-                  onChange={(e) => setSettleDate(e.target.value)}
+                  onChange={(e) =/> setSettleDate(e.target.value)}
                   className={`w-full px-3 py-2 rounded-xl border text-xs ${inputClass}`}
                 />
               </div>

@@ -25,6 +25,7 @@ import {
 import AppSidebar from '@/components/AppSidebar';
 import { useThemePreference } from '@/lib/useThemePreference';
 import { formatDateDDMMYYYY } from '@/lib/format';
+import DDMMYYYYInput from '@/components/DDMMYYYYInput';
 
 interface WalletItem {
   id: string;
@@ -385,10 +386,10 @@ export default function WealthPage() {
 
             <div className="sm:col-span-2 lg:col-span-3 flex items-center gap-2">
               <span className="text-[11px] opacity-70 shrink-0">Start Date:</span>
-              <input
-                type="date"
+              <DDMMYYYYInput
+                
                 value={invStartDate}
-                onChange={(e) => setInvStartDate(e.target.value)}
+                onChange={(e) =/> setInvStartDate(e.target.value)}
                 className="rounded-xl px-2.5 py-1.5 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
               />
             </div>
