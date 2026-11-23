@@ -266,17 +266,17 @@ export default function PlanningWorkspacePage() {
         body: JSON.stringify({
           action: 'CREATE_LOAN',
           direction: loanDirection,
-          isHistorical: loanIsHistorical,
-          sourceType: loanIsHistorical ? 'NONE' : loanSourceType,
+          isHistorical: loanSourceType === 'NONE',
+          sourceType: loanSourceType,
           sourceWalletId:
-            !loanIsHistorical && loanSourceType === 'WALLET'
+            loanSourceType === 'WALLET'
               ? loanSourceWalletId || data?.wallets[0]?.id
               : null,
           sourceSavingsId:
-            !loanIsHistorical && loanSourceType === 'SAVINGS'
+            loanSourceType === 'SAVINGS'
               ? loanSourceSavingsId || (data as unknown as { savingsGoals?: Array<{ id: string }> })?.savingsGoals?.[0]?.id
               : null,
-          confirmedReceived: loanDirection === 'BORROWED' ? loanConfirmedReceived : true,
+          confirmedReceived: loanSourceType === 'WALLET',
           title: loanParty.trim(),
           lender: loanParty.trim(),
           principal: Number(loanPrincipal),
@@ -671,48 +671,32 @@ export default function PlanningWorkspacePage() {
           </p>
 
           <form onSubmit={handleCreateLoan} className="space-y-3 mb-5">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <div className="flex rounded-xl border border-[#7A9E7E]/30 overflow-hidden text-xs font-bold">
-                <button
-                  type="button"
-                  onClick={() => setLoanDirection('LENT')}
-                  className={`flex-1 py-2 px-3 cursor-pointer transition ${
-                    loanDirection === 'LENT' ? 'bg-[#31493C] text-[#B3EFB2]' : 'opacity-75'
-                  }`}
-                >
-                  Money Lent to Someone
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLoanDirection('BORROWED')}
-                  className={`flex-1 py-2 px-3 cursor-pointer transition ${
-                    loanDirection === 'BORROWED' ? 'bg-[#D52073] text-white' : 'opacity-75'
-                  }`}
-                >
-                  Money Borrowed
-                </button>
-              </div>
-
-              <div className="flex rounded-xl border border-[#7A9E7E]/30 overflow-hidden text-xs font-bold">
-                <button
-                  type="button"
-                  onClick={() => setLoanIsHistorical(false)}
-                  className={`flex-1 py-2 px-3 cursor-pointer transition ${
-                    !loanIsHistorical ? 'bg-[#31493C] text-[#B3EFB2]' : 'opacity-75'
-                  }`}
-                >
-                  {loanDirection === 'LENT' ? 'Lending Money Now' : 'Receiving Loan Now'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLoanIsHistorical(true)}
-                  className={`flex-1 py-2 px-3 cursor-pointer transition ${
-                    loanIsHistorical ? 'bg-[#31493C] text-[#B3EFB2]' : 'opacity-75'
-                  }`}
-                >
-                  {loanDirection === 'LENT' ? 'Lent Before Using App' : 'Borrowed Before App'}
-                </button>
-              </div>
+            <div className="flex rounded-xl border border-[#7A9E7E]/30 overflow-hidden text-xs font-bold max-w-md">
+              <button
+                type="button"
+                onClick={() => {
+                  setLoanDirection('LENT');
+                  setLoanIsHistorical(false);
+                }}
+                className={`flex-1 py-2 px-3 cursor-pointer transition ${
+                  loanDirection === 'LENT' ? 'bg-[#31493C] text-[#B3EFB2]' : 'opacity-75'
+                }`}
+              >
+                Money Lent to Someone
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setLoanDirection('BORROWED');
+                  setLoanIsHistorical(false);
+                  if (loanSourceType === 'SAVINGS') setLoanSourceType('WALLET');
+                }}
+                className={`flex-1 py-2 px-3 cursor-pointer transition ${
+                  loanDirection === 'BORROWED' ? 'bg-[#D52073] text-white' : 'opacity-75'
+                }`}
+              >
+                Money Borrowed
+              </button>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
@@ -749,81 +733,74 @@ export default function PlanningWorkspacePage() {
               </button>
             </div>
 
-            {!loanIsHistorical ? (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-2.5 rounded-2xl border border-[#7A9E7E]/25 text-xs">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 border border-[#7A9E7E]/25 text-xs">
+              <div>
+                <label className="text-[11px] font-semibold opacity-75 block mb-1">
+                  {loanDirection === 'LENT' ? 'Deduct Money From' : 'Wallet Impact'}
+                </label>
+                <select
+                  value={loanSourceType}
+                  onChange={(e) => {
+                    const val = e.target.value as 'WALLET' | 'SAVINGS' | 'NONE';
+                    setLoanSourceType(val);
+                    if (val === 'WALLET') setLoanConfirmedReceived(true);
+                  }}
+                  className="w-full px-2.5 py-2 border border-[#7A9E7E]/30 bg-transparent outline-none"
+                >
+                  <option value="WALLET">
+                    {loanDirection === 'LENT' ? 'Deduct from Wallet' : 'Add to Wallet'}
+                  </option>
+                  {loanDirection === 'LENT' && (
+                    <option value="SAVINGS">Deduct from Reported Savings</option>
+                  )}
+                  <option value="NONE">
+                    {loanDirection === 'LENT' ? 'Do Not Deduct (Record Only)' : 'Do Not Add to Wallet (Record Only)'}
+                  </option>
+                </select>
+              </div>
+
+              {loanSourceType === 'WALLET' && (
                 <div>
                   <label className="text-[11px] font-semibold opacity-75 block mb-1">
-                    {loanDirection === 'LENT' ? 'Source of Funds' : 'Destination Wallet'}
+                    Select Wallet
                   </label>
                   <select
-                    value={loanSourceType}
-                    onChange={(e) => setLoanSourceType(e.target.value as 'WALLET' | 'SAVINGS' | 'NONE')}
-                    className="w-full rounded-xl px-2.5 py-1.5 border border-[#7A9E7E]/30 bg-transparent outline-none"
+                    value={loanSourceWalletId || data?.wallets[0]?.id || ''}
+                    onChange={(e) => setLoanSourceWalletId(e.target.value)}
+                    className="w-full px-2.5 py-2 border border-[#7A9E7E]/30 bg-transparent outline-none"
                   >
-                    <option value="WALLET">Wallet (Cash / Bank / MFS)</option>
-                    {loanDirection === 'LENT' && <option value="SAVINGS">Savings Entry</option>}
-                    <option value="NONE">Do Not Affect Wallet or Savings</option>
+                    {data?.wallets.map((w) => (
+                      <option key={w.id} value={w.id}>
+                        {w.name} ({formatBDT(w.balance)})
+                      </option>
+                    ))}
                   </select>
                 </div>
+              )}
 
-                {loanSourceType === 'WALLET' && (
-                  <div>
-                    <label className="text-[11px] font-semibold opacity-75 block mb-1">
-                      Select Wallet
-                    </label>
-                    <select
-                      value={loanSourceWalletId || data?.wallets[0]?.id || ''}
-                      onChange={(e) => setLoanSourceWalletId(e.target.value)}
-                      className="w-full rounded-xl px-2.5 py-1.5 border border-[#7A9E7E]/30 bg-transparent outline-none"
-                    >
-                      {data?.wallets.map((w) => (
-                        <option key={w.id} value={w.id}>
-                          {w.name} ({formatBDT(w.balance)})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-
-                {loanSourceType === 'SAVINGS' && loanDirection === 'LENT' && (
-                  <div>
-                    <label className="text-[11px] font-semibold opacity-75 block mb-1">
-                      Select Savings Entry
-                    </label>
-                    <select
-                      value={loanSourceSavingsId}
-                      onChange={(e) => setLoanSourceSavingsId(e.target.value)}
-                      className="w-full rounded-xl px-2.5 py-1.5 border border-[#7A9E7E]/30 bg-transparent outline-none"
-                    >
-                      <option value="">Choose savings...</option>
-                      {((data as unknown as { savingsGoals?: Array<{ id: string; name: string; currentBalance: number }> })?.savingsGoals || []).map((sg) => (
+              {loanSourceType === 'SAVINGS' && loanDirection === 'LENT' && (
+                <div>
+                  <label className="text-[11px] font-semibold opacity-75 block mb-1">
+                    Select Reported Savings
+                  </label>
+                  <select
+                    value={loanSourceSavingsId || ((data as unknown as { savingsGoals?: Array<{ id: string }> })?.savingsGoals?.[0]?.id || '')}
+                    onChange={(e) => setLoanSourceSavingsId(e.target.value)}
+                    className="w-full px-2.5 py-2 border border-[#7A9E7E]/30 bg-transparent outline-none"
+                  >
+                    {((data as unknown as { savingsGoals?: Array<{ id: string; name: string; currentBalance: number }> })?.savingsGoals || []).length === 0 ? (
+                      <option value="">No reported savings entries yet</option>
+                    ) : (
+                      ((data as unknown as { savingsGoals?: Array<{ id: string; name: string; currentBalance: number }> })?.savingsGoals || []).map((sg) => (
                         <option key={sg.id} value={sg.id}>
                           {sg.name} ({formatBDT(sg.currentBalance)})
                         </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-
-                {loanDirection === 'BORROWED' && loanSourceType === 'WALLET' && (
-                  <label className="flex items-center gap-2 pt-4 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={loanConfirmedReceived}
-                      onChange={(e) => setLoanConfirmedReceived(e.target.checked)}
-                      className="accent-[#31493C]"
-                    />
-                    <span className="text-[11px] font-semibold">
-                      Confirmed received into wallet now
-                    </span>
-                  </label>
-                )}
-              </div>
-            ) : (
-              <p className="text-[11px] opacity-75 px-1">
-                Historical entry: recorded in Loan Tracker only without changing current wallet or savings balances until repayment occurs.
-              </p>
-            )}
+                      ))
+                    )}
+                  </select>
+                </div>
+              )}
+            </div>
           </form>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
