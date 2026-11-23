@@ -202,3 +202,89 @@ html:not(.dark) .text-white:not(.hero-spendable-card *):not(.hero-spendable-card
 .hero-spendable-card .text-\[\#B3EFB2\] {
   color: #3EE895 !important;
 }
+
+
+/* 1. Sidebar Active Item & Light Mode Text Contrast */
+html:not(.dark) aside a[aria-current="page"],
+html:not(.dark) aside .bg-\[\#31493C\],
+html:not(.dark) [role="dialog"] .bg-\[\#31493C\] {
+  background-color: rgba(10, 143, 76, 0.14) !important;
+  color: #001A23 !important;
+}
+
+html:not(.dark) aside a[aria-current="page"] *,
+html:not(.dark) aside .bg-\[\#31493C\] *,
+html:not(.dark) aside p,
+html:not(.dark) aside span {
+  color: #001A23 !important;
+  opacity: 0.92 !important;
+}
+
+/* 2. Hero Spendable Card Refined Typography & Consistent Metrics */
+.hero-spendable-card .text-4xl,
+.hero-spendable-card .text-5xl,
+.hero-spendable-card .text-\[\#B3EFB2\],
+.hero-spendable-card .text-\[\#3EE895\],
+.hero-spendable-card .text-\[\#FFEF5C\],
+.hero-spendable-card span {
+  color: #F4FAFB !important;
+}
+
+/* 3. Sleek Apple Liquid Glass Range Slider */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 0px;
+  background: rgba(0, 26, 35, 0.14) !important;
+  outline: none;
+}
+
+html.dark input[type="range"] {
+  background: rgba(232, 241, 242, 0.18) !important;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 0px;
+  background: #0A8F4C;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0, 26, 35, 0.25);
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  background: #08753E;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 0px;
+  background: #0A8F4C;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0, 26, 35, 0.25);
+  cursor: pointer;
+}
+
+/* 4. Translucent Frosted Liquid Glass Modals (Add Entry / Add Obligation) */
+html:not(.dark) .fixed.inset-0 > div {
+  background: rgba(255, 255, 255, 0.72) !important;
+  backdrop-filter: blur(28px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 0 24px 48px rgba(0, 26, 35, 0.14) !important;
+  color: #001A23 !important;
+}
+
+html.dark .fixed.inset-0 > div {
+  background: rgba(14, 24, 28, 0.78) !important;
+  backdrop-filter: blur(28px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+  border: 1px solid rgba(232, 241, 242, 0.14) !important;
+}

@@ -971,19 +971,19 @@ export default function PocketQApp() {
               </div>
               <div>
                 <span className="opacity-70 block">Obligations Reserved</span>
-                <span className="font-bold text-base text-[#FFEF5C]">
+                <span className="font-bold text-base text-[#F4FAFB]">
                   -{formatBDT(data.summary.totalReservedObligations ?? 0)}
                 </span>
               </div>
               <div>
                 <span className="opacity-70 block">Savings Reserved</span>
-                <span className="font-bold text-base text-[#FFEF5C]">
+                <span className="font-bold text-base text-[#F4FAFB]">
                   -{formatBDT(data.summary.totalReservedSavings ?? 0)}
                 </span>
               </div>
               <div>
                 <span className="opacity-70 block">Owed by Friends</span>
-                <span className="font-bold text-base text-[#B3EFB2]">
+                <span className="font-bold text-base text-[#F4FAFB]">
                   +{formatBDT(data.summary.owedByFriends)}
                 </span>
               </div>
@@ -1955,7 +1955,7 @@ export default function PocketQApp() {
                         { title: `Installment ${obInstallments.length + 1}`, amount: '', dueDate: obDueDate || '' },
                       ])
                     }
-                    className="text-xs font-bold text-[#7A9E7E] cursor-pointer"
+                    className="text-xs font-bold text-[#001A23] dark:text-[#E8F1F2] hover:opacity-75 cursor-pointer"
                   >
                     + Add Installment
                   </button>
@@ -2589,7 +2589,7 @@ export default function PocketQApp() {
                         { name: `Friend ${splitPeople.length}`, isMe: false, itemTotal: '', cashGiven: '' },
                       ])
                     }
-                    className="text-xs font-bold text-[#7A9E7E] cursor-pointer"
+                    className="text-xs font-bold text-[#001A23] dark:text-[#E8F1F2] hover:opacity-75 cursor-pointer"
                   >
                     + Add Person
                   </button>
