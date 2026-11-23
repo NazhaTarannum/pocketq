@@ -554,7 +554,7 @@ export default function PlanningWorkspacePage() {
                 <input
                   type="text"
                   required
-                  placeholder="Source (e.g., Tuition, Freelance)"
+                  placeholder="Source (e.g., Salary, Freelance)"
                   value={eiTitle}
                   onChange={(e) => setEiTitle(e.target.value)}
                   className="rounded-xl px-3 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
@@ -570,7 +570,7 @@ export default function PlanningWorkspacePage() {
                   <option value="BUSINESS">Business</option>
                 </select>
               </div>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 [&>*]:min-w-0">
                 <input
                   type="number"
                   required

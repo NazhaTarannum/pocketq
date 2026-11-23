@@ -63,7 +63,7 @@ export default function DDMMYYYYInput({
   };
 
   return (
-    <div className="relative flex items-center w-full">
+    <div className="relative flex items-center w-full min-w-0 overflow-hidden">
       <input
         type="text"
         inputMode="numeric"
@@ -72,7 +72,7 @@ export default function DDMMYYYYInput({
         onChange={handleTextChange}
         placeholder={placeholder}
         maxLength={10}
-        className={`${className} pr-8 text-[#001A23] dark:text-[#E8F1F2] placeholder:text-[#001A23]/45 dark:placeholder:text-[#E8F1F2]/45 accent-[#001A23]`}
+        className={`${className} w-full min-w-0 pr-9 text-[#001A23] dark:text-[#E8F1F2] placeholder:text-[#001A23]/45 dark:placeholder:text-[#E8F1F2]/45 accent-[#001A23]`}
       />
       <button
         type="button"
