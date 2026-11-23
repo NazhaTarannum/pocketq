@@ -135,10 +135,27 @@ export default function AppSidebar({ darkMode = false }: AppSidebarProps) {
             />
 
             <aside
-              className={`pocketq-sidebar-drawer relative z-10 w-76 max-w-[84vw] h-dvh flex flex-col justify-between p-5 border-r shadow-2xl overflow-y-auto ${
+              style={
                 darkMode
-                  ? 'text-[#E8F1F2] border-[#31493C]'
-                  : 'text-[#001A23] border-[#7A9E7E]/30'
+                  ? {
+                      backgroundColor: 'rgba(3, 6, 8, 0.58)',
+                      backgroundImage:
+                        'radial-gradient(circle at 12% 14%, rgba(26, 92, 68, 0.34) 0%, transparent 45%), radial-gradient(circle at 86% 18%, rgba(18, 72, 92, 0.30) 0%, transparent 48%), radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.06) 0%, transparent 55%), radial-gradient(circle at 78% 85%, rgba(130, 32, 82, 0.20) 0%, transparent 48%), linear-gradient(180deg, rgba(3, 6, 8, 0.65) 0%, rgba(0, 0, 0, 0.72) 55%, rgba(2, 5, 6, 0.65) 100%)',
+                      backdropFilter: 'blur(26px) saturate(165%)',
+                      WebkitBackdropFilter: 'blur(26px) saturate(165%)',
+                      borderRight: '1px solid rgba(255, 255, 255, 0.14)',
+                    }
+                  : {
+                      backgroundColor: 'rgba(232, 241, 242, 0.62)',
+                      backgroundImage:
+                        'radial-gradient(at 10% 10%, rgba(164, 214, 198, 0.55) 0px, transparent 50%), radial-gradient(at 88% 12%, rgba(182, 224, 242, 0.65) 0px, transparent 52%), radial-gradient(at 52% 52%, rgba(232, 241, 242, 0.65) 0px, transparent 56%), radial-gradient(at 82% 86%, rgba(168, 226, 196, 0.48) 0px, transparent 52%), radial-gradient(at 14% 86%, rgba(192, 218, 238, 0.58) 0px, transparent 52%)',
+                      backdropFilter: 'blur(26px) saturate(185%)',
+                      WebkitBackdropFilter: 'blur(26px) saturate(185%)',
+                      borderRight: '1px solid rgba(255, 255, 255, 0.65)',
+                    }
+              }
+              className={`pocketq-sidebar-drawer relative z-10 w-76 max-w-[84vw] h-dvh flex flex-col justify-between p-5 shadow-2xl overflow-y-auto ${
+                darkMode ? 'text-[#E8F1F2]' : 'text-[#001A23]'
               }`}
             >
               <div className="space-y-6">
