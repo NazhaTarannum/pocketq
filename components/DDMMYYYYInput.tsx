@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface DDMMYYYYInputProps {
@@ -74,16 +73,11 @@ export default function DDMMYYYYInput({
 }: DDMMYYYYInputProps) {
   const [text, setText] = useState(() => isoToDisplay(value));
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [isDark, setIsDark] = useState(false);
-  const [coords, setCoords] = useState<{ top: number; left: number; width: number }>({
-    top: 0,
-    left: 0,
-    width: 276,
-  });
+  const [openAbove, setOpenAbove] = useState(false);
+  const [alignRight, setAlignRight] = useState(false);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const popoverRef = useRef<HTMLDivElement | null>(null);
 
   const today = useMemo(() => new Date(), []);
   const todayIso = useMemo(
@@ -100,10 +94,6 @@ export default function DDMMYYYYInput({
   );
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
     setText(isoToDisplay(value));
     const parsed = parseIsoParts(value);
     if (parsed) {
@@ -112,43 +102,35 @@ export default function DDMMYYYYInput({
     }
   }, [value]);
 
-  const syncThemeAndPosition = () => {
+  const computePlacement = () => {
     if (typeof document !== 'undefined') {
       setIsDark(document.documentElement.classList.contains('dark'));
     }
     const el = wrapperRef.current;
     if (!el || typeof window === 'undefined') return;
     const rect = el.getBoundingClientRect();
-    const popoverWidth = Math.min(284, window.innerWidth - 24);
-    const popoverHeight = 316;
+    const popoverHeight = 310;
+    const popoverWidth = 272;
 
     const spaceBelow = window.innerHeight - rect.bottom;
-    const openAbove = spaceBelow < popoverHeight && rect.top > popoverHeight;
+    setOpenAbove(spaceBelow < popoverHeight && rect.top > popoverHeight);
 
-    const top = openAbove
-      ? Math.max(12, rect.top - popoverHeight - 8)
-      : Math.min(window.innerHeight - popoverHeight - 12, rect.bottom + 8);
-
-    const left = Math.min(
-      Math.max(12, rect.left),
-      Math.max(12, window.innerWidth - popoverWidth - 12)
-    );
-
-    setCoords({ top, left, width: popoverWidth });
+    const spaceRight = window.innerWidth - rect.left;
+    setAlignRight(spaceRight < popoverWidth && rect.right >= popoverWidth);
   };
+
+  useLayoutEffect(() => {
+    if (open) {
+      computePlacement();
+    }
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
-    syncThemeAndPosition();
 
     const handlePointerDown = (e: MouseEvent | TouchEvent) => {
       const target = e.target as Node;
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(target) &&
-        popoverRef.current &&
-        !popoverRef.current.contains(target)
-      ) {
+      if (wrapperRef.current && !wrapperRef.current.contains(target)) {
         setOpen(false);
       }
     };
@@ -157,22 +139,23 @@ export default function DDMMYYYYInput({
       if (e.key === 'Escape') setOpen(false);
     };
 
-    const handleReposition = () => syncThemeAndPosition();
-
     document.addEventListener('mousedown', handlePointerDown);
     document.addEventListener('touchstart', handlePointerDown);
     document.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('resize', handleReposition);
-    window.addEventListener('scroll', handleReposition, true);
+    window.addEventListener('resize', computePlacement);
 
     return () => {
       document.removeEventListener('mousedown', handlePointerDown);
       document.removeEventListener('touchstart', handlePointerDown);
       document.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('resize', handleReposition);
-      window.removeEventListener('scroll', handleReposition, true);
+      window.removeEventListener('resize', computePlacement);
     };
   }, [open]);
+
+  const handleOpen = () => {
+    computePlacement();
+    setOpen(true);
+  };
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/\D/g, '').slice(0, 8);
@@ -264,12 +247,14 @@ export default function DDMMYYYYInput({
   };
 
   return (
-    <div ref={wrapperRef} className="relative flex items-center w-full min-w-0 overflow-hidden">
+    <div ref={wrapperRef} className="relative flex items-center w-full min-w-0">
       <input
         type="text"
         inputMode="numeric"
         required={required}
         value={text}
+        onFocus={handleOpen}
+        onClick={handleOpen}
         onChange={handleTextChange}
         placeholder={placeholder}
         maxLength={10}
@@ -281,147 +266,145 @@ export default function DDMMYYYYInput({
         aria-label="Open calendar"
         aria-expanded={open}
         onClick={() => {
-          if (!open) syncThemeAndPosition();
-          setOpen((prev) => !prev);
+          if (open) {
+            setOpen(false);
+          } else {
+            handleOpen();
+          }
         }}
         className="absolute right-2.5 text-[#001A23] dark:text-[#E8F1F2] opacity-70 hover:opacity-100 cursor-pointer bg-transparent border-0 p-0"
       >
         <Calendar className="w-4 h-4" />
       </button>
 
-      {mounted &&
-        open &&
-        createPortal(
-          <div
-            ref={popoverRef}
-            role="dialog"
-            aria-label="Choose date"
-            style={{
-              position: 'fixed',
-              top: `${coords.top}px`,
-              left: `${coords.left}px`,
-              width: `${coords.width}px`,
-              zIndex: 9999,
-            }}
-            className={`rounded-3xl p-3.5 backdrop-blur-2xl transition-all select-none ${
-              isDark
-                ? 'bg-[#0B1215]/78 text-[#E8F1F2] border border-white/15 shadow-[0_22px_50px_rgba(0,0,0,0.82),inset_0_1px_0_rgba(255,255,255,0.14)]'
-                : 'bg-white/68 text-[#001A23] border border-white/85 shadow-[0_18px_42px_rgba(0,26,35,0.16),inset_0_1px_0_rgba(255,255,255,0.95)]'
-            }`}
-          >
-            {/* Header: Month / Year + Navigation */}
-            <div className="flex items-center justify-between mb-2.5 px-1">
-              <span className="text-sm font-extrabold tracking-tight">
-                {MONTH_NAMES[viewMonth]} {viewYear}
-              </span>
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={handlePrevMonth}
-                  aria-label="Previous month"
-                  className={`p-1.5 rounded-full transition-colors cursor-pointer ${
-                    isDark ? 'hover:bg-white/10' : 'hover:bg-black/5'
-                  }`}
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setViewYear(today.getFullYear());
-                    setViewMonth(today.getMonth());
-                  }}
-                  aria-label="Jump to current month"
-                  title="Current month"
-                  className={`w-2 h-2 rounded-full mx-1 transition-transform hover:scale-125 cursor-pointer ${
-                    isDark ? 'bg-[#3EE895]/80' : 'bg-[#0A8F4C]/80'
-                  }`}
-                />
-                <button
-                  type="button"
-                  onClick={handleNextMonth}
-                  aria-label="Next month"
-                  className={`p-1.5 rounded-full transition-colors cursor-pointer ${
-                    isDark ? 'hover:bg-white/10' : 'hover:bg-black/5'
-                  }`}
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Weekday Labels */}
-            <div className="grid grid-cols-7 gap-1 text-center mb-1 pb-1 border-b border-current/10">
-              {WEEKDAYS.map((w) => (
-                <span key={w} className="text-[11px] font-bold opacity-55">
-                  {w}
-                </span>
-              ))}
-            </div>
-
-            {/* Days Grid */}
-            <div className="grid grid-cols-7 gap-1 text-center">
-              {calendarCells.map((cell) => {
-                const isSelected = value === cell.iso;
-                const isToday = todayIso === cell.iso;
-
-                return (
-                  <button
-                    key={cell.key}
-                    type="button"
-                    onClick={() => handleSelectIso(cell.iso)}
-                    className={`h-8 rounded-xl text-xs transition-all cursor-pointer flex items-center justify-center ${
-                      isSelected
-                        ? isDark
-                          ? 'bg-[#3EE895] text-[#001A23] font-extrabold shadow-sm'
-                          : 'bg-[#0F2C38] text-[#3EE895] font-extrabold shadow-sm'
-                        : isToday
-                        ? isDark
-                          ? 'bg-white/12 text-[#3EE895] font-extrabold ring-1 ring-[#3EE895]/45'
-                          : 'bg-white/75 text-[#0A8F4C] font-extrabold ring-1 ring-[#0A8F4C]/40'
-                        : cell.inCurrentMonth
-                        ? isDark
-                          ? 'hover:bg-white/10 font-medium'
-                          : 'hover:bg-white/80 font-medium'
-                        : 'opacity-35 hover:opacity-70'
-                    }`}
-                  >
-                    {cell.day}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Footer Actions */}
-            <div className="flex items-center justify-between mt-2.5 pt-2 border-t border-current/10 px-1 text-[11px] font-bold">
+      {open && (
+        <div
+          role="dialog"
+          aria-label="Choose date"
+          style={{
+            backdropFilter: 'blur(26px) saturate(190%)',
+            WebkitBackdropFilter: 'blur(26px) saturate(190%)',
+          }}
+          className={`pq-calendar-popover absolute z-50 w-[268px] max-w-[calc(100vw-2rem)] rounded-[22px] p-3.5 transition-all select-none ${
+            openAbove ? 'bottom-[calc(100%+6px)]' : 'top-[calc(100%+6px)]'
+          } ${alignRight ? 'right-0' : 'left-0'} ${
+            isDark
+              ? 'bg-[#0B1215]/74 text-[#E8F1F2] border border-white/16 shadow-[0_20px_48px_rgba(0,0,0,0.78),inset_0_1px_0_rgba(255,255,255,0.16)]'
+              : 'bg-[#E8F1F2]/68 text-[#001A23] border border-white/85 shadow-[0_16px_38px_rgba(0,26,35,0.14),inset_0_1px_0_rgba(255,255,255,0.95)]'
+          }`}
+        >
+          {/* Header: Month / Year + Navigation */}
+          <div className="flex items-center justify-between mb-2.5 px-1">
+            <span className="text-sm font-extrabold tracking-tight">
+              {MONTH_NAMES[viewMonth]} {viewYear}
+            </span>
+            <div className="flex items-center gap-0.5">
               <button
                 type="button"
-                onClick={() => handleSelectIso(todayIso)}
-                className={`px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
-                  isDark
-                    ? 'text-[#3EE895] hover:bg-[#3EE895]/15'
-                    : 'text-[#0A8F4C] hover:bg-[#0A8F4C]/10'
+                onClick={handlePrevMonth}
+                aria-label="Previous month"
+                className={`p-1.5 rounded-full transition-colors cursor-pointer ${
+                  isDark ? 'hover:bg-white/10' : 'hover:bg-white/60'
                 }`}
               >
-                Today
+                <ChevronLeft className="w-4 h-4" />
               </button>
-              {value && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    onChange('');
-                    setText('');
-                    setOpen(false);
-                  }}
-                  className="px-2.5 py-1 rounded-full opacity-65 hover:opacity-100 transition-opacity cursor-pointer"
-                >
-                  Clear
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => {
+                  setViewYear(today.getFullYear());
+                  setViewMonth(today.getMonth());
+                }}
+                aria-label="Jump to current month"
+                title="Current month"
+                className={`w-2 h-2 rounded-full mx-1 transition-transform hover:scale-125 cursor-pointer ${
+                  isDark ? 'bg-[#3EE895]/85' : 'bg-[#0A8F4C]/85'
+                }`}
+              />
+              <button
+                type="button"
+                onClick={handleNextMonth}
+                aria-label="Next month"
+                className={`p-1.5 rounded-full transition-colors cursor-pointer ${
+                  isDark ? 'hover:bg-white/10' : 'hover:bg-white/60'
+                }`}
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
             </div>
-          </div>,
-          document.body
-        )}
+          </div>
+
+          {/* Weekday Labels */}
+          <div className="grid grid-cols-7 gap-1 text-center mb-1 pb-1 border-b border-current/10">
+            {WEEKDAYS.map((w) => (
+              <span key={w} className="text-[11px] font-bold opacity-55">
+                {w}
+              </span>
+            ))}
+          </div>
+
+          {/* Days Grid */}
+          <div className="grid grid-cols-7 gap-1 text-center">
+            {calendarCells.map((cell) => {
+              const isSelected = value === cell.iso;
+              const isToday = todayIso === cell.iso;
+
+              return (
+                <button
+                  key={cell.key}
+                  type="button"
+                  onClick={() => handleSelectIso(cell.iso)}
+                  className={`h-8 rounded-xl text-xs transition-all cursor-pointer flex items-center justify-center ${
+                    isSelected
+                      ? isDark
+                        ? 'bg-[#3EE895] text-[#001A23] font-extrabold shadow-sm'
+                        : 'bg-[#0F2C38] text-[#3EE895] font-extrabold shadow-sm'
+                      : isToday
+                      ? isDark
+                        ? 'bg-white/14 text-[#3EE895] font-extrabold ring-1 ring-[#3EE895]/45'
+                        : 'bg-white/75 text-[#0A8F4C] font-extrabold ring-1 ring-[#0A8F4C]/40'
+                      : cell.inCurrentMonth
+                      ? isDark
+                        ? 'hover:bg-white/12 font-medium'
+                        : 'hover:bg-white/70 font-medium'
+                      : 'opacity-35 hover:opacity-70'
+                  }`}
+                >
+                  {cell.day}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Footer Actions */}
+          <div className="flex items-center justify-between mt-2.5 pt-2 border-t border-current/10 px-1 text-[11px] font-bold">
+            <button
+              type="button"
+              onClick={() => handleSelectIso(todayIso)}
+              className={`px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
+                isDark
+                  ? 'text-[#3EE895] hover:bg-[#3EE895]/15'
+                  : 'text-[#0A8F4C] hover:bg-white/60'
+              }`}
+            >
+              Today
+            </button>
+            {value && (
+              <button
+                type="button"
+                onClick={() => {
+                  onChange('');
+                  setText('');
+                  setOpen(false);
+                }}
+                className="px-2.5 py-1 rounded-full opacity-65 hover:opacity-100 transition-opacity cursor-pointer"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
