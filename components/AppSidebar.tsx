@@ -117,10 +117,12 @@ export default function AppSidebar({ darkMode = false }: AppSidebarProps) {
         style={
           darkMode
             ? {
-                backgroundColor: 'rgba(255, 255, 255, 0.06)',
+                backgroundColor: 'rgba(16, 42, 34, 0.22)',
+                backgroundImage: 'linear-gradient(135deg, rgba(62, 232, 149, 0.08) 0%, rgba(18, 72, 92, 0.06) 100%)',
                 backdropFilter: 'blur(18px) saturate(160%)',
                 WebkitBackdropFilter: 'blur(18px) saturate(160%)',
-                borderColor: 'rgba(255, 255, 255, 0.14)',
+                borderColor: 'rgba(179, 239, 178, 0.16)',
+                boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.08)',
               }
             : {
                 backgroundColor: 'rgba(255, 255, 255, 0.32)',
