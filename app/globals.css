@@ -1165,34 +1165,3 @@ html.dark main .sim-left-after-spend-safe,
 html.dark body main .sim-left-after-spend-safe {
   color: #7A9E7E !important;
 }
-
-/* Hamburger Sidebar Drawer ONLY */
-html.dark .pocketq-sidebar-drawer {
-  background-color: rgba(3, 6, 8, 0.72) !important;
-  background-image:
-    radial-gradient(circle at 12% 14%, rgba(26, 92, 68, 0.32) 0%, transparent 42%),
-    radial-gradient(circle at 86% 18%, rgba(18, 72, 92, 0.28) 0%, transparent 45%),
-    radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.045) 0%, transparent 55%),
-    radial-gradient(circle at 78% 85%, rgba(130, 32, 82, 0.18) 0%, transparent 45%),
-    linear-gradient(180deg, rgba(3, 6, 8, 0.78) 0%, rgba(0, 0, 0, 0.82) 55%, rgba(2, 5, 6, 0.78) 100%) !important;
-  backdrop-filter: blur(28px) saturate(165%) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(165%) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
-  box-shadow: 16px 0 48px rgba(0, 0, 0, 0.72) !important;
-}
-
-html:not(.dark) .pocketq-sidebar-drawer {
-  background-color: rgba(232, 241, 242, 0.72) !important;
-  background-image:
-    radial-gradient(at 10% 10%, rgba(164, 214, 198, 0.55) 0px, transparent 48%),
-    radial-gradient(at 88% 12%, rgba(182, 224, 242, 0.65) 0px, transparent 50%),
-    radial-gradient(at 52% 52%, rgba(232, 241, 242, 0.72) 0px, transparent 55%),
-    radial-gradient(at 82% 86%, rgba(168, 226, 196, 0.48) 0px, transparent 50%),
-    radial-gradient(at 14% 86%, rgba(192, 218, 238, 0.58) 0px, transparent 50%) !important;
-  backdrop-filter: blur(28px) saturate(185%) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(185%) !important;
-  border-right: 1px solid rgba(122, 158, 126, 0.28) !important;
-  box-shadow:
-    inset -1px 0 0 0 rgba(255, 255, 255, 0.92),
-    16px 0 44px rgba(0, 26, 35, 0.14) !important;
-}
