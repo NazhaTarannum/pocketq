@@ -1243,17 +1243,21 @@ html:not(.dark), html:not(.dark) body {
   background-attachment: scroll !important;
 }
 
-html, body {
+html {
   background-color: #EDF6F9 !important;
 }
 
-body {
-  position: relative;
-  isolation: isolate;
+html.dark {
+  background-color: #020405 !important;
 }
 
-html.dark, .dark body {
-  background-color: #020405 !important;
+body,
+.dark body,
+html.dark body,
+html:not(.dark) body {
+  background-color: transparent !important;
+  position: relative;
+  isolation: isolate;
 }
 
 body::before {
