@@ -113,7 +113,7 @@ const EMPTY_PLANNING_DATA: PlanningData = {
 };
 
 export default function PlanningWorkspacePage() {
-  const [data, setData] = useState<DashboardData | null>(null);
+  const [data, setData] = useState<PlanningData | null>(null);
 
   useEffect(() => {
     try {
@@ -461,9 +461,8 @@ export default function PlanningWorkspacePage() {
               <input
                 type="text"
                 required
-                placeholder="Category (e.g., Food)"
+                placeholder="Category (e.g. Food, Transport, Rent)"
                 value={budCategory}
-              placeholder="Category (e.g. Food, Transport, Rent)"
                 onChange={(e) => setBudCategory(e.target.value)}
                 className="rounded-xl px-3 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
               />
@@ -711,7 +710,7 @@ export default function PlanningWorkspacePage() {
                 required
                 placeholder={loanDirection === 'BORROWED' ? 'Lender Name' : 'Borrower Name'}
                 value={loanParty}
-                onChange={setLoanParty}
+                onChange={(e) => setLoanParty(e.target.value)}
                 className="rounded-xl px-3 py-2 text-xs border border-[#7A9E7E]/30 bg-transparent outline-none"
               />
               <input
@@ -772,7 +771,7 @@ export default function PlanningWorkspacePage() {
                   </label>
                   <select
                     value={loanSourceWalletId || data?.wallets[0]?.id || ''}
-                    onChange={setLoanSourceWalletId}
+                    onChange={(e) => setLoanSourceWalletId(e.target.value)}
                     className="w-full px-2.5 py-2 border border-[#7A9E7E]/30 bg-transparent outline-none"
                   >
                     {data?.wallets.map((w) => (
@@ -1035,7 +1034,7 @@ export default function PlanningWorkspacePage() {
                   step="0.01"
                   max={repayLoanTarget.remaining}
                   value={repayAmount}
-                  onChange={setRepayAmount}
+                  onChange={(e) => setRepayAmount(e.target.value)}
                   placeholder={`Enter amount up to ${repayLoanTarget.remaining}`}
                   className="w-full rounded-xl px-3 py-2 text-sm border border-[#7A9E7E]/30 bg-transparent outline-none"
                 />

@@ -924,7 +924,7 @@ export default function ReservedManagementPage() {
                   <label className="text-xs font-semibold block mb-1">Intended Payment Wallet</label>
                   <select
                     value={obTargetWalletId}
-                    onChange={setObTargetWalletId}
+                    onChange={(e) => setObTargetWalletId(e.target.value)}
                     className="w-full rounded-xl px-3 py-2 text-sm border border-[#7A9E7E]/30 bg-transparent outline-none"
                   >
                     <option value="">Select wallet (optional)</option>
@@ -1050,7 +1050,7 @@ export default function ReservedManagementPage() {
                   required
                   min="0"
                   value={reserveAmtInput}
-                  onChange={setReserveAmtInput}
+                  onChange={(e) => setReserveAmtInput(e.target.value)}
                   className="w-full rounded-xl px-3 py-2 text-sm border border-[#7A9E7E]/30 bg-transparent outline-none"
                 />
               </div>
@@ -1220,7 +1220,7 @@ export default function ReservedManagementPage() {
                     type="text"
                     placeholder="Receipt # or note"
                     value={payNoteInput}
-                    onChange={setPayNoteInput}
+                    onChange={(e) => setPayNoteInput(e.target.value)}
                     className="w-full rounded-xl px-3 py-2 text-sm border border-[#7A9E7E]/30 bg-transparent outline-none"
                   />
                 </div>

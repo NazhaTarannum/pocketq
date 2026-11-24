@@ -81,22 +81,23 @@ export default function DDMMYYYYInput({
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const popoverRef = useRef<HTMLDivElement | null>(null);
 
-  const today = useMemo(() => new Date(), []);
-  const todayIso = useMemo(
-    () => toIsoDate(today.getFullYear(), today.getMonth(), today.getDate()),
-    [today]
-  );
-
   const initialParts = parseIsoParts(value);
+  const [todayIso, setTodayIso] = useState<string>('');
   const [viewYear, setViewYear] = useState<number>(
-    initialParts ? initialParts.year : today.getFullYear()
+    initialParts ? initialParts.year : 2026
   );
   const [viewMonth, setViewMonth] = useState<number>(
-    initialParts ? initialParts.month : today.getMonth()
+    initialParts ? initialParts.month : 0
   );
 
   useEffect(() => {
     setMounted(true);
+    const now = new Date();
+    setTodayIso(toIsoDate(now.getFullYear(), now.getMonth(), now.getDate()));
+    if (!parseIsoParts(value)) {
+      setViewYear(now.getFullYear());
+      setViewMonth(now.getMonth());
+    }
   }, []);
 
   useEffect(() => {
@@ -343,13 +344,15 @@ export default function DDMMYYYYInput({
                   role="button"
                   tabIndex={0}
                   onClick={() => {
-                    setViewYear(today.getFullYear());
-                    setViewMonth(today.getMonth());
+                    const now = new Date();
+                    setViewYear(now.getFullYear());
+                    setViewMonth(now.getMonth());
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
-                      setViewYear(today.getFullYear());
-                      setViewMonth(today.getMonth());
+                      const now = new Date();
+                      setViewYear(now.getFullYear());
+                      setViewMonth(now.getMonth());
                     }
                   }}
                   aria-label="Jump to current month"

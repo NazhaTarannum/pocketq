@@ -89,7 +89,7 @@ const EMPTY_WEALTH_DATA: WealthPayload = {
 };
 
 export default function WealthPage() {
-  const [data, setData] = useState<WealthData | null>(null);
+  const [data, setData] = useState<WealthPayload | null>(null);
 
   useEffect(() => {
     try {
