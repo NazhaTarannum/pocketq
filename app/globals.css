@@ -1166,7 +1166,6 @@ html.dark body main .sim-left-after-spend-safe {
   color: #7A9E7E !important;
 }
 
-
 html:not(.dark) body main .hero-spendable-card .hero-spendable-amount,
 html:not(.dark) body main .hero-spendable-card .hero-spendable-amount.text-\[\#3EE895\] {
   color: #000000 !important;
