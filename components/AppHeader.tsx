@@ -9,7 +9,7 @@ import {
   LayoutDashboard,
   CalendarRange,
   Split,
-  PlusCircle,
+  Plus,
   Settings,
 } from 'lucide-react';
 import AppSidebar from './AppSidebar';
@@ -20,17 +20,25 @@ interface AppHeaderProps {
   onAddEntry?: () => void;
 }
 
-const BASE_TABS = [
+const DESKTOP_TABS = [
   { key: 'dashboard', label: 'Dashboard', href: '/', icon: LayoutDashboard },
   { key: 'planning', label: 'Planning', href: '/planning', icon: CalendarRange },
   { key: 'split', label: 'Split Bill', href: '/split', icon: Split },
-  { key: 'entry', label: '+ Entry', href: '/?add=1', icon: PlusCircle },
+  { key: 'entry', label: '+ Entry', href: '/?add=1', icon: Plus },
+  { key: 'settings', label: 'Settings', href: '/settings', icon: Settings },
+];
+
+const MOBILE_FOOTER_TABS = [
+  { key: 'dashboard', label: 'Dashboard', href: '/', icon: LayoutDashboard },
+  { key: 'planning', label: 'Planning', href: '/planning', icon: CalendarRange },
+  { key: 'split', label: 'Split Bill', href: '/split', icon: Split },
   { key: 'settings', label: 'Settings', href: '/settings', icon: Settings },
 ];
 
 export default function AppHeader({ darkMode, onToggleDarkMode, onAddEntry }: AppHeaderProps) {
   const pathname = usePathname() || '/';
-  const visibleTabs = pathname === '/' ? BASE_TABS : BASE_TABS.filter((t) => t.key !== 'entry');
+  const visibleDesktopTabs =
+    pathname === '/' ? DESKTOP_TABS : DESKTOP_TABS.filter((t) => t.key !== 'entry');
   const router = useRouter();
   const navContainerRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<Record<string, HTMLButtonElement | HTMLAnchorElement | null>>({});
@@ -57,6 +65,14 @@ export default function AppHeader({ darkMode, onToggleDarkMode, onAddEntry }: Ap
       try {
         localStorage.setItem('pocketq_dark_mode', String(next));
       } catch {}
+    }
+  };
+
+  const handleTriggerEntry = () => {
+    if (onAddEntry) {
+      onAddEntry();
+    } else {
+      router.push('/?add=1');
     }
   };
 
@@ -119,14 +135,30 @@ export default function AppHeader({ darkMode, onToggleDarkMode, onAddEntry }: Ap
             </Link>
           </div>
 
-          <div className="flex items-center gap-3 sm:gap-5 shrink-0">
-            {/* Desktop Navigation (hidden on mobile; shifted to mobile footer below) */}
+          <div className="flex items-center gap-2 sm:gap-5 shrink-0">
+            {/* Mobile "+ Entry" Pill in Top Header (Dashboard) */}
+            {pathname === '/' && (
+              <button
+                type="button"
+                onClick={handleTriggerEntry}
+                className={`md:hidden inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-extrabold transition-all cursor-pointer shrink-0 ${
+                  isDark
+                    ? 'bg-[#3EE895]/20 text-[#3EE895] border border-[#3EE895]/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]'
+                    : 'bg-[#0F2C38] text-[#3EE895] shadow-sm'
+                }`}
+              >
+                <Plus className="w-3.5 h-3.5 stroke-[2.75]" />
+                <span>Entry</span>
+              </button>
+            )}
+
+            {/* Desktop Navigation */}
             <nav
               ref={navContainerRef}
               aria-label="Primary Navigation"
               className="hidden md:flex relative items-center gap-6 py-1"
             >
-              {visibleTabs.map((tab) => {
+              {visibleDesktopTabs.map((tab) => {
                 const isActive = activeKey === tab.key;
                 if (tab.key === 'entry') {
                   return (
@@ -135,13 +167,7 @@ export default function AppHeader({ darkMode, onToggleDarkMode, onAddEntry }: Ap
                       ref={(el) => {
                         itemRefs.current[tab.key] = el;
                       }}
-                      onClick={() => {
-                        if (onAddEntry) {
-                          onAddEntry();
-                        } else {
-                          router.push('/?add=1');
-                        }
-                      }}
+                      onClick={handleTriggerEntry}
                       className="relative pb-1.5 text-[13px] font-medium tracking-tight opacity-70 hover:opacity-100 transition-opacity duration-200 cursor-pointer bg-transparent border-0"
                     >
                       {tab.label}
@@ -200,33 +226,9 @@ export default function AppHeader({ darkMode, onToggleDarkMode, onAddEntry }: Ap
               : 'bg-white/75 border border-white/80 shadow-[0_12px_30px_rgba(0,26,35,0.14),inset_0_1px_0_rgba(255,255,255,0.95)] text-[#001A23]'
           }`}
         >
-          {visibleTabs.map((tab) => {
+          {MOBILE_FOOTER_TABS.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeKey === tab.key;
-
-            if (tab.key === 'entry') {
-              return (
-                <button
-                  key={tab.key}
-                  type="button"
-                  onClick={() => {
-                    if (onAddEntry) {
-                      onAddEntry();
-                    } else {
-                      router.push('/?add=1');
-                    }
-                  }}
-                  className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-2xl text-[10px] font-bold transition-all cursor-pointer ${
-                    isDark
-                      ? 'text-[#3EE895] hover:bg-white/10'
-                      : 'text-[#0A8F4C] hover:bg-black/5'
-                  }`}
-                >
-                  <Icon className="w-4 h-4 shrink-0" />
-                  <span className="truncate max-w-full">Entry</span>
-                </button>
-              );
-            }
 
             return (
               <Link
