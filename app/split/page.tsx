@@ -740,8 +740,8 @@ export default function BillSplittingPage() {
 
               {/* STEP 2: Add Bill Items */}
               <section className={`p-5 rounded-2xl border space-y-4 ${cardClass}`}>
-                <div className="flex items-center justify-between">
-                  <div>
+                <div className="flex items-start sm:items-center justify-between gap-4">
+                  <div className="min-w-0 flex-1">
                     <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#31493C] dark:text-[#B3EFB2]">
                       Step 2
                     </span>
@@ -753,9 +753,10 @@ export default function BillSplittingPage() {
                   <button
                     type="button"
                     onClick={addItem}
-                    className="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#31493C] text-[#B3EFB2] hover:opacity-90 transition cursor-pointer flex items-center gap-1"
+                    className="shrink-0 whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-bold bg-[#31493C] text-[#B3EFB2] hover:opacity-90 transition cursor-pointer inline-flex items-center justify-center gap-1.5"
                   >
-                    <Plus className="w-3.5 h-3.5" /> Add Item
+                    <Plus className="w-3.5 h-3.5 shrink-0" />
+                    <span>Add Item</span>
                   </button>
                 </div>
 
