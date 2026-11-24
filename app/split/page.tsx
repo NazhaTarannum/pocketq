@@ -1530,8 +1530,8 @@ export default function BillSplittingPage() {
             </div>
 
             {/* RIGHT COLUMN: Step 5 Live Bill Summary & Confirm CTA */}
-            <aside className="lg:col-span-4 space-y-4 lg:sticky lg:top-20">
-              <div className={`p-5 rounded-2xl border space-y-4 ${cardClass}`}>
+            <div className="lg:col-span-4 space-y-4 lg:sticky lg:top-20">
+              <section className={`p-5 rounded-3xl border space-y-4 ${cardClass}`}>
                 <div>
                   <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#31493C] dark:text-[#B3EFB2]">
                     Step 5 • Live Summary
@@ -1595,7 +1595,13 @@ export default function BillSplittingPage() {
                 </div>
 
                 {/* Group Pool Collection Status */}
-                <div className="p-2.5 rounded-xl bg-[#7A9E7E]/10 border border-[#7A9E7E]/25 text-xs space-y-1">
+                <div
+                  className={`p-3 rounded-2xl border backdrop-blur-md text-xs space-y-1 ${
+                    darkMode
+                      ? 'bg-white/[0.04] border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]'
+                      : 'bg-white/60 border-[#7A9E7E]/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]'
+                  }`}
+                >
                   <div className="flex justify-between">
                     <span className="opacity-75">Total Paid by Group</span>
                     <span className="font-extrabold">
@@ -1624,7 +1630,11 @@ export default function BillSplittingPage() {
                   {liveCalc.participantBreakdowns.map((b) => (
                     <div
                       key={b.participantId}
-                      className="p-3 rounded-xl border border-[#7A9E7E]/25 bg-[#7A9E7E]/5 space-y-1.5 text-xs"
+                      className={`p-3.5 rounded-2xl border backdrop-blur-md space-y-1.5 text-xs transition-all ${
+                        darkMode
+                          ? 'bg-white/[0.04] border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]'
+                          : 'bg-white/65 border-[#7A9E7E]/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.75)]'
+                      }`}
                     >
                       <div className="flex justify-between items-center font-extrabold">
                         <span>{b.name}</span>
@@ -1719,11 +1729,17 @@ export default function BillSplittingPage() {
 
                 {/* Validation Checklist */}
                 {liveCalc.validationErrors.length > 0 && (
-                  <div className="p-3 rounded-xl bg-amber-500/15 border border-amber-500/40 text-xs space-y-1">
-                    <span className="font-extrabold block text-amber-700 dark:text-amber-300">
+                  <div
+                    className={`p-3.5 rounded-2xl border backdrop-blur-md text-xs space-y-1 ${
+                      darkMode
+                        ? 'bg-[#FFEF5C]/[0.07] border-[#FFEF5C]/25 text-[#E8F1F2] shadow-[inset_0_1px_0_rgba(255,239,92,0.14)]'
+                        : 'bg-[#FFEF5C]/25 border-[#7A9E7E]/30 text-[#001A23] shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]'
+                    }`}
+                  >
+                    <span className="font-extrabold block text-[#31493C] dark:text-[#FFEF5C]">
                       Before Confirming:
                     </span>
-                    <ul className="list-disc pl-4 space-y-0.5 text-[11px]">
+                    <ul className="list-disc pl-4 space-y-0.5 text-[11px] opacity-90">
                       {liveCalc.validationErrors.slice(0, 4).map((err, i) => (
                         <li key={i}>{err}</li>
                       ))}
@@ -1735,13 +1751,13 @@ export default function BillSplittingPage() {
                   type="button"
                   disabled={!liveCalc.isValid || submitting}
                   onClick={handleConfirmBill}
-                  className="w-full py-3 px-4 rounded-xl text-xs font-extrabold bg-[#31493C] text-[#B3EFB2] hover:opacity-95 disabled:opacity-40 transition cursor-pointer flex items-center justify-center gap-2 shadow-sm"
+                  className="w-full py-3 px-4 rounded-full text-xs font-extrabold bg-[#31493C] text-[#B3EFB2] hover:opacity-95 disabled:opacity-40 transition cursor-pointer flex items-center justify-center gap-2 shadow-sm"
                 >
                   <Check className="w-4 h-4" />
                   {submitting ? 'Confirming & Syncing...' : 'Confirm Bill & Create Settlements'}
                 </button>
-              </div>
-            </aside>
+              </section>
+            </div>
           </div>
         ) : (
           /* STEP 7: Saved Bills & Settlement Management */
