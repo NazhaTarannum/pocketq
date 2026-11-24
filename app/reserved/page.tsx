@@ -428,46 +428,54 @@ export default function ReservedManagementPage() {
       <main className="max-w-7xl mx-auto px-4 py-4 sm:py-6 space-y-5 sm:space-y-6">
         {/* Top Summary Strip */}
         <section className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="rounded-2xl p-4 bg-[#31493C] text-[#E8F1F2]">
+          <div className="min-w-0 rounded-2xl p-3.5 sm:p-4 bg-[#31493C] text-[#E8F1F2]">
             <span className="text-[11px] opacity-75 flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#B3EFB2]" /> Available to Spend
+              <ShieldCheck className="w-3.5 h-3.5 shrink-0 text-[#B3EFB2]" /> Available to Spend
             </span>
-            <p className="text-xl font-extrabold text-[#B3EFB2] mt-1">
+            <p className="text-base sm:text-lg lg:text-xl font-extrabold text-[#B3EFB2] mt-1 leading-tight break-all sm:break-normal">
               {formatBDT(data.summary.availableToSpend)}
             </p>
-            <span className="text-[10px] opacity-70">Unreserved liquid cash</span>
+            <span className="text-[10px] opacity-70 block mt-0.5">Unreserved liquid cash</span>
           </div>
 
           <div
-            className={`rounded-2xl p-4 border ${
+            className={`min-w-0 rounded-2xl p-3.5 sm:p-4 border ${
               darkMode ? 'bg-[#31493C]/20 border-[#31493C]' : 'bg-white border-[#7A9E7E]/25'
             }`}
           >
             <span className="text-[11px] opacity-70 block">Obligations Reserved</span>
-            <p className="text-xl font-extrabold text-[#7A9E7E] mt-1">{formatBDT(totalResOb)}</p>
-            <span className="text-[10px] opacity-65">
+            <p className="text-base sm:text-lg lg:text-xl font-extrabold text-[#7A9E7E] mt-1 leading-tight break-all sm:break-normal">
+              {formatBDT(totalResOb)}
+            </p>
+            <span className="text-[10px] opacity-65 block mt-0.5 break-all sm:break-normal">
               {formatBDT(totalRemainingToReserve)} left to reserve
             </span>
           </div>
 
           <div
-            className={`rounded-2xl p-4 border ${
+            className={`min-w-0 rounded-2xl p-3.5 sm:p-4 border ${
               darkMode ? 'bg-[#31493C]/20 border-[#31493C]' : 'bg-white border-[#7A9E7E]/25'
             }`}
           >
             <span className="text-[11px] opacity-70 block">Obligations Paid</span>
-            <p className="text-xl font-extrabold mt-1">{formatBDT(totalPaidOb)}</p>
-            <span className="text-[10px] opacity-65">Of {formatBDT(totalReq)} total required</span>
+            <p className="text-base sm:text-lg lg:text-xl font-extrabold mt-1 leading-tight break-all sm:break-normal">
+              {formatBDT(totalPaidOb)}
+            </p>
+            <span className="text-[10px] opacity-65 block mt-0.5 break-all sm:break-normal">
+              Of {formatBDT(totalReq)} total required
+            </span>
           </div>
 
           <div
-            className={`rounded-2xl p-4 border ${
+            className={`min-w-0 rounded-2xl p-3.5 sm:p-4 border ${
               darkMode ? 'bg-[#31493C]/20 border-[#31493C]' : 'bg-white border-[#7A9E7E]/25'
             }`}
           >
             <span className="text-[11px] opacity-70 block">Savings & Emergency</span>
-            <p className="text-xl font-extrabold text-[#7A9E7E] mt-1">{formatBDT(totalSaved)}</p>
-            <span className="text-[10px] opacity-65">100% flexible & user-controlled</span>
+            <p className="text-base sm:text-lg lg:text-xl font-extrabold text-[#7A9E7E] mt-1 leading-tight break-all sm:break-normal">
+              {formatBDT(totalSaved)}
+            </p>
+            <span className="text-[10px] opacity-65 block mt-0.5">100% flexible & user-controlled</span>
           </div>
         </section>
 
@@ -558,23 +566,23 @@ export default function ReservedManagementPage() {
 
                       {/* 4 Clear Distinct Figures: Required / Already Reserved / Remaining to Reserve / Actually Paid */}
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3 text-xs">
-                        <div className="p-2.5 rounded-xl bg-black/5 dark:bg-white/5">
+                        <div className="min-w-0 p-2.5 rounded-xl bg-black/5 dark:bg-white/5">
                           <span className="opacity-65 block text-[11px]">Amount Required</span>
-                          <span className="font-extrabold text-sm">{formatBDT(ob.totalAmount)}</span>
+                          <span className="font-extrabold text-xs sm:text-sm break-all sm:break-normal block">{formatBDT(ob.totalAmount)}</span>
                         </div>
-                        <div className="p-2.5 rounded-xl bg-[#7A9E7E]/15">
+                        <div className="min-w-0 p-2.5 rounded-xl bg-[#7A9E7E]/15">
                           <span className="opacity-75 block text-[11px]">Already Reserved</span>
-                          <span className="font-extrabold text-sm text-[#7A9E7E]">
+                          <span className="font-extrabold text-xs sm:text-sm text-[#7A9E7E] break-all sm:break-normal block">
                             {formatBDT(ob.reservedAmount)}
                           </span>
                         </div>
-                        <div className="p-2.5 rounded-xl bg-[#FFEF5C]/25">
+                        <div className="min-w-0 p-2.5 rounded-xl bg-[#FFEF5C]/25">
                           <span className="opacity-75 block text-[11px]">Remaining to Reserve</span>
-                          <span className="font-extrabold text-sm">{formatBDT(remToReserve)}</span>
+                          <span className="font-extrabold text-xs sm:text-sm break-all sm:break-normal block">{formatBDT(remToReserve)}</span>
                         </div>
-                        <div className="p-2.5 rounded-xl bg-black/5 dark:bg-white/5">
+                        <div className="min-w-0 p-2.5 rounded-xl bg-black/5 dark:bg-white/5">
                           <span className="opacity-65 block text-[11px]">Actually Paid</span>
-                          <span className="font-extrabold text-sm">{formatBDT(ob.paidAmount)}</span>
+                          <span className="font-extrabold text-xs sm:text-sm break-all sm:break-normal block">{formatBDT(ob.paidAmount)}</span>
                         </div>
                       </div>
 
