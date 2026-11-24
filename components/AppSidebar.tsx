@@ -114,10 +114,26 @@ export default function AppSidebar({ darkMode = false }: AppSidebarProps) {
         onClick={() => setOpen(true)}
         aria-label="Open navigation menu"
         title="Workspaces"
+        style={
+          darkMode
+            ? {
+                backgroundColor: 'rgba(255, 255, 255, 0.06)',
+                backdropFilter: 'blur(18px) saturate(160%)',
+                WebkitBackdropFilter: 'blur(18px) saturate(160%)',
+                borderColor: 'rgba(255, 255, 255, 0.14)',
+              }
+            : {
+                backgroundColor: 'rgba(255, 255, 255, 0.32)',
+                backdropFilter: 'blur(18px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(18px) saturate(180%)',
+                borderColor: 'rgba(255, 255, 255, 0.55)',
+                boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.7)',
+              }
+        }
         className={`inline-flex items-center justify-center p-2 rounded-xl border transition cursor-pointer ${
           darkMode
-            ? 'bg-[#31493C]/50 border-[#31493C] text-[#E8F1F2] hover:bg-[#31493C]'
-            : 'bg-white border-[#7A9E7E]/30 text-[#001A23] hover:bg-[#7A9E7E]/10'
+            ? 'text-[#E8F1F2] hover:bg-white/10'
+            : 'text-[#001A23] hover:bg-white/50'
         }`}
       >
         <Menu className="w-4 h-4" />
