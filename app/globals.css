@@ -1,1266 +1,271 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
-
 @theme inline {
   --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 }
 
+/* ==========================================================================
+   Liquid Glass for PocketQ
+   Works with dark + light mode (.dark or [data-theme="dark"] on <html>)
+   and across all desktop & mobile browsers (iOS Safari, Android Chrome, etc.)
+   ========================================================================== */
+
+/* ---------- 1. TOKENS (light mode default) ---------- */
 :root {
-  --bg-main: #DCE8EC;
-  --bg-card: rgba(232, 241, 242, 0.36);
-  --text-primary: #001A23;
-  --text-muted: #3F5A64;
+  --glass-bg: rgba(255, 255, 255, 0.38);
+  --glass-bg-strong: rgba(255, 255, 255, 0.55);
+  --glass-tint: rgba(255, 255, 255, 0.0);
+  --glass-blur: 22px;
+  --glass-saturate: 180%;
+  --glass-brightness: 1.05;
+
+  --glass-border: rgba(255, 255, 255, 0.55);
+  --glass-rim-top: rgba(255, 255, 255, 0.95);
+  --glass-rim-bottom: rgba(255, 255, 255, 0.25);
+  --glass-shadow: 0 8px 32px rgba(31, 38, 70, 0.14), 0 2px 6px rgba(31, 38, 70, 0.08);
+  --glass-inner-glow: inset 0 1px 1px rgba(255, 255, 255, 0.9),
+                      inset 0 -1px 1px rgba(255, 255, 255, 0.25);
+
+  --glass-radius: 24px;
+  --glass-accent: #2fbf71;
+  --glass-text: #0f1a14;
+  --glass-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.dark {
-  --bg-main: #000000;
-  --bg-card: rgba(12, 12, 14, 0.55);
-  --text-primary: #F5F7F8;
-  --text-muted: #8E9AA0;
+/* ---------- 2. DARK MODE TOKENS ---------- */
+.dark,
+[data-theme="dark"] {
+  --glass-bg: rgba(20, 28, 26, 0.36);
+  --glass-bg-strong: rgba(24, 34, 31, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-rim-top: rgba(255, 255, 255, 0.38);
+  --glass-rim-bottom: rgba(255, 255, 255, 0.05);
+  --glass-shadow: 0 10px 40px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35);
+  --glass-inner-glow: inset 0 1px 1px rgba(255, 255, 255, 0.28),
+                      inset 0 -1px 1px rgba(255, 255, 255, 0.05);
+  --glass-brightness: 1.1;
+  --glass-text: #eaf5ee;
 }
 
-*, *::before, *::after {
-  border-radius: 0px !important;
+/* ---------- 3. BASE GLASS SURFACE ---------- */
+.glass,
+section[class*="rounded-"],
+div[class*="rounded-3xl"],
+div[class*="rounded-2xl"][class*="border"] {
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--glass-radius) !important;
+  color: var(--glass-text);
+
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 45%),
+    var(--glass-tint),
+    var(--glass-bg) !important;
+
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness)) !important;
+          backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness)) !important;
+
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: var(--glass-shadow), var(--glass-inner-glow) !important;
+
+  transition:
+    transform 0.45s var(--glass-spring),
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
+  will-change: transform;
 }
 
-/* Soft, Luminous Cool Glacial Backdrop (No Yellow Tint) */
-html, body {
-  min-height: 100%;
-  background-color: #DCE8EC !important;
-  background-image:
-    radial-gradient(at 10% 10%, rgba(164, 214, 198, 0.55) 0px, transparent 48%),
-    radial-gradient(at 88% 12%, rgba(182, 224, 242, 0.65) 0px, transparent 50%),
-    radial-gradient(at 52% 52%, rgba(232, 241, 242, 0.72) 0px, transparent 55%),
-    radial-gradient(at 82% 86%, rgba(168, 226, 196, 0.48) 0px, transparent 50%),
-    radial-gradient(at 14% 86%, rgba(192, 218, 238, 0.58) 0px, transparent 50%) !important;
-  background-attachment: fixed !important;
-  color: var(--text-primary);
-  font-family: var(--font-sans);
-}
-
-html.dark, .dark body {
-  background-color: #020405 !important;
-  background-image:
-    radial-gradient(circle at 12% 14%, rgba(26, 92, 68, 0.32) 0%, transparent 42%),
-    radial-gradient(circle at 86% 18%, rgba(18, 72, 92, 0.28) 0%, transparent 45%),
-    radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.045) 0%, transparent 55%),
-    radial-gradient(circle at 78% 85%, rgba(130, 32, 82, 0.18) 0%, transparent 45%),
-    linear-gradient(180deg, #030608 0%, #000000 55%, #020506 100%) !important;
-  background-attachment: fixed !important;
-}
-
-h1, h2, h3 {
-  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, sans-serif;
-  letter-spacing: -0.02em;
-}
-
-div.min-h-screen {
-  background: transparent !important;
-}
-
-/* Clean, Translucent Frosted Alice-Blue Glass (No Heavy White Border) */
-header,
-aside,
-.rounded-3xl {
-  background: rgba(232, 241, 242, 0.36) !important;
-  backdrop-filter: blur(24px) saturate(185%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(185%) !important;
-  border: none !important;
-  box-shadow: 0 10px 30px -8px rgba(0, 26, 35, 0.10) !important;
-}
-
-.dark header,
-.dark aside,
-.dark .rounded-3xl {
-  background: linear-gradient(155deg, rgba(24, 24, 27, 0.42) 0%, rgba(8, 8, 10, 0.62) 100%) !important;
-  backdrop-filter: blur(32px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(32px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.09) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.16) !important;
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.10), 0 20px 50px rgba(0, 0, 0, 0.95) !important;
-}
-
-/* Frosted Ocean-Teal Glass Hero Card */
-.hero-spendable-card {
+/* Gradient rim light: bright top-left, faint bottom-right */
+.glass::before,
+section[class*="rounded-"]::before,
+div[class*="rounded-3xl"]::before,
+div[class*="rounded-2xl"][class*="border"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.2px;
   background: linear-gradient(
     135deg,
-    rgba(14, 46, 62, 0.74) 0%,
-    rgba(22, 74, 86, 0.64) 100%
-  ) !important;
-  backdrop-filter: blur(26px) saturate(195%) !important;
-  -webkit-backdrop-filter: blur(26px) saturate(195%) !important;
-  border: none !important;
-  box-shadow: 0 16px 36px -10px rgba(14, 46, 62, 0.28) !important;
-  color: #F2F8FA !important;
+    var(--glass-rim-top) 0%,
+    transparent 38%,
+    transparent 62%,
+    var(--glass-rim-bottom) 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+          mask-composite: exclude;
+  pointer-events: none;
+  z-index: -1;
 }
 
-.dark .hero-spendable-card {
-  background: linear-gradient(
-    145deg,
-    rgba(28, 28, 32, 0.48) 0%,
-    rgba(6, 6, 8, 0.76) 100%
-  ) !important;
-  backdrop-filter: blur(34px) saturate(190%) !important;
-  -webkit-backdrop-filter: blur(34px) saturate(190%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.11) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.22) !important;
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.14), 0 24px 56px rgba(0, 0, 0, 0.96) !important;
+/* Soft curved sheen across the top, the "liquid" highlight */
+.glass::after,
+section[class*="rounded-"]::after,
+div[class*="rounded-3xl"]::after,
+div[class*="rounded-2xl"][class*="border"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(120% 60% at 20% -10%, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0) 60%),
+    radial-gradient(80% 50% at 100% 110%, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 70%);
+  pointer-events: none;
+  z-index: -1;
+  mix-blend-mode: soft-light;
 }
 
-/* Translucent Nested Sub-Cards */
-.rounded-2xl {
-  background: rgba(255, 255, 255, 0.26) !important;
-  backdrop-filter: blur(14px) saturate(165%) !important;
-  -webkit-backdrop-filter: blur(14px) saturate(165%) !important;
-  border: none !important;
-  box-shadow: 0 4px 16px -4px rgba(0, 26, 35, 0.06) !important;
+/* ---------- 4. VARIANTS ---------- */
+
+/* Big dashboard cards ("Safe Spendable Cash", "Can I Afford It?") */
+.glass--card,
+section[class*="rounded-"] {
+  --glass-radius: 28px;
 }
 
-.dark .rounded-2xl {
-  background: rgba(14, 14, 16, 0.55) !important;
-  border: 1px solid rgba(255, 255, 255, 0.07) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.13) !important;
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.07) !important;
+/* Floating bottom nav bar (Dashboard / Planning / Split Bill / Settings) */
+.glass--nav,
+nav[class*="fixed"][class*="bottom-0"] {
+  --glass-radius: 32px;
+  --glass-blur: 28px;
+  position: fixed !important;
+  left: 12px !important;
+  right: 12px !important;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 12px) !important;
+  width: auto !important;
+  border-radius: 32px !important;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 45%),
+    var(--glass-bg-strong) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(var(--glass-saturate)) brightness(var(--glass-brightness)) !important;
+          backdrop-filter: blur(28px) saturate(var(--glass-saturate)) brightness(var(--glass-brightness)) !important;
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: var(--glass-shadow), var(--glass-inner-glow) !important;
+  z-index: 50;
 }
 
-/* Deep Vibrant Emerald for Progress Bars & Sliders */
-.bg-\[\#7A9E7E\],
-.bg-emerald-500,
-.bg-emerald-600 {
-  background-color: #0A8F4C !important;
+/* Top header bar */
+.glass--header,
+header {
+  --glass-radius: 22px;
+  --glass-blur: 26px;
+  border-radius: 22px !important;
+  margin: 8px 12px !important;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 45%),
+    var(--glass-bg) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(var(--glass-saturate)) brightness(var(--glass-brightness)) !important;
+          backdrop-filter: blur(26px) saturate(var(--glass-saturate)) brightness(var(--glass-brightness)) !important;
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: var(--glass-shadow), var(--glass-inner-glow) !important;
 }
 
-input[type="range"] {
-  accent-color: #0A8F4C !important;
+/* Pills / buttons (7d 15d 30d, Set Limits, + Entry, "You Can") */
+.glass--pill,
+button[class*="rounded-lg"],
+button[class*="rounded-xl"],
+button[class*="rounded-full"] {
+  --glass-radius: 999px;
+  --glass-blur: 14px;
+  border-radius: 999px !important;
+  -webkit-backdrop-filter: blur(14px) saturate(var(--glass-saturate));
+          backdrop-filter: blur(14px) saturate(var(--glass-saturate));
+  transition:
+    transform 0.45s var(--glass-spring),
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.dark input[type="range"] {
-  accent-color: #18D476 !important;
+/* Inputs & selects inside glass cards */
+input:not([type="range"]),
+select,
+textarea {
+  border-radius: 16px !important;
+  background: var(--glass-bg) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+          backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid var(--glass-border) !important;
 }
 
-/* Borderless Translucent Inputs & Dropdowns */
-input:not([type="range"]), select, textarea {
-  background-color: rgba(232, 241, 242, 0.34) !important;
-  border: none !important;
-  box-shadow: inset 0 1px 2px rgba(0, 26, 35, 0.06) !important;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  color: inherit;
-  color-scheme: light;
+/* Accent (green) glass for primary actions or "You Can" */
+.glass--accent {
+  --glass-tint: color-mix(in srgb, var(--glass-accent) 28%, transparent);
+  --glass-border: color-mix(in srgb, var(--glass-accent) 55%, white 10%);
+  --glass-rim-top: color-mix(in srgb, var(--glass-accent) 60%, white);
+  color: var(--glass-text);
 }
 
-.dark input:not([type="range"]), .dark select, .dark textarea {
-  background-color: rgba(10, 10, 12, 0.72) !important;
-  border: 1px solid rgba(255, 255, 255, 0.09) !important;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.75) !important;
-  color-scheme: dark;
-}
-
-select option {
-  background-color: rgba(232, 241, 242, 0.94);
-  color: #001A23;
-}
-
-.dark select option {
-  background-color: rgba(7, 30, 34, 0.94);
-  color: #E8F1F2;
-}
-
-
-/* High-Contrast Light Mode Text Fix for Active Pills & Cards */
-html:not(.dark) .text-\[\#E8F1F2\],
-html:not(.dark) .text-\[\#B3EFB2\] {
-  color: #001A23 !important;
-}
-
-html:not(.dark) .text-\[\#7A9E7E\] {
-  color: #097A42 !important;
-}
-
-/* Keep bright text inside the dark frosted hero card */
-.hero-spendable-card .text-\[\#E8F1F2\],
-.hero-spendable-card {
-  color: #F2F8FA !important;
-}
-
-.hero-spendable-card .text-\[\#B3EFB2\] {
-  color: #3EE895 !important;
-}
-
-
-/* Fix Light Mode contrast on active items (Sidebar Portal, Tabs, Pills, Cards) */
-html:not(.dark) .bg-\[\#31493C\],
-html:not(.dark) [class*="bg-[#31493C]"] {
-  background-color: rgba(10, 143, 76, 0.14) !important;
-  color: #001A23 !important;
-}
-
-html:not(.dark) .bg-\[\#31493C\] *,
-html:not(.dark) [class*="bg-[#31493C]"] * {
-  color: #001A23 !important;
-}
-
-html:not(.dark) .bg-\[\#31493C\] svg,
-html:not(.dark) [class*="bg-[#31493C]"] svg {
-  color: #0A8F4C !important;
-}
-
-html:not(.dark) .text-white:not(.hero-spendable-card *):not(.hero-spendable-card) {
-  color: #001A23 !important;
-}
-
-/* Preserve luminous text inside the dark frosted hero card */
-.hero-spendable-card,
-.hero-spendable-card * {
-  color: #F2F8FA !important;
-}
-
-.hero-spendable-card .text-\[\#3EE895\],
-.hero-spendable-card .text-\[\#B3EFB2\] {
-  color: #3EE895 !important;
-}
-
-
-/* 1. Sidebar Active Item & Light Mode Text Contrast */
-html:not(.dark) aside a[aria-current="page"],
-html:not(.dark) aside .bg-\[\#31493C\],
-html:not(.dark) [role="dialog"] .bg-\[\#31493C\] {
-  background-color: rgba(10, 143, 76, 0.14) !important;
-  color: #001A23 !important;
-}
-
-html:not(.dark) aside a[aria-current="page"] *,
-html:not(.dark) aside .bg-\[\#31493C\] *,
-html:not(.dark) aside p,
-html:not(.dark) aside span {
-  color: #001A23 !important;
-  opacity: 0.92 !important;
-}
-
-/* 2. Hero Spendable Card Refined Typography & Consistent Metrics */
-.hero-spendable-card .text-4xl,
-.hero-spendable-card .text-5xl,
-.hero-spendable-card .text-\[\#B3EFB2\],
-.hero-spendable-card .text-\[\#3EE895\],
-.hero-spendable-card .text-\[\#FFEF5C\],
-.hero-spendable-card span {
-  color: #F4FAFB !important;
-}
-
-/* 3. Sleek Apple Liquid Glass Range Slider */
-input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 6px;
-  border-radius: 0px;
-  background: rgba(0, 26, 35, 0.14) !important;
-  outline: none;
-}
-
-html.dark input[type="range"] {
-  background: rgba(232, 241, 242, 0.18) !important;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 0px;
-  background: #0A8F4C;
-  border: 2px solid #FFFFFF;
-  box-shadow: 0 2px 8px rgba(0, 26, 35, 0.25);
-  cursor: pointer;
-  transition: transform 0.15s ease, background-color 0.15s ease;
-}
-
-input[type="range"]::-webkit-slider-thumb:hover {
-  transform: scale(1.1);
-  background: #08753E;
-}
-
-input[type="range"]::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
-  border-radius: 0px;
-  background: #0A8F4C;
-  border: 2px solid #FFFFFF;
-  box-shadow: 0 2px 8px rgba(0, 26, 35, 0.25);
-  cursor: pointer;
-}
-
-/* 4. Translucent Frosted Liquid Glass Modals (Add Entry / Add Obligation) */
-html:not(.dark) .fixed.inset-0 > div {
-  background: rgba(255, 255, 255, 0.72) !important;
-  backdrop-filter: blur(28px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.85) !important;
-  box-shadow: 0 24px 48px rgba(0, 26, 35, 0.14) !important;
-  color: #001A23 !important;
-}
-
-html.dark .fixed.inset-0 > div {
-  background: rgba(14, 24, 28, 0.78) !important;
-  backdrop-filter: blur(28px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
-  border: 1px solid rgba(232, 241, 242, 0.14) !important;
-}
-
-
-/* Remove browser blue text/accent in inputs and modals */
-html:not(.dark) input,
-html:not(.dark) select,
-html:not(.dark) textarea {
-  color: #001A23 !important;
-  accent-color: #001A23 !important;
-}
-
-html:not(.dark) input:focus,
-html:not(.dark) select:focus,
-html:not(.dark) textarea:focus {
-  border-color: #001A23 !important;
-  outline: none !important;
-}
-
-
-/* Apple Liquid Glass for All Nested Inner Cards (Obligations, Savings, Wallets, Lists) */
-html:not(.dark) .bg-\[\#E8F1F2\]\/40,
-html:not(.dark) .bg-\[\#E8F1F2\]\/50,
-html:not(.dark) .bg-\[\#E8F1F2\]\/60,
-html:not(.dark) .bg-\[\#E8F1F2\]\/70,
-html:not(.dark) .bg-\[\#E8F1F2\]\/80,
-html:not(.dark) .bg-white\/40,
-html:not(.dark) .bg-white\/50,
-html:not(.dark) .bg-white\/60,
-html:not(.dark) .bg-white\/70,
-html:not(.dark) [class*="bg-[#E8F1F2]/"] {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.56) 0%,
-    rgba(255, 255, 255, 0.28) 100%
-  ) !important;
-  backdrop-filter: blur(24px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.72) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.92) !important;
+/* Selected state for segmented controls (the active "15d", active nav tab) */
+.glass--active,
+.glass[aria-pressed="true"],
+.glass[aria-selected="true"] {
+  --glass-bg: var(--glass-bg-strong);
   box-shadow:
-    0 8px 24px rgba(0, 26, 35, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.85) !important;
-  border-radius: 0px !important;
-}
-
-/* Dark Mode Liquid Glass for Nested Inner Cards */
-html.dark .bg-\[\#31493C\]\/10,
-html.dark .bg-\[\#31493C\]\/15,
-html.dark .bg-\[\#31493C\]\/20,
-html.dark .bg-\[\#31493C\]\/30,
-html.dark [class*="bg-[#31493C]/"] {
-  background: linear-gradient(
-    155deg,
-    rgba(22, 22, 25, 0.45) 0%,
-    rgba(8, 8, 10, 0.65) 100%
-  ) !important;
-  backdrop-filter: blur(28px) saturate(175%) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(175%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
-  box-shadow:
-    0 12px 32px rgba(0, 0, 0, 0.85),
-    inset 0 1px 0 rgba(255, 255, 255, 0.09) !important;
-  border-radius: 0px !important;
-}
-
-/* Glass styling for secondary buttons inside cards (+ Reserve, Pay, etc.) */
-html:not(.dark) main button[class*="border"],
-html:not(.dark) main a[class*="border"] {
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  border-radius: 0px !important;
-}
-
-
-/* Smooth Luminous Liquid Glass Chart Bars (Monthly & Yearly Financial Reports) */
-.bg-\[\#7A9E7E\][style*="height"],
-.bg-emerald-500[style*="height"],
-.bg-green-500[style*="height"],
-.bg-\[\#10B981\][style*="height"],
-.bg-\[\#22C55E\][style*="height"],
-.bg-\[\#B3EFB2\][style*="height"] {
-  background: linear-gradient(
-    180deg,
-    rgba(179, 239, 178, 0.72) 0%,
-    rgba(52, 211, 153, 0.34) 55%,
-    rgba(16, 185, 129, 0.18) 100%
-  ) !important;
-  backdrop-filter: blur(18px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(180%) !important;
-  border: 1px solid rgba(179, 239, 178, 0.55) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.85) !important;
-  box-shadow:
-    0 6px 20px rgba(16, 185, 129, 0.18),
-    inset 0 1px 1px rgba(255, 255, 255, 0.65) !important;
-  transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1) !important;
-}
-
-.bg-\[\#D52073\][style*="height"],
-.bg-rose-500[style*="height"],
-.bg-pink-600[style*="height"] {
-  background: linear-gradient(
-    180deg,
-    rgba(244, 114, 182, 0.72) 0%,
-    rgba(213, 32, 115, 0.36) 55%,
-    rgba(213, 32, 115, 0.18) 100%
-  ) !important;
-  backdrop-filter: blur(18px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(180%) !important;
-  border: 1px solid rgba(244, 114, 182, 0.55) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.8) !important;
-  box-shadow:
-    0 6px 20px rgba(213, 32, 115, 0.2),
-    inset 0 1px 1px rgba(255, 255, 255, 0.6) !important;
-  transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1) !important;
-}
-
-/* Light mode subtle tint adjustment so glass bars stay rich against light frosted cards */
-html:not(.dark) .bg-\[\#7A9E7E\][style*="height"],
-html:not(.dark) .bg-emerald-500[style*="height"],
-html:not(.dark) .bg-green-500[style*="height"],
-html:not(.dark) .bg-\[\#10B981\][style*="height"],
-html:not(.dark) .bg-\[\#22C55E\][style*="height"],
-html:not(.dark) .bg-\[\#B3EFB2\][style*="height"] {
-  background: linear-gradient(
-    180deg,
-    rgba(49, 73, 60, 0.78) 0%,
-    rgba(122, 158, 126, 0.46) 60%,
-    rgba(179, 239, 178, 0.32) 100%
-  ) !important;
-  border: 1px solid rgba(49, 73, 60, 0.35) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.9) !important;
-}
-
-html:not(.dark) .bg-\[\#D52073\][style*="height"],
-html:not(.dark) .bg-rose-500[style*="height"],
-html:not(.dark) .bg-pink-600[style*="height"] {
-  background: linear-gradient(
-    180deg,
-    rgba(213, 32, 115, 0.76) 0%,
-    rgba(213, 32, 115, 0.42) 60%,
-    rgba(244, 114, 182, 0.28) 100%
-  ) !important;
-  border: 1px solid rgba(213, 32, 115, 0.35) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.9) !important;
-}
-
-
-/* Liquid Glass Styling for All Horizontal Progress Bars */
-[style*="width:"][class*="h-full"],
-[style*="width:"][class*="h-1.5"],
-[style*="width:"][class*="h-2"],
-[style*="width:"][class*="h-2.5"],
-[style*="width:"][class*="h-3"] {
-  background-image: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.65) 0%,
-    rgba(255, 255, 255, 0.16) 48%,
-    rgba(0, 0, 0, 0.18) 100%
-  ) !important;
-  backdrop-filter: blur(16px) saturate(190%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(190%) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.85) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.18) !important;
-  box-shadow:
-    0 4px 14px rgba(0, 0, 0, 0.32),
-    inset 0 1px 1px rgba(255, 255, 255, 0.65) !important;
-  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1) !important;
-}
-
-/* Specific translucent glass tints for horizontal bars */
-.bg-\[\#B3EFB2\][style*="width"],
-.bg-\[\#7A9E7E\][style*="width"],
-.bg-emerald-500[style*="width"],
-.bg-green-500[style*="width"] {
-  background-color: rgba(52, 211, 153, 0.36) !important;
-  border-left: 1px solid rgba(179, 239, 178, 0.45) !important;
-  border-right: 1px solid rgba(179, 239, 178, 0.45) !important;
-}
-
-.bg-\[\#D52073\][style*="width"],
-.bg-rose-500[style*="width"],
-.bg-pink-600[style*="width"] {
-  background-color: rgba(213, 32, 115, 0.40) !important;
-  border-left: 1px solid rgba(244, 114, 182, 0.45) !important;
-  border-right: 1px solid rgba(244, 114, 182, 0.45) !important;
-}
-
-.bg-\[\#FFEF5C\][style*="width"],
-.bg-amber-400[style*="width"],
-.bg-yellow-400[style*="width"] {
-  background-color: rgba(255, 239, 92, 0.38) !important;
-  border-left: 1px solid rgba(255, 245, 157, 0.50) !important;
-  border-right: 1px solid rgba(255, 245, 157, 0.50) !important;
-}
-
-/* Make inline-colored category & wallet distribution bars translucent glass */
-div[style*="background-color"][style*="width"] {
-  opacity: 0.78 !important;
-}
-
-/* Global Apple Liquid Glass for All Buttons & Status Badges Across Every Page */
-html.dark main button,
-html.dark main a[class*="px-"],
-html.dark main span[class*="rounded-full"][class*="px-"],
-.dark main button,
-.dark main a[class*="px-"],
-.dark main span[class*="rounded-full"][class*="px-"] {
-  backdrop-filter: blur(22px) saturate(190%) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(190%) !important;
-  transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1) !important;
-}
-
-/* Mint / Emerald Glass (+ Add Wallet, + New, You Can, Net Positive) */
-html.dark main [class*="bg-[#B3EFB2]"],
-html.dark main [class*="bg-emerald-"],
-.dark main [class*="bg-[#B3EFB2]"],
-.dark main [class*="bg-emerald-"] {
-  background: linear-gradient(
-    180deg,
-    rgba(179, 239, 178, 0.28) 0%,
-    rgba(52, 211, 153, 0.10) 100%
-  ) !important;
-  background-color: transparent !important;
-  color: #DDFCE4 !important;
-  border: 1px solid rgba(179, 239, 178, 0.34) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.62) !important;
-  box-shadow:
-    0 6px 20px rgba(16, 185, 129, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.42) !important;
-}
-
-/* Solar Yellow / Amber Glass (+ Add, Partially Reserved, Primary CTAs) */
-html.dark main [class*="bg-[#FFEF5C]"],
-html.dark main [class*="bg-amber-"],
-html.dark main [class*="bg-yellow-"],
-.dark main [class*="bg-[#FFEF5C]"],
-.dark main [class*="bg-amber-"],
-.dark main [class*="bg-yellow-"] {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 239, 92, 0.28) 0%,
-    rgba(245, 158, 11, 0.10) 100%
-  ) !important;
-  background-color: transparent !important;
-  color: #FFF7B2 !important;
-  border: 1px solid rgba(255, 239, 92, 0.36) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.65) !important;
-  box-shadow:
-    0 6px 20px rgba(245, 158, 11, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
-}
-
-/* Rose / Pink Glass (Overdue, Negative Net, Delete/Alert) */
-html.dark main [class*="bg-[#D52073]"],
-html.dark main [class*="bg-rose-"],
-html.dark main [class*="bg-pink-"],
-.dark main [class*="bg-[#D52073]"],
-.dark main [class*="bg-rose-"],
-.dark main [class*="bg-pink-"] {
-  background: linear-gradient(
-    180deg,
-    rgba(244, 114, 182, 0.30) 0%,
-    rgba(213, 32, 115, 0.12) 100%
-  ) !important;
-  background-color: transparent !important;
-  color: #FFD6E8 !important;
-  border: 1px solid rgba(244, 114, 182, 0.38) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.62) !important;
-  box-shadow:
-    0 6px 20px rgba(213, 32, 115, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.42) !important;
-}
-
-/* Forest / Smoked Glass Action Buttons (Pay, + Reserve, Set Limits, Active Pills) */
-html.dark main button[class*="bg-[#31493C]"],
-html.dark main a[class*="bg-[#31493C]"],
-html.dark main button[class*="border"],
-html.dark main a[class*="border"],
-.dark main button[class*="bg-[#31493C]"],
-.dark main a[class*="bg-[#31493C]"],
-.dark main button[class*="border"],
-.dark main a[class*="border"] {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.12) 0%,
-    rgba(255, 255, 255, 0.03) 100%
-  ) !important;
-  background-color: transparent !important;
-  color: #F2F7F8 !important;
-  border: 1px solid rgba(255, 255, 255, 0.14) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.34) !important;
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
-}
-
-html.dark main button:hover,
-.dark main button:hover {
-  filter: brightness(1.18) !important;
-  transform: translateY(-0.5px);
-}
-
-
-/* Glacial Light Mode: Truly Translucent Apple Liquid Glass Buttons, Pills & Badges */
-html:not(.dark) main button,
-html:not(.dark) main a[class*="px-"],
-html:not(.dark) main span[class*="rounded-full"][class*="px-"] {
-  backdrop-filter: blur(22px) saturate(190%) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(190%) !important;
-  transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1) !important;
-}
-
-/* Mint / Emerald Translucent Glass (+ Add Wallet, + New, You Can, Net Positive) */
-html:not(.dark) main [class*="bg-[#B3EFB2]"]:not([style*="height"]):not([style*="width"]),
-html:not(.dark) main [class*="bg-emerald-"]:not([style*="height"]):not([style*="width"]),
-html:not(.dark) main [class*="bg-green-"]:not([style*="height"]):not([style*="width"]) {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.56) 0%,
-    rgba(167, 243, 208, 0.28) 52%,
-    rgba(52, 211, 153, 0.16) 100%
-  ) !important;
-  background-color: transparent !important;
-  color: #064E3B !important;
-  border: 1px solid rgba(16, 185, 129, 0.28) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.94) !important;
-  box-shadow:
-    0 6px 20px rgba(16, 185, 129, 0.12),
-    inset 0 1px 1px rgba(255, 255, 255, 0.92) !important;
-}
-
-/* Solar Yellow / Amber Translucent Glass (+ Add, Partially Reserved, Primary CTAs) */
-html:not(.dark) main [class*="bg-[#FFEF5C]"]:not([style*="height"]):not([style*="width"]),
-html:not(.dark) main [class*="bg-amber-"]:not([style*="height"]):not([style*="width"]),
-html:not(.dark) main [class*="bg-yellow-"]:not([style*="height"]):not([style*="width"]) {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.58) 0%,
-    rgba(254, 240, 138, 0.32) 52%,
-    rgba(250, 204, 21, 0.18) 100%
-  ) !important;
-  background-color: transparent !important;
-  color: #422006 !important;
-  border: 1px solid rgba(217, 119, 6, 0.26) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.95) !important;
-  box-shadow:
-    0 6px 20px rgba(217, 119, 6, 0.11),
-    inset 0 1px 1px rgba(255, 255, 255, 0.92) !important;
-}
-
-/* Rose / Pink Translucent Glass (Overdue, Money Lent, Borrowed, Negative Net) */
-html:not(.dark) main [class*="bg-[#D52073]"]:not([style*="height"]):not([style*="width"]),
-html:not(.dark) main [class*="bg-rose-"]:not([style*="height"]):not([style*="width"]),
-html:not(.dark) main [class*="bg-pink-"]:not([style*="height"]):not([style*="width"]) {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.54) 0%,
-    rgba(251, 207, 232, 0.30) 52%,
-    rgba(213, 32, 115, 0.16) 100%
-  ) !important;
-  background-color: transparent !important;
-  color: #880E4F !important;
-  border: 1px solid rgba(213, 32, 115, 0.28) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.94) !important;
-  box-shadow:
-    0 6px 20px rgba(213, 32, 115, 0.12),
-    inset 0 1px 1px rgba(255, 255, 255, 0.92) !important;
-}
-
-/* Neutral / Forest / Secondary Translucent Glass Buttons (+ Reserve, Pay, Set Limits, Tabs) */
-html:not(.dark) main button[class*="bg-[#31493C]"],
-html:not(.dark) main a[class*="bg-[#31493C]"],
-html:not(.dark) main button[class*="border"],
-html:not(.dark) main a[class*="border"],
-html:not(.dark) main button[class*="bg-white"],
-html:not(.dark) main button[class*="bg-[#E8F1F2]"] {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.62) 0%,
-    rgba(232, 241, 242, 0.24) 100%
-  ) !important;
-  background-color: transparent !important;
-  color: #001A23 !important;
-  border: 1px solid rgba(255, 255, 255, 0.72) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.96) !important;
-  box-shadow:
-    0 4px 16px rgba(0, 26, 35, 0.07),
-    inset 0 1px 1px rgba(255, 255, 255, 0.92) !important;
-}
-
-html:not(.dark) main button:hover,
-html:not(.dark) main a[class*="px-"]:hover {
-  filter: brightness(1.05) !important;
-  transform: translateY(-0.5px);
-}
-
-/* Liquid Glass Donut / Pie Chart Refraction */
-svg.liquid-glass-pie {
-  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.45));
-}
-
-svg.liquid-glass-pie circle.pie-segment {
-  fill-opacity: 0.78;
-  stroke-opacity: 0.82;
-  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-
-
-/* Glacial Light Mode: Translucent Apple Liquid Glass Safe Spendable Cash Hero Card */
-html:not(.dark) .hero-spendable-card {
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.56) 0%,
-    rgba(196, 232, 236, 0.36) 45%,
-    rgba(154, 214, 204, 0.28) 100%
-  ) !important;
-  backdrop-filter: blur(32px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(32px) saturate(200%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.78) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.98) !important;
-  box-shadow:
-    0 18px 42px -10px rgba(0, 42, 54, 0.12),
-    inset 0 1px 1px rgba(255, 255, 255, 0.95),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.45) !important;
-  color: #001A23 !important;
-}
-
-html:not(.dark) .hero-spendable-card,
-html:not(.dark) .hero-spendable-card * {
-  color: #001A23 !important;
-}
-
-html:not(.dark) .hero-spendable-card .text-\[\#3EE895\],
-html:not(.dark) .hero-spendable-card .text-\[\#B3EFB2\],
-html:not(.dark) .hero-spendable-card svg {
-  color: #097A42 !important;
-}
-
-html:not(.dark) .hero-spendable-card .opacity-70,
-html:not(.dark) .hero-spendable-card .opacity-75,
-html:not(.dark) .hero-spendable-card .opacity-80,
-html:not(.dark) .hero-spendable-card p {
-  color: #1E3A44 !important;
-}
-
-/* ============================================================================
-   UNIVERSAL APPLE LIQUID GLASS SWEEP (Header, Sidebar, Modals, Badges & Cards)
-   ============================================================================ */
-
-/* 1. Header & Sidebar Navigation Pills, Theme Toggle, and Active Links */
-html:not(.dark) header button,
-html:not(.dark) header a,
-html:not(.dark) aside button,
-html:not(.dark) aside a {
-  backdrop-filter: blur(20px) saturate(185%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(185%) !important;
-}
-
-html:not(.dark) aside a[aria-current="page"],
-html:not(.dark) header a[aria-current="page"],
-html:not(.dark) aside [class*="bg-[#31493C]"],
-html:not(.dark) header [class*="bg-[#31493C]"] {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.72) 0%,
-    rgba(167, 243, 208, 0.34) 100%
-  ) !important;
-  border: 1px solid rgba(16, 185, 129, 0.28) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.96) !important;
-  box-shadow:
-    0 4px 14px rgba(0, 26, 35, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
-}
-
-.dark aside a[aria-current="page"],
-.dark header a[aria-current="page"],
-.dark aside [class*="bg-[#31493C]"],
-.dark header [class*="bg-[#31493C]"] {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.14) 0%,
-    rgba(255, 255, 255, 0.04) 100%
-  ) !important;
-  border: 1px solid rgba(255, 255, 255, 0.14) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.32) !important;
-  box-shadow:
-    0 6px 18px rgba(0, 0, 0, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
-}
-
-/* 2. All Remaining Colored Status Badges & Pills Anywhere in the App (Sky, Slate, Teal, Indigo, Purple) */
-html:not(.dark) [class*="bg-sky-"],
-html:not(.dark) [class*="bg-blue-"],
-html:not(.dark) [class*="bg-teal-"],
-html:not(.dark) [class*="bg-cyan-"] {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.62) 0%,
-    rgba(186, 230, 253, 0.34) 100%
-  ) !important;
-  background-color: transparent !important;
-  backdrop-filter: blur(18px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(180%) !important;
-  color: #0C4A6E !important;
-  border: 1px solid rgba(14, 165, 233, 0.25) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.94) !important;
-  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
-}
-
-.dark [class*="bg-sky-"],
-.dark [class*="bg-blue-"],
-.dark [class*="bg-teal-"],
-.dark [class*="bg-cyan-"] {
-  background: linear-gradient(
-    180deg,
-    rgba(56, 189, 248, 0.24) 0%,
-    rgba(14, 165, 233, 0.08) 100%
-  ) !important;
-  background-color: transparent !important;
-  backdrop-filter: blur(18px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(180%) !important;
-  color: #BAE6FD !important;
-  border: 1px solid rgba(56, 189, 248, 0.30) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.45) !important;
-}
-
-html:not(.dark) [class*="bg-slate-"],
-html:not(.dark) [class*="bg-gray-"],
-html:not(.dark) [class*="bg-zinc-"] {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.62) 0%,
-    rgba(226, 232, 240, 0.30) 100%
-  ) !important;
-  background-color: transparent !important;
-  backdrop-filter: blur(18px) saturate(170%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(170%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.72) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.94) !important;
-}
-
-.dark [class*="bg-slate-"],
-.dark [class*="bg-gray-"],
-.dark [class*="bg-zinc-"] {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.10) 0%,
-    rgba(255, 255, 255, 0.03) 100%
-  ) !important;
-  background-color: transparent !important;
-  backdrop-filter: blur(18px) saturate(170%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(170%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.24) !important;
-}
-
-/* 3. Modal Buttons & Dialog Controls (Add Entry, Add Obligation, Add Wallet, Edit Modals) */
-html:not(.dark) .fixed.inset-0 button {
-  backdrop-filter: blur(20px) saturate(185%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(185%) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.94) !important;
-  box-shadow: 0 4px 16px rgba(0, 26, 35, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
-}
-
-.dark .fixed.inset-0 button {
-  backdrop-filter: blur(20px) saturate(185%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(185%) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.35) !important;
-}
-
-/* 4. Wallet Cards & Remaining White/Opaque Card Containers in Light Mode */
-html:not(.dark) main [class*="bg-white"]:not(input):not(select):not(textarea) {
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.52) 0%,
-    rgba(232, 241, 242, 0.26) 100%
-  ) !important;
-  backdrop-filter: blur(24px) saturate(185%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(185%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.72) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.95) !important;
-  box-shadow:
-    0 8px 26px rgba(0, 26, 35, 0.07),
-    inset 0 1px 0 rgba(255, 255, 255, 0.88) !important;
-}
-
-/* 5. Progress Bar Tracks (Empty background rails behind progress bars) */
-html:not(.dark) div[class*="overflow-hidden"][class*="h-"] {
-  background: rgba(255, 255, 255, 0.42) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.68) !important;
-  box-shadow: inset 0 1px 2px rgba(0, 26, 35, 0.06) !important;
-}
-
-.dark div[class*="overflow-hidden"][class*="h-"] {
-  background: rgba(255, 255, 255, 0.06) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.09) !important;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.65) !important;
-}
-
-
-/* ============================================================================
-   LIGHT MODE ONLY: LUMINOUS GLACIAL PRISM GRADIENT & CRYSTAL HERO GLASS CARD
-   (Dark mode is completely untouched)
-   ============================================================================ */
-
-/* 1. Luminous multi-orb pastel glass backdrop across ALL pages in Light Mode */
-html:not(.dark),
-html:not(.dark) body {
-  background-color: #EDF6F9 !important;
-  background-image:
-    radial-gradient(circle at 12% 10%, rgba(167, 243, 208, 0.55) 0%, transparent 44%),
-    radial-gradient(circle at 88% 12%, rgba(186, 230, 253, 0.62) 0%, transparent 46%),
-    radial-gradient(circle at 52% 46%, rgba(255, 255, 255, 0.85) 0%, transparent 55%),
-    radial-gradient(circle at 18% 85%, rgba(221, 214, 254, 0.42) 0%, transparent 48%),
-    radial-gradient(circle at 84% 82%, rgba(254, 240, 138, 0.34) 0%, transparent 46%),
-    linear-gradient(160deg, #F4FAFC 0%, #E4F1F5 50%, #EDF6F8 100%) !important;
-  background-attachment: fixed !important;
-}
-
-/* Make outer page wrappers transparent in Light Mode so the body gradient refracts through glass cards */
-html:not(.dark) div.min-h-screen,
-html:not(.dark) div[class*="bg-[#E8F1F2]"]:not(input):not(select):not(textarea) {
-  background-color: transparent !important;
-}
-
-/* 2. Bright, crystal-clear translucent Liquid Glass Safe Spendable Cash Hero Card in Light Mode */
-html:not(.dark) .hero-spendable-card,
-html:not(.dark) section.hero-spendable-card,
-html:not(.dark) div.hero-spendable-card {
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.54) 0%,
-    rgba(224, 247, 250, 0.32) 48%,
-    rgba(209, 250, 229, 0.28) 100%
-  ) !important;
-  background-color: transparent !important;
-  backdrop-filter: blur(34px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(34px) saturate(200%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.82) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.98) !important;
-  box-shadow:
-    0 18px 42px -12px rgba(0, 42, 54, 0.10),
-    inset 0 1px 1px rgba(255, 255, 255, 0.96),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.55) !important;
-  color: #001A23 !important;
-}
-
-html:not(.dark) .hero-spendable-card,
-html:not(.dark) .hero-spendable-card * {
-  color: #001A23 !important;
-}
-
-html:not(.dark) .hero-spendable-card .text-\[\#3EE895\],
-html:not(.dark) .hero-spendable-card .text-\[\#B3EFB2\],
-html:not(.dark) .hero-spendable-card svg {
-  color: #087F43 !important;
-}
-
-html:not(.dark) .hero-spendable-card p,
-html:not(.dark) .hero-spendable-card span[class*="opacity-"] {
-  color: #24424D !important;
-}
-
-/* 3. Crystal-clear frosted glass for all primary & nested cards in Light Mode */
-html:not(.dark) main .rounded-3xl,
-html:not(.dark) main .rounded-2xl {
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.50) 0%,
-    rgba(255, 255, 255, 0.24) 100%
-  ) !important;
-  backdrop-filter: blur(28px) saturate(190%) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.78) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.96) !important;
-  box-shadow:
-    0 10px 30px rgba(0, 32, 44, 0.06),
-    inset 0 1px 1px rgba(255, 255, 255, 0.92) !important;
-}
-
-/* ============================================================================
-   LIQUID GLASS RANGE SLIDERS & PERFECT CENTERING FOR ALL BUTTONS / LINKS
-   (Applied cleanly across both Dark & Light modes)
-   ============================================================================ */
-
-/* 1. Translucent Liquid Glass Range Sliders ("Can I Afford It?" & all sliders) */
-input[type="range"] {
-  -webkit-appearance: none !important;
-  appearance: none !important;
-  background: transparent !important;
-  cursor: pointer;
-}
-
-/* Dark Mode Slider Track */
-.dark input[type="range"]::-webkit-slider-runnable-track,
-html.dark input[type="range"]::-webkit-slider-runnable-track {
-  height: 8px !important;
-  border-radius: 9999px !important;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.14) 0%,
-    rgba(255, 255, 255, 0.04) 100%
-  ) !important;
-  backdrop-filter: blur(14px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(14px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.32) !important;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.55) !important;
-}
-
-/* Light Mode Slider Track */
-html:not(.dark) input[type="range"]::-webkit-slider-runnable-track {
-  height: 8px !important;
-  border-radius: 9999px !important;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.65) 0%,
-    rgba(209, 250, 229, 0.32) 100%
-  ) !important;
-  backdrop-filter: blur(14px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(14px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.85) !important;
-  box-shadow: inset 0 1px 2px rgba(0, 26, 35, 0.10) !important;
-}
-
-/* Dark Mode Liquid Glass Slider Thumb */
-.dark input[type="range"]::-webkit-slider-thumb,
-html.dark input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none !important;
-  appearance: none !important;
-  width: 20px !important;
-  height: 20px !important;
-  margin-top: -7px !important;
-  border-radius: 9999px !important;
-  background: linear-gradient(
-    180deg,
-    rgba(179, 239, 178, 0.58) 0%,
-    rgba(52, 211, 153, 0.24) 100%
-  ) !important;
-  backdrop-filter: blur(18px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(200%) !important;
-  border: 1px solid rgba(179, 239, 178, 0.55) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.90) !important;
-  box-shadow:
-    0 4px 14px rgba(16, 185, 129, 0.35),
-    inset 0 1px 1px rgba(255, 255, 255, 0.75) !important;
-  transition: transform 0.18s ease, box-shadow 0.18s ease !important;
-}
-
-/* Light Mode Liquid Glass Slider Thumb */
-html:not(.dark) input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none !important;
-  appearance: none !important;
-  width: 20px !important;
-  height: 20px !important;
-  margin-top: -7px !important;
-  border-radius: 9999px !important;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.85) 0%,
-    rgba(167, 243, 208, 0.52) 100%
-  ) !important;
-  backdrop-filter: blur(18px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(200%) !important;
-  border: 1px solid rgba(16, 185, 129, 0.38) !important;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.98) !important;
-  box-shadow:
-    0 4px 14px rgba(16, 185, 129, 0.22),
-    inset 0 1px 1px rgba(255, 255, 255, 0.95) !important;
-  transition: transform 0.18s ease, box-shadow 0.18s ease !important;
-}
-
-input[type="range"]::-webkit-slider-thumb:hover {
-  transform: scale(1.12);
-}
-
-/* Firefox Slider Support */
-input[type="range"]::-moz-range-track {
-  height: 8px !important;
-  border-radius: 9999px !important;
-  background: rgba(255, 255, 255, 0.14) !important;
-  border: 1px solid rgba(255, 255, 255, 0.22) !important;
-}
-
-input[type="range"]::-moz-range-thumb {
-  width: 20px !important;
-  height: 20px !important;
-  border-radius: 9999px !important;
-  background: rgba(179, 239, 178, 0.45) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
-}
-
-/* 2. Perfect Horizontal & Vertical Centering for "See More +" & All Pill/Footer Buttons */
-main a[href="/reserved"],
-main a[href="/savings"],
-main a[href*="/"],
-main button {
-  align-items: center !important;
-  justify-content: center !important;
-  text-align: center !important;
-  vertical-align: middle !important;
-}
-
-/* Fix asymmetric top-only padding (pt-2.5 without pb-2.5) on card footer links like "See More +" */
-main a.pt-2\.5 {
-  display: flex !important;
-  width: 100% !important;
-  padding-top: 0.625rem !important;
-  padding-bottom: 0.625rem !important;
-  border-radius: 0.875rem !important;
-  line-height: 1.2 !important;
-}
-
-/* Dedicated Pill-Round Liquid Glass Slider Track & Circular Thumb */
-html body main .liquid-glass-slider-track,
-html.dark body main .liquid-glass-slider-track,
-html:not(.dark) body main .liquid-glass-slider-track,
-html body main .liquid-glass-slider-fill,
-html.dark body main .liquid-glass-slider-fill,
-html:not(.dark) body main .liquid-glass-slider-fill {
-  border-radius: 9999px !important;
-  clip-path: inset(0 round 9999px) !important;
-  -webkit-clip-path: inset(0 round 9999px) !important;
-}
-
-html body main .liquid-glass-slider-thumb,
-html.dark body main .liquid-glass-slider-thumb,
-html:not(.dark) body main .liquid-glass-slider-thumb {
-  width: 22px !important;
-  height: 22px !important;
-  min-width: 22px !important;
-  min-height: 22px !important;
-  border-radius: 9999px !important;
-  clip-path: circle(50% at 50% 50%) !important;
-  -webkit-clip-path: circle(50% at 50% 50%) !important;
-  will-change: left, transform;
-}
-
-/* Light Mode: ONLY the big Safe Spendable Cash hero amount is pure black */
-html:not(.dark) main .hero-spendable-amount,
-html:not(.dark) body main .hero-spendable-amount {
-  color: #000000 !important;
-}
-
-/* Explicit Emerald Green for Left After Spend in Can I Afford It */
-html:not(.dark) main .sim-left-after-spend-safe,
-html:not(.dark) body main .sim-left-after-spend-safe {
-  color: #097A42 !important;
-}
-html.dark main .sim-left-after-spend-safe,
-html.dark body main .sim-left-after-spend-safe {
-  color: #7A9E7E !important;
-}
-
-html:not(.dark) body main .hero-spendable-card .hero-spendable-amount,
-html:not(.dark) body main .hero-spendable-card .hero-spendable-amount.text-\[\#3EE895\] {
-  color: #000000 !important;
-}
-
-/* Mobile floating footer clearance */
-@media (max-width: 767px) {
-  main {
-    padding-bottom: 6.25rem !important;
+    var(--glass-shadow),
+    var(--glass-inner-glow),
+    0 0 0 1px color-mix(in srgb, var(--glass-accent) 45%, transparent),
+    0 0 22px color-mix(in srgb, var(--glass-accent) 28%, transparent) !important;
+}
+
+/* Small inner glass tile (nav items, stat blocks inside a card) */
+.glass--tile {
+  --glass-radius: 22px;
+  --glass-blur: 12px;
+  padding: 10px 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ---------- 5. INTERACTION (jelly press, like iOS 26) ---------- */
+@media (hover: hover) {
+  .glass--pill:hover,
+  .glass--tile:hover,
+  button[class*="rounded-"]:hover {
+    transform: translateY(-1px) scale(1.03);
+    box-shadow: var(--glass-shadow), var(--glass-inner-glow), 0 12px 34px rgba(0, 0, 0, 0.18);
   }
 }
-
-/* Apple Liquid Glass Calendar Popover */
-.pq-calendar-popover {
-  border-radius: 24px !important;
-  backdrop-filter: blur(26px) saturate(190%) !important;
-  -webkit-backdrop-filter: blur(26px) saturate(190%) !important;
+.glass--pill:active,
+.glass--tile:active,
+button[class*="rounded-"]:active {
+  transform: scale(0.94);
+  transition-duration: 0.12s;
 }
 
-.pq-calendar-popover.pq-cal-light {
-  background: rgba(232, 241, 242, 0.72) !important;
-  border: 1px solid rgba(255, 255, 255, 0.88) !important;
-  box-shadow: 0 18px 42px rgba(0, 26, 35, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
-}
-
-.pq-calendar-popover.pq-cal-dark {
-  background: rgba(11, 18, 21, 0.78) !important;
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
-  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.82), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
-}
-
-.pq-cal-nav-btn:hover {
-  background: rgba(255, 255, 255, 0.55);
-}
-.pq-cal-dark .pq-cal-nav-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-}
-
-.pq-cal-in-month:hover {
-  background: rgba(255, 255, 255, 0.72);
-}
-.pq-cal-dark .pq-cal-in-month:hover {
-  background: rgba(255, 255, 255, 0.12);
-}
-
-.pq-cal-today {
-  background: rgba(255, 255, 255, 0.75);
-  color: #0A8F4C;
-  box-shadow: inset 0 0 0 1px rgba(10, 143, 76, 0.45);
-}
-.pq-cal-dark .pq-cal-today {
-  background: rgba(255, 255, 255, 0.12);
-  color: #3EE895;
-  box-shadow: inset 0 0 0 1px rgba(62, 232, 149, 0.45);
-}
-
-.pq-cal-selected {
-  background: #0F2C38 !important;
-  color: #3EE895 !important;
-  box-shadow: 0 4px 12px rgba(0, 26, 35, 0.22);
-}
-.pq-cal-dark .pq-cal-selected {
-  background: #3EE895 !important;
-  color: #001A23 !important;
-  box-shadow: 0 4px 14px rgba(62, 232, 149, 0.32);
-}
-
-/* ============================================================================
-   MOBILE VIEWPORT-LOCKED AMBIENT GRADIENT (iOS Safari, Android Chrome, Samsung, Firefox)
-   ============================================================================ */
-html, body,
-html.dark, .dark body,
-html:not(.dark), html:not(.dark) body {
-  background-image: none !important;
-  background-attachment: scroll !important;
-}
-
+/* ---------- 6. BACKGROUND (Viewport-locked across ALL mobile & desktop browsers) ---------- */
 html {
-  background-color: #EDF6F9 !important;
+  background-color: #eef4f0 !important;
 }
-
-html.dark {
-  background-color: #020405 !important;
+html.dark,
+html[data-theme="dark"] {
+  background-color: #050808 !important;
 }
 
 body,
-.dark body,
-html.dark body,
-html:not(.dark) body {
+.glass-backdrop {
+  min-height: 100dvh;
   background-color: transparent !important;
+  background-image: none !important;
   position: relative;
   isolation: isolate;
 }
 
-body::before {
+/* Keep outer page wrappers transparent so the backdrop refracts through every glass card */
+div.min-h-screen {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Fixed viewport layer so iOS Safari & Android Chrome never stretch or flatten the gradient */
+body::before,
+.glass-backdrop::before {
   content: "";
   position: fixed;
   inset: 0;
@@ -1270,23 +275,64 @@ body::before {
   z-index: -1;
   pointer-events: none;
   transform: translateZ(0);
-  background-color: #EDF6F9;
+  background-color: #eef4f0;
   background-image:
-    radial-gradient(circle at 12% 10%, rgba(167, 243, 208, 0.55) 0%, transparent 44%),
-    radial-gradient(circle at 88% 12%, rgba(186, 230, 253, 0.62) 0%, transparent 46%),
-    radial-gradient(circle at 52% 46%, rgba(255, 255, 255, 0.85) 0%, transparent 55%),
-    radial-gradient(circle at 18% 85%, rgba(221, 214, 254, 0.42) 0%, transparent 48%),
-    radial-gradient(circle at 84% 82%, rgba(254, 240, 138, 0.34) 0%, transparent 46%),
-    linear-gradient(160deg, #F4FAFC 0%, #E4F1F5 50%, #EDF6F8 100%);
+    radial-gradient(40vmax 40vmax at 10% 8%,  rgba(47, 191, 113, 0.45), transparent 60%),
+    radial-gradient(45vmax 45vmax at 95% 25%, rgba(80, 140, 255, 0.35), transparent 60%),
+    radial-gradient(50vmax 50vmax at 30% 95%, rgba(255, 120, 160, 0.30), transparent 60%);
 }
 
 html.dark body::before,
-.dark body::before {
-  background-color: #020405;
+html[data-theme="dark"] body::before,
+.dark .glass-backdrop::before,
+[data-theme="dark"] .glass-backdrop::before {
+  background-color: #050808;
   background-image:
-    radial-gradient(circle at 12% 14%, rgba(26, 92, 68, 0.32) 0%, transparent 42%),
-    radial-gradient(circle at 86% 18%, rgba(18, 72, 92, 0.28) 0%, transparent 45%),
-    radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.045) 0%, transparent 55%),
-    radial-gradient(circle at 78% 85%, rgba(130, 32, 82, 0.18) 0%, transparent 45%),
-    linear-gradient(180deg, #030608 0%, #000000 55%, #020506 100%);
+    radial-gradient(40vmax 40vmax at 10% 8%,  rgba(47, 191, 113, 0.28), transparent 60%),
+    radial-gradient(45vmax 45vmax at 95% 25%, rgba(70, 110, 230, 0.22), transparent 60%),
+    radial-gradient(50vmax 50vmax at 30% 95%, rgba(220, 60, 120, 0.20), transparent 60%);
+}
+
+/* ---------- 7. OPTIONAL: REAL REFRACTION (Chromium only) ---------- */
+.glass--refract {
+  -webkit-backdrop-filter: blur(10px) saturate(var(--glass-saturate));
+          backdrop-filter: url(#liquid-refract) blur(10px) saturate(var(--glass-saturate));
+}
+
+/* ---------- 8. FALLBACKS & ACCESSIBILITY ---------- */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass,
+  section[class*="rounded-"],
+  div[class*="rounded-3xl"],
+  div[class*="rounded-2xl"][class*="border"] {
+    background: var(--glass-bg-strong) !important;
+  }
+  .dark .glass,
+  [data-theme="dark"] .glass,
+  .dark section[class*="rounded-"],
+  .dark div[class*="rounded-3xl"],
+  .dark div[class*="rounded-2xl"][class*="border"] {
+    background: rgba(18, 26, 23, 0.92) !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass,
+  section[class*="rounded-"],
+  div[class*="rounded-3xl"],
+  div[class*="rounded-2xl"][class*="border"] {
+    -webkit-backdrop-filter: none !important;
+            backdrop-filter: none !important;
+    background: var(--glass-bg-strong) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass,
+  .glass--pill:active,
+  .glass--tile:active,
+  button[class*="rounded-"]:active {
+    transition: none !important;
+    transform: none !important;
+  }
 }
