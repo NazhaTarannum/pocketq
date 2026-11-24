@@ -957,36 +957,36 @@ export default function PocketQApp() {
               </span>
             </div>
 
-            <div className="mt-4">
-              <div className="hero-spendable-amount text-4xl sm:text-5xl font-extrabold text-[#3EE895] tracking-tight" style={darkMode ? undefined : { color: "#000000" }}>
+            <div className="mt-4 min-w-0">
+              <div className="hero-spendable-amount text-2xl sm:text-4xl md:text-5xl font-extrabold text-[#3EE895] tracking-tight break-all sm:break-normal" style={darkMode ? undefined : { color: "#000000" }}>
                 {formatBDT(data.summary.availableToSpend)}
               </div>
-              <p className="text-sm mt-2 text-[#E8F1F2]/85">
+              <p className="text-xs sm:text-sm mt-2 text-[#E8F1F2]/85">
                 You hold <strong>{formatBDT(data.summary.totalBalance)}</strong> across wallets,
                 with <strong>{formatBDT(data.summary.totalReserved)}</strong> reserved for upcoming commitments.
               </p>
             </div>
 
             <div className="mt-4 pt-3.5 border-t border-[#7A9E7E]/30 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-              <div>
+              <div className="min-w-0">
                 <span className="opacity-70 block">Total Owned</span>
-                <span className="font-bold text-base">{formatBDT(data.summary.totalBalance)}</span>
+                <span className="font-bold text-xs sm:text-sm md:text-base break-all sm:break-normal block">{formatBDT(data.summary.totalBalance)}</span>
               </div>
-              <div>
+              <div className="min-w-0">
                 <span className="opacity-70 block">Obligations Reserved</span>
-                <span className="font-bold text-base text-[#F4FAFB]">
+                <span className="font-bold text-xs sm:text-sm md:text-base text-[#F4FAFB] break-all sm:break-normal block">
                   -{formatBDT(data.summary.totalReservedObligations ?? 0)}
                 </span>
               </div>
-              <div>
+              <div className="min-w-0">
                 <span className="opacity-70 block">Savings Reserved</span>
-                <span className="font-bold text-base text-[#F4FAFB]">
+                <span className="font-bold text-xs sm:text-sm md:text-base text-[#F4FAFB] break-all sm:break-normal block">
                   -{formatBDT(data.summary.totalReservedSavings ?? 0)}
                 </span>
               </div>
-              <div>
+              <div className="min-w-0">
                 <span className="opacity-70 block">Owed by Friends</span>
-                <span className="font-bold text-base text-[#F4FAFB]">
+                <span className="font-bold text-xs sm:text-sm md:text-base text-[#F4FAFB] break-all sm:break-normal block">
                   +{formatBDT(data.summary.owedByFriends)}
                 </span>
               </div>
@@ -1251,12 +1251,12 @@ export default function PocketQApp() {
               const isTight = !isDanger && rawDaily < dailySafeThreshold;
 
               return (
-                <div className="pt-3 border-t border-[#7A9E7E]/20 flex flex-nowrap items-center justify-between gap-2 text-xs">
-                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                    <div>
+                <div className="pt-3 border-t border-[#7A9E7E]/20 flex flex-wrap items-center justify-between gap-2.5 text-xs">
+                  <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+                    <div className="min-w-0">
                       <span className="opacity-70 block">Left After Spend</span>
                       <span
-                        className={`font-extrabold text-sm ${
+                        className={`font-extrabold text-xs sm:text-sm break-all sm:break-normal block ${
                           isDanger
                             ? "text-[#D52073]"
                             : isTight
@@ -1267,12 +1267,12 @@ export default function PocketQApp() {
                         {formatBDT(postSpend)}
                       </span>
                     </div>
-                    <div className="h-6 w-px bg-[#7A9E7E]/25" />
-                    <div>
+                    <div className="h-6 w-px bg-[#7A9E7E]/25 shrink-0" />
+                    <div className="min-w-0">
                       <span className="opacity-70 block">{runwayDays}-Day Daily Limit</span>
                       <span
                         style={{ color: "#D52073" }}
-                        className="font-bold text-sm text-[#D52073]"
+                        className="font-bold text-xs sm:text-sm text-[#D52073] break-all sm:break-normal block"
                       >
                         {formatBDT(dailySafe)}/day
                       </span>
@@ -1280,7 +1280,7 @@ export default function PocketQApp() {
                   </div>
 
                   <span
-                    className={`px-2.5 py-1 rounded-full font-bold text-[11px] whitespace-nowrap shrink-0 ${
+                    className={`ml-auto px-2.5 py-1 rounded-full font-bold text-[11px] whitespace-nowrap shrink-0 ${
                       isDanger
                         ? "bg-[#D52073] text-white"
                         : isTight
@@ -1472,7 +1472,7 @@ export default function PocketQApp() {
                   </div>
                 </div>
                 <div className="font-bold text-base mt-1">{w.name}</div>
-                <div className="text-2xl font-extrabold mt-2">{formatBDT(w.balance)}</div>
+                <div className="text-lg sm:text-2xl font-extrabold mt-2 break-all sm:break-normal">{formatBDT(w.balance)}</div>
               </div>
             ))}
           </div>
@@ -1645,7 +1645,7 @@ export default function PocketQApp() {
                   Cashflow & Wallet Share
                 </h2>
                 <span
-                  className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${
+                  className={`text-[11px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full break-all sm:break-normal ${
                     netCashflow >= 0
                       ? "bg-[#B3EFB2] text-[#001A23]"
                       : "bg-[#D52073] text-white"
