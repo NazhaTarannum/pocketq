@@ -428,11 +428,11 @@ export default function ReservedManagementPage() {
       <main className="max-w-7xl mx-auto px-4 py-4 sm:py-6 space-y-5 sm:space-y-6">
         {/* Top Summary Strip */}
         <section className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="min-w-0 rounded-2xl p-3.5 sm:p-4 bg-[#31493C] text-[#E8F1F2]">
+          <div className="glass glass--card glass--accent min-w-0 rounded-2xl p-3.5 sm:p-4">
             <span className="text-[11px] opacity-75 flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5 shrink-0 text-[#B3EFB2]" /> Available to Spend
+              <ShieldCheck className="w-3.5 h-3.5 shrink-0 text-[#156d3d] dark:text-[#4ade80]" /> Available to Spend
             </span>
-            <p className="text-base sm:text-lg lg:text-xl font-extrabold text-[#B3EFB2] mt-1 leading-tight break-all sm:break-normal">
+            <p className="text-base sm:text-lg lg:text-xl font-extrabold text-[#156d3d] dark:text-[#4ade80] mt-1 leading-tight break-all sm:break-normal">
               {formatBDT(data.summary.availableToSpend)}
             </p>
             <span className="text-[10px] opacity-70 block mt-0.5">Unreserved liquid cash</span>
@@ -537,7 +537,7 @@ export default function ReservedManagementPage() {
                         <div>
                           <div className="flex flex-wrap items-center gap-2">
                             <h3 className="font-extrabold text-sm">{ob.title}</h3>
-                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#31493C] text-[#B3EFB2]">
+                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#31493C] text-[#156d3d] dark:text-[#4ade80]">
                               Due: {formatDateDDMMYYYY(ob.dueDate)}
                             </span>
                             {ob.targetWallet && (
@@ -1035,7 +1035,7 @@ export default function ReservedManagementPage() {
                     onClick={() => setReserveMode(m)}
                     className={`flex-1 py-1.5 rounded-xl text-xs font-bold cursor-pointer ${
                       reserveMode === m
-                        ? 'bg-[#31493C] text-[#B3EFB2]'
+                        ? 'bg-[#31493C] text-[#156d3d] dark:text-[#4ade80]'
                         : 'bg-[#7A9E7E]/15 opacity-75'
                     }`}
                   >
@@ -1433,7 +1433,7 @@ export default function ReservedManagementPage() {
               <button
                 type="button"
                 onClick={() => setActiveModal(null)}
-                className="px-4 py-2 rounded-xl text-xs font-bold bg-[#31493C] text-[#B3EFB2] cursor-pointer"
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-[#31493C] text-[#156d3d] dark:text-[#4ade80] cursor-pointer"
               >
                 Close
               </button>

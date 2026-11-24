@@ -397,9 +397,9 @@ export default function PlanningWorkspacePage() {
       <main className="max-w-7xl mx-auto px-4 py-4 sm:py-6 space-y-5 sm:space-y-6">
         {/* Top Metrics */}
         <section className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="min-w-0 rounded-2xl p-3.5 sm:p-4 bg-[#31493C] text-[#E8F1F2]">
+          <div className="glass glass--card glass--accent min-w-0 rounded-2xl p-3.5 sm:p-4">
             <span className="text-[11px] opacity-75 block">Available to Spend</span>
-            <p className="text-base sm:text-lg lg:text-xl font-extrabold text-[#B3EFB2] mt-1 leading-tight break-all sm:break-normal">
+            <p className="text-base sm:text-lg lg:text-xl font-extrabold text-[#156d3d] dark:text-[#4ade80] mt-1 leading-tight break-all sm:break-normal">
               {formatBDT(data.summary.availableToSpend)}
             </p>
             <span className="text-[10px] opacity-70 block mt-0.5">Actual confirmed liquid cash</span>
@@ -820,7 +820,7 @@ export default function PlanningWorkspacePage() {
                       : 'bg-[#E8F1F2]/50 border-[#7A9E7E]/20'
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-2">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
                     <div>
                       <div className="flex items-center gap-2">
                         <span
@@ -878,7 +878,7 @@ export default function PlanningWorkspacePage() {
                         <button
                           type="button"
                           onClick={() => openRepayModal(loan)}
-                          className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#31493C] text-[#B3EFB2] cursor-pointer ml-1"
+                          className="glass glass--pill glass--accent px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap shrink-0 cursor-pointer"
                         >
                           {isLent ? 'Record Received' : 'Record Repay'}
                         </button>

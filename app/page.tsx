@@ -946,9 +946,9 @@ export default function PocketQApp() {
 
           {/* CENTER COLUMN on Desktop (6 cols), 1st & 2nd on Mobile: Safe Spendable Cash + Can I Afford It? */}
           <div className="order-1 lg:order-2 lg:col-span-6 flex flex-col gap-4">
-          <div className="rounded-3xl hero-spendable-card p-5 text-[#F2F8FA] shadow-md relative overflow-hidden">
+          <div className="glass glass--card rounded-3xl hero-spendable-card p-5 relative overflow-hidden">
             <div className="flex flex-col items-start gap-1.5">
-              <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-[#B3EFB2]/20 text-[#B3EFB2]">
+              <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full glass glass--pill glass--accent text-[#146c3b] dark:text-[#86efac]">
                 <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                 Safe Spendable Cash
               </span>
@@ -961,32 +961,32 @@ export default function PocketQApp() {
               <div className="hero-spendable-amount text-2xl sm:text-4xl md:text-5xl font-extrabold text-[#3EE895] tracking-tight break-all sm:break-normal" style={darkMode ? undefined : { color: "#000000" }}>
                 {formatBDT(data.summary.availableToSpend)}
               </div>
-              <p className="text-xs sm:text-sm mt-2 text-[#E8F1F2]/85">
+              <p className="text-xs sm:text-sm mt-2 opacity-85">
                 You hold <strong>{formatBDT(data.summary.totalBalance)}</strong> across wallets,
                 with <strong>{formatBDT(data.summary.totalReserved)}</strong> reserved for upcoming commitments.
               </p>
             </div>
 
-            <div className="mt-4 pt-3.5 border-t border-[#7A9E7E]/30 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div className="mt-4 pt-3.5 border-t border-black/10 dark:border-white/15 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
               <div className="min-w-0">
                 <span className="opacity-70 block">Total Owned</span>
                 <span className="font-bold text-xs sm:text-sm md:text-base break-all sm:break-normal block">{formatBDT(data.summary.totalBalance)}</span>
               </div>
               <div className="min-w-0">
                 <span className="opacity-70 block">Obligations Reserved</span>
-                <span className="font-bold text-xs sm:text-sm md:text-base text-[#F4FAFB] break-all sm:break-normal block">
+                <span className="font-bold text-xs sm:text-sm md:text-base text-[#0f1a14] dark:text-[#F4FAFB] break-all sm:break-normal block">
                   -{formatBDT(data.summary.totalReservedObligations ?? 0)}
                 </span>
               </div>
               <div className="min-w-0">
                 <span className="opacity-70 block">Savings Reserved</span>
-                <span className="font-bold text-xs sm:text-sm md:text-base text-[#F4FAFB] break-all sm:break-normal block">
+                <span className="font-bold text-xs sm:text-sm md:text-base text-[#0f1a14] dark:text-[#F4FAFB] break-all sm:break-normal block">
                   -{formatBDT(data.summary.totalReservedSavings ?? 0)}
                 </span>
               </div>
               <div className="min-w-0">
                 <span className="opacity-70 block">Owed by Friends</span>
-                <span className="font-bold text-xs sm:text-sm md:text-base text-[#F4FAFB] break-all sm:break-normal block">
+                <span className="font-bold text-xs sm:text-sm md:text-base text-[#0f1a14] dark:text-[#F4FAFB] break-all sm:break-normal block">
                   +{formatBDT(data.summary.owedByFriends)}
                 </span>
               </div>
