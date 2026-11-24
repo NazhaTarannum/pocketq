@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface DDMMYYYYInputProps {
@@ -73,11 +74,12 @@ export default function DDMMYYYYInput({
 }: DDMMYYYYInputProps) {
   const [text, setText] = useState(() => isoToDisplay(value));
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [isDark, setIsDark] = useState(false);
-  const [openAbove, setOpenAbove] = useState(false);
-  const [alignRight, setAlignRight] = useState(false);
+  const [coords, setCoords] = useState<{ top: number; left: number; width: number } | null>(null);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const popoverRef = useRef<HTMLDivElement | null>(null);
 
   const today = useMemo(() => new Date(), []);
   const todayIso = useMemo(
@@ -94,6 +96,10 @@ export default function DDMMYYYYInput({
   );
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
     setText(isoToDisplay(value));
     const parsed = parseIsoParts(value);
     if (parsed) {
@@ -102,26 +108,36 @@ export default function DDMMYYYYInput({
     }
   }, [value]);
 
-  const computePlacement = () => {
+  const computeCoords = () => {
     if (typeof document !== 'undefined') {
       setIsDark(document.documentElement.classList.contains('dark'));
     }
     const el = wrapperRef.current;
-    if (!el || typeof window === 'undefined') return;
+    if (!el || typeof window === 'undefined') return null;
     const rect = el.getBoundingClientRect();
-    const popoverHeight = 310;
-    const popoverWidth = 272;
+    const popoverWidth = Math.min(276, window.innerWidth - 24);
+    const popoverHeight = 312;
 
     const spaceBelow = window.innerHeight - rect.bottom;
-    setOpenAbove(spaceBelow < popoverHeight && rect.top > popoverHeight);
+    const openAbove = spaceBelow < popoverHeight && rect.top > popoverHeight;
 
-    const spaceRight = window.innerWidth - rect.left;
-    setAlignRight(spaceRight < popoverWidth && rect.right >= popoverWidth);
+    const top = openAbove
+      ? Math.max(12, rect.top - popoverHeight - 6)
+      : Math.min(window.innerHeight - popoverHeight - 12, rect.bottom + 6);
+
+    const left = Math.min(
+      Math.max(12, rect.left),
+      Math.max(12, window.innerWidth - popoverWidth - 12)
+    );
+
+    const next = { top, left, width: popoverWidth };
+    setCoords(next);
+    return next;
   };
 
   useLayoutEffect(() => {
     if (open) {
-      computePlacement();
+      computeCoords();
     }
   }, [open]);
 
@@ -130,7 +146,12 @@ export default function DDMMYYYYInput({
 
     const handlePointerDown = (e: MouseEvent | TouchEvent) => {
       const target = e.target as Node;
-      if (wrapperRef.current && !wrapperRef.current.contains(target)) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(target) &&
+        popoverRef.current &&
+        !popoverRef.current.contains(target)
+      ) {
         setOpen(false);
       }
     };
@@ -139,21 +160,25 @@ export default function DDMMYYYYInput({
       if (e.key === 'Escape') setOpen(false);
     };
 
+    const handleReposition = () => computeCoords();
+
     document.addEventListener('mousedown', handlePointerDown);
     document.addEventListener('touchstart', handlePointerDown);
     document.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('resize', computePlacement);
+    window.addEventListener('resize', handleReposition);
+    window.addEventListener('scroll', handleReposition, true);
 
     return () => {
       document.removeEventListener('mousedown', handlePointerDown);
       document.removeEventListener('touchstart', handlePointerDown);
       document.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('resize', computePlacement);
+      window.removeEventListener('resize', handleReposition);
+      window.removeEventListener('scroll', handleReposition, true);
     };
   }, [open]);
 
   const handleOpen = () => {
-    computePlacement();
+    computeCoords();
     setOpen(true);
   };
 
@@ -277,134 +302,153 @@ export default function DDMMYYYYInput({
         <Calendar className="w-4 h-4" />
       </button>
 
-      {open && (
-        <div
-          role="dialog"
-          aria-label="Choose date"
-          style={{
-            backdropFilter: 'blur(26px) saturate(190%)',
-            WebkitBackdropFilter: 'blur(26px) saturate(190%)',
-          }}
-          className={`pq-calendar-popover absolute z-50 w-[268px] max-w-[calc(100vw-2rem)] rounded-[22px] p-3.5 transition-all select-none ${
-            openAbove ? 'bottom-[calc(100%+6px)]' : 'top-[calc(100%+6px)]'
-          } ${alignRight ? 'right-0' : 'left-0'} ${
-            isDark
-              ? 'bg-[#0B1215]/74 text-[#E8F1F2] border border-white/16 shadow-[0_20px_48px_rgba(0,0,0,0.78),inset_0_1px_0_rgba(255,255,255,0.16)]'
-              : 'bg-[#E8F1F2]/68 text-[#001A23] border border-white/85 shadow-[0_16px_38px_rgba(0,26,35,0.14),inset_0_1px_0_rgba(255,255,255,0.95)]'
-          }`}
-        >
-          {/* Header: Month / Year + Navigation */}
-          <div className="flex items-center justify-between mb-2.5 px-1">
-            <span className="text-sm font-extrabold tracking-tight">
-              {MONTH_NAMES[viewMonth]} {viewYear}
-            </span>
-            <div className="flex items-center gap-0.5">
-              <button
-                type="button"
-                onClick={handlePrevMonth}
-                aria-label="Previous month"
-                className={`p-1.5 rounded-full transition-colors cursor-pointer ${
-                  isDark ? 'hover:bg-white/10' : 'hover:bg-white/60'
-                }`}
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setViewYear(today.getFullYear());
-                  setViewMonth(today.getMonth());
-                }}
-                aria-label="Jump to current month"
-                title="Current month"
-                className={`w-2 h-2 rounded-full mx-1 transition-transform hover:scale-125 cursor-pointer ${
-                  isDark ? 'bg-[#3EE895]/85' : 'bg-[#0A8F4C]/85'
-                }`}
-              />
-              <button
-                type="button"
-                onClick={handleNextMonth}
-                aria-label="Next month"
-                className={`p-1.5 rounded-full transition-colors cursor-pointer ${
-                  isDark ? 'hover:bg-white/10' : 'hover:bg-white/60'
-                }`}
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* Weekday Labels */}
-          <div className="grid grid-cols-7 gap-1 text-center mb-1 pb-1 border-b border-current/10">
-            {WEEKDAYS.map((w) => (
-              <span key={w} className="text-[11px] font-bold opacity-55">
-                {w}
+      {mounted &&
+        open &&
+        coords &&
+        createPortal(
+          <div
+            ref={popoverRef}
+            role="dialog"
+            aria-label="Choose date"
+            style={{
+              position: 'fixed',
+              top: `${coords.top}px`,
+              left: `${coords.left}px`,
+              width: `${coords.width}px`,
+              zIndex: 99999,
+              backdropFilter: 'blur(26px) saturate(190%)',
+              WebkitBackdropFilter: 'blur(26px) saturate(190%)',
+            }}
+            className={`pq-calendar-popover p-3.5 select-none ${
+              isDark ? 'pq-cal-dark text-[#E8F1F2]' : 'pq-cal-light text-[#001A23]'
+            }`}
+          >
+            {/* Header: Month / Year + Navigation */}
+            <div className="flex items-center justify-between mb-2.5 px-1">
+              <span className="text-sm font-extrabold tracking-tight">
+                {MONTH_NAMES[viewMonth]} {viewYear}
               </span>
-            ))}
-          </div>
-
-          {/* Days Grid */}
-          <div className="grid grid-cols-7 gap-1 text-center">
-            {calendarCells.map((cell) => {
-              const isSelected = value === cell.iso;
-              const isToday = todayIso === cell.iso;
-
-              return (
-                <button
-                  key={cell.key}
-                  type="button"
-                  onClick={() => handleSelectIso(cell.iso)}
-                  className={`h-8 rounded-xl text-xs transition-all cursor-pointer flex items-center justify-center ${
-                    isSelected
-                      ? isDark
-                        ? 'bg-[#3EE895] text-[#001A23] font-extrabold shadow-sm'
-                        : 'bg-[#0F2C38] text-[#3EE895] font-extrabold shadow-sm'
-                      : isToday
-                      ? isDark
-                        ? 'bg-white/14 text-[#3EE895] font-extrabold ring-1 ring-[#3EE895]/45'
-                        : 'bg-white/75 text-[#0A8F4C] font-extrabold ring-1 ring-[#0A8F4C]/40'
-                      : cell.inCurrentMonth
-                      ? isDark
-                        ? 'hover:bg-white/12 font-medium'
-                        : 'hover:bg-white/70 font-medium'
-                      : 'opacity-35 hover:opacity-70'
-                  }`}
+              <div className="flex items-center gap-1">
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={handlePrevMonth}
+                  onKeyDown={(e) => e.key === 'Enter' && handlePrevMonth()}
+                  aria-label="Previous month"
+                  className="pq-cal-nav-btn w-7 h-7 rounded-full flex items-center justify-center cursor-pointer"
                 >
-                  {cell.day}
-                </button>
-              );
-            })}
-          </div>
+                  <ChevronLeft className="w-4 h-4" />
+                </div>
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => {
+                    setViewYear(today.getFullYear());
+                    setViewMonth(today.getMonth());
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      setViewYear(today.getFullYear());
+                      setViewMonth(today.getMonth());
+                    }
+                  }}
+                  aria-label="Jump to current month"
+                  title="Current month"
+                  className={`w-2 h-2 rounded-full mx-1 transition-transform hover:scale-125 cursor-pointer ${
+                    isDark ? 'bg-[#3EE895]/85' : 'bg-[#0A8F4C]/85'
+                  }`}
+                />
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={handleNextMonth}
+                  onKeyDown={(e) => e.key === 'Enter' && handleNextMonth()}
+                  aria-label="Next month"
+                  className="pq-cal-nav-btn w-7 h-7 rounded-full flex items-center justify-center cursor-pointer"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </div>
+              </div>
+            </div>
 
-          {/* Footer Actions */}
-          <div className="flex items-center justify-between mt-2.5 pt-2 border-t border-current/10 px-1 text-[11px] font-bold">
-            <button
-              type="button"
-              onClick={() => handleSelectIso(todayIso)}
-              className={`px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
-                isDark
-                  ? 'text-[#3EE895] hover:bg-[#3EE895]/15'
-                  : 'text-[#0A8F4C] hover:bg-white/60'
-              }`}
-            >
-              Today
-            </button>
-            {value && (
-              <button
-                type="button"
-                onClick={() => {
-                  onChange('');
-                  setText('');
-                  setOpen(false);
-                }}
-                className="px-2.5 py-1 rounded-full opacity-65 hover:opacity-100 transition-opacity cursor-pointer"
+            {/* Weekday Labels */}
+            <div className="grid grid-cols-7 gap-1 text-center mb-1.5 pb-1 border-b border-current/10">
+              {WEEKDAYS.map((w) => (
+                <span key={w} className="text-[11px] font-bold opacity-55">
+                  {w}
+                </span>
+              ))}
+            </div>
+
+            {/* Days Grid */}
+            <div className="grid grid-cols-7 gap-1 text-center">
+              {calendarCells.map((cell) => {
+                const isSelected = value === cell.iso;
+                const isToday = todayIso === cell.iso;
+
+                return (
+                  <div
+                    key={cell.key}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => handleSelectIso(cell.iso)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSelectIso(cell.iso)}
+                    className={`pq-cal-day h-8 rounded-full text-xs cursor-pointer flex items-center justify-center transition-all ${
+                      isSelected
+                        ? 'pq-cal-selected font-extrabold'
+                        : isToday
+                        ? 'pq-cal-today font-extrabold'
+                        : cell.inCurrentMonth
+                        ? 'pq-cal-in-month font-medium'
+                        : 'opacity-35 hover:opacity-70'
+                    }`}
+                  >
+                    {cell.day}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Footer Actions */}
+            <div className="flex items-center justify-between mt-2.5 pt-2 border-t border-current/10 px-1 text-[11px] font-bold">
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => handleSelectIso(todayIso)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSelectIso(todayIso)}
+                className={`px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
+                  isDark
+                    ? 'text-[#3EE895] hover:bg-[#3EE895]/15'
+                    : 'text-[#0A8F4C] hover:bg-white/60'
+                }`}
               >
-                Clear
-              </button>
-            )}
-          </div>
-        </div>
-      )}
+                Today
+              </div>
+              {value && (
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => {
+                    onChange('');
+                    setText('');
+                    setOpen(false);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      onChange('');
+                      setText('');
+                      setOpen(false);
+                    }
+                  }}
+                  className="px-2.5 py-1 rounded-full opacity-65 hover:opacity-100 transition-opacity cursor-pointer"
+                >
+                  Clear
+                </div>
+              )}
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   );
 }
