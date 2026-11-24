@@ -136,18 +136,16 @@ export default function AppHeader({ darkMode, onToggleDarkMode, onAddEntry }: Ap
           </div>
 
           <div className="flex items-center gap-2 sm:gap-5 shrink-0">
-            {/* Mobile "+ Entry" Pill in Top Header (Dashboard) */}
+            {/* Mobile "+ Entry" Smooth Inline Action in Top Header (Dashboard) */}
             {pathname === '/' && (
               <button
                 type="button"
                 onClick={handleTriggerEntry}
-                className={`md:hidden inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-extrabold transition-all cursor-pointer shrink-0 ${
-                  isDark
-                    ? 'bg-[#3EE895]/20 text-[#3EE895] border border-[#3EE895]/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]'
-                    : 'bg-[#0F2C38] text-[#3EE895] shadow-sm'
+                className={`md:hidden inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold tracking-tight opacity-85 hover:opacity-100 active:scale-95 transition-all cursor-pointer bg-transparent border-0 shrink-0 ${
+                  isDark ? 'text-[#3EE895]' : 'text-[#0A8F4C]'
                 }`}
               >
-                <Plus className="w-3.5 h-3.5 stroke-[2.75]" />
+                <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
                 <span>Entry</span>
               </button>
             )}
