@@ -1170,3 +1170,10 @@ html:not(.dark) body main .hero-spendable-card .hero-spendable-amount,
 html:not(.dark) body main .hero-spendable-card .hero-spendable-amount.text-\[\#3EE895\] {
   color: #000000 !important;
 }
+
+/* Mobile floating footer clearance */
+@media (max-width: 767px) {
+  main {
+    padding-bottom: 6.25rem !important;
+  }
+}

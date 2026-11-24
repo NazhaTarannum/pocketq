@@ -3,7 +3,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Sun, Moon } from 'lucide-react';
+import {
+  Sun,
+  Moon,
+  LayoutDashboard,
+  CalendarRange,
+  Split,
+  PlusCircle,
+  Settings,
+} from 'lucide-react';
 import AppSidebar from './AppSidebar';
 
 interface AppHeaderProps {
@@ -13,11 +21,11 @@ interface AppHeaderProps {
 }
 
 const BASE_TABS = [
-  { key: 'dashboard', label: 'Dashboard', href: '/' },
-  { key: 'planning', label: 'Planning', href: '/planning' },
-  { key: 'split', label: 'Split Bill', href: '/split' },
-  { key: 'entry', label: '+ Entry', href: '/?add=1' },
-  { key: 'settings', label: 'Settings', href: '/settings' },
+  { key: 'dashboard', label: 'Dashboard', href: '/', icon: LayoutDashboard },
+  { key: 'planning', label: 'Planning', href: '/planning', icon: CalendarRange },
+  { key: 'split', label: 'Split Bill', href: '/split', icon: Split },
+  { key: 'entry', label: '+ Entry', href: '/?add=1', icon: PlusCircle },
+  { key: 'settings', label: 'Settings', href: '/settings', icon: Settings },
 ];
 
 export default function AppHeader({ darkMode, onToggleDarkMode, onAddEntry }: AppHeaderProps) {
@@ -86,91 +94,160 @@ export default function AppHeader({ darkMode, onToggleDarkMode, onAddEntry }: Ap
   }, [activeKey, pathname]);
 
   return (
-    <header
-      className={`sticky top-0 z-30 backdrop-blur-md transition-colors duration-200 ${
-        isDark ? 'text-[#E8F1F2]' : 'text-[#001A23]'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between gap-2 sm:gap-4">
-        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-          <AppSidebar darkMode={isDark} />
-          <Link href="/" className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[#0F2C38] flex items-center justify-center text-[#3EE895] font-bold text-base sm:text-lg shadow-sm shrink-0">
-              Q
-            </div>
-            <div className="hidden min-[420px]:block truncate">
-              <h1 className="font-bold text-base sm:text-lg tracking-tight leading-none">PocketQ</h1>
-              <p className="text-xs opacity-70 mt-0.5 hidden sm:block">Smart Financial Companion</p>
-            </div>
-          </Link>
-        </div>
+    <>
+      {/* TOP HEADER */}
+      <header
+        className={`sticky top-0 z-30 backdrop-blur-md transition-colors duration-200 ${
+          isDark ? 'text-[#E8F1F2]' : 'text-[#001A23]'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <AppSidebar darkMode={isDark} />
+            <Link href="/" className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#0F2C38] flex items-center justify-center text-[#3EE895] font-bold text-base sm:text-lg shadow-sm shrink-0">
+                Q
+              </div>
+              <div className="min-w-0">
+                <h1 className="font-bold text-base sm:text-lg tracking-tight leading-none truncate">
+                  PocketQ
+                </h1>
+                <p className="text-xs opacity-70 mt-0.5 hidden sm:block">
+                  Smart Financial Companion
+                </p>
+              </div>
+            </Link>
+          </div>
 
-        <div className="flex items-center gap-3 sm:gap-5 shrink-0">
-          <nav
-            ref={navContainerRef}
-            aria-label="Primary Navigation"
-            className="relative flex items-center gap-3.5 sm:gap-6 py-1"
-          >
-            {visibleTabs.map((tab) => {
-              const isActive = activeKey === tab.key;
-              if (tab.key === 'entry') {
+          <div className="flex items-center gap-3 sm:gap-5 shrink-0">
+            {/* Desktop Navigation (hidden on mobile; shifted to mobile footer below) */}
+            <nav
+              ref={navContainerRef}
+              aria-label="Primary Navigation"
+              className="hidden md:flex relative items-center gap-6 py-1"
+            >
+              {visibleTabs.map((tab) => {
+                const isActive = activeKey === tab.key;
+                if (tab.key === 'entry') {
+                  return (
+                    <button
+                      key={tab.key}
+                      ref={(el) => {
+                        itemRefs.current[tab.key] = el;
+                      }}
+                      onClick={() => {
+                        if (onAddEntry) {
+                          onAddEntry();
+                        } else {
+                          router.push('/?add=1');
+                        }
+                      }}
+                      className="relative pb-1.5 text-[13px] font-medium tracking-tight opacity-70 hover:opacity-100 transition-opacity duration-200 cursor-pointer bg-transparent border-0"
+                    >
+                      {tab.label}
+                    </button>
+                  );
+                }
+
                 return (
-                  <button
+                  <Link
                     key={tab.key}
                     ref={(el) => {
                       itemRefs.current[tab.key] = el;
                     }}
-                    onClick={() => {
-                      if (onAddEntry) {
-                        onAddEntry();
-                      } else {
-                        router.push('/?add=1');
-                      }
-                    }}
-                    className="relative pb-1.5 text-xs sm:text-[13px] font-medium tracking-tight opacity-70 hover:opacity-100 transition-opacity duration-200 cursor-pointer bg-transparent border-0"
+                    href={tab.href}
+                    className={`relative pb-1.5 text-[13px] tracking-tight transition-opacity duration-200 ${
+                      isActive ? 'opacity-100 font-semibold' : 'opacity-65 hover:opacity-100 font-medium'
+                    }`}
                   >
                     {tab.label}
-                  </button>
+                  </Link>
                 );
-              }
+              })}
 
-              return (
-                <Link
-                  key={tab.key}
-                  ref={(el) => {
-                    itemRefs.current[tab.key] = el;
-                  }}
-                  href={tab.href}
-                  className={`relative pb-1.5 text-xs sm:text-[13px] tracking-tight transition-opacity duration-200 ${
-                    tab.key === 'settings' ? 'hidden md:inline-block' : ''
-                  } ${isActive ? 'opacity-100 font-semibold' : 'opacity-65 hover:opacity-100 font-medium'}`}
-                >
-                  {tab.label}
-                </Link>
-              );
-            })}
+              <span
+                aria-hidden="true"
+                style={{
+                  transform: `translateX(${underline.left}px)`,
+                  width: `${underline.width}px`,
+                }}
+                className={`pointer-events-none absolute bottom-0 left-0 h-[2px] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  isDark ? 'bg-[#18D476]' : 'bg-[#0A8F4C]'
+                }`}
+              />
+            </nav>
 
-            <span
-              aria-hidden="true"
-              style={{
-                transform: `translateX(${underline.left}px)`,
-                width: `${underline.width}px`,
-              }}
-              className={`pointer-events-none absolute bottom-0 left-0 h-[2px] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                isDark ? 'bg-[#18D476]' : 'bg-[#0A8F4C]'
-              }`}
-            />
-          </nav>
-
-          <button
-            onClick={handleToggleDark}
-            aria-label="Toggle theme"
-            className="p-1.5 opacity-75 hover:opacity-100 transition-opacity cursor-pointer bg-transparent border-0 shrink-0"
-          >
-            {isDark ? <Sun className="w-4 h-4 text-[#FFEF5C]" /> : <Moon className="w-4 h-4" />}
-          </button>
+            <button
+              onClick={handleToggleDark}
+              aria-label="Toggle theme"
+              className="p-2 rounded-xl opacity-80 hover:opacity-100 transition-opacity cursor-pointer bg-transparent border-0 shrink-0"
+            >
+              {isDark ? <Sun className="w-4 h-4 text-[#FFEF5C]" /> : <Moon className="w-4 h-4" />}
+            </button>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      {/* MOBILE FLOATING LIQUID GLASS FOOTER NAVIGATION */}
+      <footer
+        aria-label="Mobile Navigation"
+        className="md:hidden fixed bottom-0 inset-x-0 z-40 px-3 pb-[calc(0.65rem+env(safe-area-inset-bottom))] pt-1.5 pointer-events-none"
+      >
+        <nav
+          className={`pointer-events-auto max-w-md mx-auto rounded-3xl px-2 py-1.5 flex items-center justify-around gap-1 backdrop-blur-2xl transition-all ${
+            isDark
+              ? 'bg-[#0B1215]/75 border border-white/12 shadow-[0_14px_34px_rgba(0,0,0,0.75),inset_0_1px_0_rgba(255,255,255,0.12)] text-[#E8F1F2]'
+              : 'bg-white/75 border border-white/80 shadow-[0_12px_30px_rgba(0,26,35,0.14),inset_0_1px_0_rgba(255,255,255,0.95)] text-[#001A23]'
+          }`}
+        >
+          {visibleTabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeKey === tab.key;
+
+            if (tab.key === 'entry') {
+              return (
+                <button
+                  key={tab.key}
+                  type="button"
+                  onClick={() => {
+                    if (onAddEntry) {
+                      onAddEntry();
+                    } else {
+                      router.push('/?add=1');
+                    }
+                  }}
+                  className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-2xl text-[10px] font-bold transition-all cursor-pointer ${
+                    isDark
+                      ? 'text-[#3EE895] hover:bg-white/10'
+                      : 'text-[#0A8F4C] hover:bg-black/5'
+                  }`}
+                >
+                  <Icon className="w-4 h-4 shrink-0" />
+                  <span className="truncate max-w-full">Entry</span>
+                </button>
+              );
+            }
+
+            return (
+              <Link
+                key={tab.key}
+                href={tab.href}
+                aria-current={isActive ? 'page' : undefined}
+                className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-2xl text-[10px] transition-all ${
+                  isActive
+                    ? isDark
+                      ? 'bg-[#3EE895]/18 text-[#3EE895] font-extrabold shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]'
+                      : 'bg-[#0A8F4C]/12 text-[#0A8F4C] font-extrabold shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]'
+                    : 'opacity-65 hover:opacity-100 font-medium'
+                }`}
+              >
+                <Icon className="w-4 h-4 shrink-0" />
+                <span className="truncate max-w-full">{tab.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+      </footer>
+    </>
   );
 }
