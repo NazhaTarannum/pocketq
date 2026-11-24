@@ -317,22 +317,24 @@ export default function InsightsAndCalendarPage() {
                 6-month Income vs. Expense comparison and 12-month summary
               </p>
             </div>
-            <div className="flex gap-4 text-xs">
-              <div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-5 text-xs w-full lg:w-auto">
+              <div className="min-w-0">
                 <span className="opacity-65 block">Yearly Income</span>
-                <strong className="text-sm text-[#7A9E7E]">
+                <strong className="text-xs sm:text-sm text-[#7A9E7E] break-all sm:break-normal block">
                   {formatBDT(data.reports.yearlyIncome)}
                 </strong>
               </div>
-              <div>
+              <div className="min-w-0">
                 <span className="opacity-65 block">Yearly Expenses</span>
-                <strong className="text-sm text-[#D52073]">
+                <strong className="text-xs sm:text-sm text-[#D52073] break-all sm:break-normal block">
                   {formatBDT(data.reports.yearlyExpenses)}
                 </strong>
               </div>
-              <div>
+              <div className="min-w-0">
                 <span className="opacity-65 block">Net Yearly</span>
-                <strong className="text-sm">{formatBDT(data.reports.yearlyNet)}</strong>
+                <strong className="text-xs sm:text-sm break-all sm:break-normal block">
+                  {formatBDT(data.reports.yearlyNet)}
+                </strong>
               </div>
             </div>
           </div>
@@ -356,9 +358,9 @@ export default function InsightsAndCalendarPage() {
                     title={`Expense: ${formatBDT(m.expense)}`}
                   />
                 </div>
-                <div className="text-[10px] space-y-0.5 opacity-80">
-                  <div className="text-[#7A9E7E] font-bold">In: {formatBDT(m.income)}</div>
-                  <div className="text-[#D52073] font-bold">Out: {formatBDT(m.expense)}</div>
+                <div className="text-[10px] space-y-0.5 opacity-80 min-w-0">
+                  <div className="text-[#7A9E7E] font-bold break-all">In: {formatBDT(m.income)}</div>
+                  <div className="text-[#D52073] font-bold break-all">Out: {formatBDT(m.expense)}</div>
                 </div>
               </div>
             ))}
