@@ -125,11 +125,12 @@ export default function AppSidebar({ darkMode = false }: AppSidebarProps) {
                 boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.08)',
               }
             : {
-                backgroundColor: 'rgba(255, 255, 255, 0.32)',
-                backdropFilter: 'blur(18px) saturate(180%)',
-                WebkitBackdropFilter: 'blur(18px) saturate(180%)',
-                borderColor: 'rgba(255, 255, 255, 0.55)',
-                boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.7)',
+                backgroundColor: 'rgba(164, 224, 204, 0.16)',
+                backgroundImage: 'linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(164, 224, 204, 0.08) 100%)',
+                backdropFilter: 'blur(18px) saturate(160%)',
+                WebkitBackdropFilter: 'blur(18px) saturate(160%)',
+                borderColor: 'rgba(0, 26, 35, 0.12)',
+                boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.45)',
               }
         }
         className={`inline-flex items-center justify-center p-2 rounded-xl border transition cursor-pointer ${
