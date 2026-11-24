@@ -397,45 +397,45 @@ export default function PlanningWorkspacePage() {
       <main className="max-w-7xl mx-auto px-4 py-4 sm:py-6 space-y-5 sm:space-y-6">
         {/* Top Metrics */}
         <section className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="rounded-2xl p-4 bg-[#31493C] text-[#E8F1F2]">
+          <div className="min-w-0 rounded-2xl p-3.5 sm:p-4 bg-[#31493C] text-[#E8F1F2]">
             <span className="text-[11px] opacity-75 block">Available to Spend</span>
-            <p className="text-xl font-extrabold text-[#B3EFB2] mt-1">
+            <p className="text-base sm:text-lg lg:text-xl font-extrabold text-[#B3EFB2] mt-1 leading-tight break-all sm:break-normal">
               {formatBDT(data.summary.availableToSpend)}
             </p>
-            <span className="text-[10px] opacity-70">Actual confirmed liquid cash</span>
+            <span className="text-[10px] opacity-70 block mt-0.5">Actual confirmed liquid cash</span>
           </div>
           <div
-            className={`rounded-2xl p-4 border ${
+            className={`min-w-0 rounded-2xl p-3.5 sm:p-4 border ${
               darkMode ? 'bg-[#31493C]/20 border-[#31493C]' : 'bg-white border-[#7A9E7E]/25'
             }`}
           >
             <span className="text-[11px] opacity-70 block">Expected Income (Unreceived)</span>
-            <p className="text-xl font-extrabold text-[#7A9E7E] mt-1">
+            <p className="text-base sm:text-lg lg:text-xl font-extrabold text-[#7A9E7E] mt-1 leading-tight break-all sm:break-normal">
               {formatBDT(data.summary.pendingExpectedIncome30)}
             </p>
-            <span className="text-[10px] opacity-65">Not added to wallets until received</span>
+            <span className="text-[10px] opacity-65 block mt-0.5">Not added to wallets until received</span>
           </div>
           <div
-            className={`rounded-2xl p-4 border ${
+            className={`min-w-0 rounded-2xl p-3.5 sm:p-4 border ${
               darkMode ? 'bg-[#31493C]/20 border-[#31493C]' : 'bg-white border-[#7A9E7E]/25'
             }`}
           >
             <span className="text-[11px] opacity-70 block">Money Borrowed (I Owe)</span>
-            <p className="text-xl font-extrabold text-[#D52073] mt-1">
+            <p className="text-base sm:text-lg lg:text-xl font-extrabold text-[#D52073] mt-1 leading-tight break-all sm:break-normal">
               {formatBDT(data.summary.totalLoanRemaining)}
             </p>
-            <span className="text-[10px] opacity-65">Outstanding debt balance</span>
+            <span className="text-[10px] opacity-65 block mt-0.5">Outstanding debt balance</span>
           </div>
           <div
-            className={`rounded-2xl p-4 border ${
+            className={`min-w-0 rounded-2xl p-3.5 sm:p-4 border ${
               darkMode ? 'bg-[#31493C]/20 border-[#31493C]' : 'bg-white border-[#7A9E7E]/25'
             }`}
           >
             <span className="text-[11px] opacity-70 block">Money Lent (Owed to Me)</span>
-            <p className="text-xl font-extrabold text-[#7A9E7E] mt-1">
+            <p className="text-base sm:text-lg lg:text-xl font-extrabold text-[#7A9E7E] mt-1 leading-tight break-all sm:break-normal">
               {formatBDT(data.summary.totalLentRemaining)}
             </p>
-            <span className="text-[10px] opacity-65">Pending repayments from others</span>
+            <span className="text-[10px] opacity-65 block mt-0.5">Pending repayments from others</span>
           </div>
         </section>
 
