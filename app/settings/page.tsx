@@ -371,47 +371,43 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={() => setDarkMode(false)}
-              className={`flex items-center justify-between p-4 rounded-2xl border text-left transition cursor-pointer ${
+              className={`relative flex items-center justify-center py-4 px-14 rounded-2xl border text-center transition cursor-pointer ${
                 !darkMode
                   ? 'bg-[#31493C] text-white border-[#31493C] shadow-xs'
                   : 'bg-transparent border-[#7A9E7E]/30 hover:border-[#7A9E7E]'
               }`}
             >
-              <div className="flex items-center gap-3">
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${!darkMode ? 'bg-[#FFEF5C] text-[#001A23]' : 'bg-[#7A9E7E]/15'}`}>
-                  <Sun className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="text-sm font-bold block">Light Mode</span>
-                  <span className={`text-xs ${!darkMode ? 'text-[#B3EFB2]' : 'opacity-70'}`}>
-                    Clean daytime workspace
-                  </span>
-                </div>
+              <div className={`absolute left-4 w-9 h-9 rounded-xl flex items-center justify-center ${!darkMode ? 'bg-[#FFEF5C] text-[#001A23]' : 'bg-[#7A9E7E]/15'}`}>
+                <Sun className="w-4 h-4" />
               </div>
-              {!darkMode && <CheckCircle2 className="w-4 h-4 text-[#B3EFB2]" />}
+              <div>
+                <span className="text-sm font-bold block">Light Mode</span>
+                <span className={`text-xs block ${!darkMode ? 'text-[#B3EFB2]' : 'opacity-70'}`}>
+                  Clean daytime workspace
+                </span>
+              </div>
+              {!darkMode && <CheckCircle2 className="absolute right-4 w-4 h-4 text-[#B3EFB2]" />}
             </button>
 
             <button
               type="button"
               onClick={() => setDarkMode(true)}
-              className={`flex items-center justify-between p-4 rounded-2xl border text-left transition cursor-pointer ${
+              className={`relative flex items-center justify-center py-4 px-14 rounded-2xl border text-center transition cursor-pointer ${
                 darkMode
                   ? 'bg-[#31493C] text-white border-[#B3EFB2]/50 shadow-xs'
                   : 'bg-transparent border-[#7A9E7E]/30 hover:border-[#7A9E7E]'
               }`}
             >
-              <div className="flex items-center gap-3">
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${darkMode ? 'bg-[#FFEF5C] text-[#001A23]' : 'bg-[#7A9E7E]/15'}`}>
-                  <Moon className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="text-sm font-bold block">Dark Mode</span>
-                  <span className={`text-xs ${darkMode ? 'text-[#B3EFB2]' : 'opacity-70'}`}>
-                    Low-glare night workspace
-                  </span>
-                </div>
+              <div className={`absolute left-4 w-9 h-9 rounded-xl flex items-center justify-center ${darkMode ? 'bg-[#FFEF5C] text-[#001A23]' : 'bg-[#7A9E7E]/15'}`}>
+                <Moon className="w-4 h-4" />
               </div>
-              {darkMode && <CheckCircle2 className="w-4 h-4 text-[#B3EFB2]" />}
+              <div>
+                <span className="text-sm font-bold block">Dark Mode</span>
+                <span className={`text-xs block ${darkMode ? 'text-[#B3EFB2]' : 'opacity-70'}`}>
+                  Low-glare night workspace
+                </span>
+              </div>
+              {darkMode && <CheckCircle2 className="absolute right-4 w-4 h-4 text-[#B3EFB2]" />}
             </button>
           </div>
         </section>
